@@ -94,7 +94,14 @@ export default function DemoForm() {
 
     const handleBack = () => {
         setStep(step - 1);
-        setErrors({});
+        setErrors({
+            email: "",
+            firstName: "",
+            lastName: "",
+            company: "",
+            phone: "",
+            country: ""
+        });
     };
 
     const handleSubmit = (e: any) => {

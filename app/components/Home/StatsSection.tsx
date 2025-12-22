@@ -4,10 +4,10 @@ import Icon from '@mdi/react';
 import { useCountUp } from '@/app/hooks/useCountUp';
 
 export default function StatsSection() {
-    const count1 = useCountUp(25, 2000);
-    const count2 = useCountUp(550, 2000);
-    const count3 = useCountUp(1200, 2000);
-    const count4 = useCountUp(1, 2000);
+    const count1 = useCountUp(25, true, 2000);
+    const count2 = useCountUp(550, true, 2000);
+    const count3 = useCountUp(1200, true, 2000);
+    const count4 = useCountUp(1, true, 2000);
 
     return (
         <>
