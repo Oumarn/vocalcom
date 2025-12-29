@@ -15,7 +15,7 @@ export default function StatsSection() {
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="grid md:grid-cols-4 gap-8">
                         <div className="text-center group hover:scale-105 transition-transform">
-                            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 text-white mb-4 group-hover:shadow-lg transition-shadow">
+                            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl text-white mb-4 group-hover:shadow-lg transition-shadow" style={{background: 'linear-gradient(193deg, #00bfc3, #4488af)'}}>
                                 <Icon path={mdiTrendingUp} size={1.5} />
                             </div>
                             <div className="text-5xl font-bold text-gray-900 mb-2">
@@ -26,7 +26,7 @@ export default function StatsSection() {
                         </div>
 
                         <div className="text-center group hover:scale-105 transition-transform">
-                            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-green-600 text-white mb-4 group-hover:shadow-lg transition-shadow">
+                            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl text-white mb-4 group-hover:shadow-lg transition-shadow" style={{background: 'linear-gradient(212deg, #ff9a4b, #fb563c)'}}>
                                 <Icon path={mdiAccountGroup} size={1.5} />
                             </div>
                             <div className="text-5xl font-bold text-gray-900 mb-2">
@@ -37,7 +37,7 @@ export default function StatsSection() {
                         </div>
 
                         <div className="text-center group hover:scale-105 transition-transform">
-                            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 text-white mb-4 group-hover:shadow-lg transition-shadow">
+                            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl text-white mb-4 group-hover:shadow-lg transition-shadow" style={{background: '#904b99'}}>
                                 <Icon path={mdiOfficeBuildingOutline} size={1.5} />
                             </div>
                             <div className="text-5xl font-bold text-gray-900 mb-2">
@@ -48,7 +48,7 @@ export default function StatsSection() {
                         </div>
 
                         <div className="text-center group hover:scale-105 transition-transform">
-                            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 text-white mb-4 group-hover:shadow-lg transition-shadow">
+                            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl text-white mb-4 group-hover:shadow-lg transition-shadow" style={{background: 'linear-gradient(202deg, #e94a31, #e1351e)'}}>
                                 <Icon path={mdiMessageProcessingOutline} size={1.5} />
                             </div>
                             <div className="text-5xl font-bold text-gray-900 mb-2">

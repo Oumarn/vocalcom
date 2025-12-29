@@ -21,7 +21,7 @@ export default function BenefitsGrid() {
                         <div className="group relative p-8 rounded-2xl bg-gradient-to-br from-blue-50 to-white border-2 border-blue-100 hover:border-blue-300 hover:shadow-xl transition-all duration-300 overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-400/10 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
                             <div className="relative">
-                                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-lg">
+                                <div className="w-14 h-14 rounded-xl text-white flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-lg" style={{background: 'linear-gradient(193deg, #00bfc3, #4488af)'}}>
                                     <Icon path={mdiRobotHappy} size={1.2} />
                                 </div>
                                 <h3 className="text-xl font-bold text-gray-900 mb-3">Agents IA de Nouvelle Génération</h3>
@@ -51,7 +51,7 @@ export default function BenefitsGrid() {
                         <div className="group relative p-8 rounded-2xl bg-gradient-to-br from-purple-50 to-white border-2 border-purple-100 hover:border-purple-300 hover:shadow-xl transition-all duration-300 overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-400/10 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
                             <div className="relative">
-                                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 text-white flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-lg">
+                                <div className="w-14 h-14 rounded-xl text-white flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-lg" style={{background: '#904b99'}}>
                                     <Icon path={mdiSpeedometer} size={1.2} />
                                 </div>
                                 <h3 className="text-xl font-bold text-gray-900 mb-3">Scalable Sans Effort</h3>
