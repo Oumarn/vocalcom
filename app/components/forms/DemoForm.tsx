@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Icon from "@mdi/react";
 import { mdiArrowRight, mdiCheck, mdiArrowLeft, mdiEmailOutline, mdiAccountOutline, mdiOfficeBuilding, mdiPhone, mdiEarth } from "@mdi/js";
 
 export default function DemoForm() {
+    const router = useRouter();
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [sendDatas, setSendDatas] = useState(false);
@@ -119,6 +121,8 @@ export default function DemoForm() {
         setTimeout(() => {
             setLoading(false);
             setSendDatas(true);
+            // Redirect to thank you page
+            router.push('/thank-you');
         }, 2000);
     };
 

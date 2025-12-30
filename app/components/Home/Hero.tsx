@@ -6,13 +6,16 @@ export default function HeroHome() {
     return (
         <>
             <section className="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden bg-white">
-                <div className="absolute inset-0 z-0 opacity-5" style={{background: 'linear-gradient(193deg, #00bfc3, #4488af 40%, #904b99)'}}></div>
                 
-                {/* Animated background elements */}
-                <div className="absolute inset-0 overflow-hidden opacity-20">
-                    <div className="absolute top-20 left-10 w-72 h-72 bg-white rounded-full mix-blend-overlay filter blur-3xl animate-blob"></div>
-                    <div className="absolute top-40 right-20 w-96 h-96 bg-blue-300 rounded-full mix-blend-overlay filter blur-3xl animate-blob animation-delay-2000"></div>
-                    <div className="absolute -bottom-20 left-40 w-80 h-80 bg-cyan-300 rounded-full mix-blend-overlay filter blur-3xl animate-blob animation-delay-4000"></div>
+                {/* Image Background */}
+                <div className="absolute inset-0 overflow-hidden">
+                    <img
+                        src="/Hero_image.jpg"
+                        alt="AI Background"
+                        className="absolute inset-0 w-full h-full object-cover opacity-40"
+                    />
+                    {/* Overlay to blend image with content */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/70 via-white/60 to-white/50"></div>
                 </div>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
