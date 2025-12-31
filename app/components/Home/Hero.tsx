@@ -25,7 +25,7 @@ export default function HeroHome() {
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-cyan-50 to-blue-50 border border-cyan-200 shadow-lg shadow-cyan-500/20">
                             <div className="w-2 h-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 animate-pulse"></div>
                             <span className="text-sm font-semibold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
-                                AI-first Contact Center
+                                AI-first Contact Center Platform
                             </span>
                         </div>
 
