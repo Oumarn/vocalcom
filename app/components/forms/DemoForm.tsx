@@ -219,34 +219,41 @@ export default function DemoForm() {
         setLoading(true);
 
         try {
-            // Prepare form data for Pardot
-            const formData = new FormData();
-            formData.append('email', form.email);
-            formData.append('First Name', form.firstName);
-            formData.append('Last Name', form.lastName);
-            formData.append('Job Title', form.jobTitle);
-            formData.append('Company', form.company);
-            formData.append('Country', form.country);
-            formData.append('Phone Number', form.phone);
-
-            // Submit to Pardot form handler
-            const response = await fetch('https://go.vocalcom.com/l/1029911/2026-01-04/363cd', {
+            // Submit to our Next.js API route which forwards to Pardot
+            const response = await fetch('/api/submit', {
                 method: 'POST',
-                body: formData,
-                mode: 'no-cors' // Required for cross-origin form submission
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: form.email,
+                    firstName: form.firstName,
+                    lastName: form.lastName,
+                    jobTitle: form.jobTitle,
+                    company: form.company,
+                    country: form.country,
+                    phone: form.phone,
+                }),
             });
 
-            setLoading(false);
-            setSendDatas(true);
-            
-            // Redirect to success page
-            window.location.href = 'https://vocalcom.com/thank-you';
+            const result = await response.json();
+
+            console.log('API Response:', result);
+
+            if (result.ok) {
+                setLoading(false);
+                setSendDatas(true);
+                // Redirect to success page
+                window.location.href = 'https://vocalcom.vercel.app/thank-you';
+            } else {
+                console.error('Submission failed:', result);
+                throw new Error(result.error || 'Submission failed');
+            }
             
         } catch (error) {
             console.error('Form submission error:', error);
             setLoading(false);
-            // Still redirect on error since no-cors mode doesn't return response
-            window.location.href = 'https://vocalcom.com/thank-you';
+            alert('Une erreur est survenue. Veuillez réessayer.');
         }
     };
 
