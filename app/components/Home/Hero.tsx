@@ -60,7 +60,6 @@ export default function HeroHome() {
                     <div className="bg-white rounded-3xl p-8 shadow-2xl animate-slide-in w-full max-w-lg mx-auto lg:mr-0 border border-gray-100" id="demo">
                         <div className="mb-6">
                             <h3 className="text-2xl font-bold tracking-tight text-center text-gray-900">Voir la Démo en Action</h3>
-                            <p className="text-sm text-center text-gray-600 mt-2">⚡ Réponse en <strong className="text-[#24B7C3]">moins de 2h</strong> • Sans engagement</p>
                         </div>
 
                         <DemoForm />
