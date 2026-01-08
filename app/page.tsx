@@ -1,35 +1,49 @@
-import { redirect } from 'next/navigation';
-import { headers } from 'next/headers';
+'use client';
 
-export default async function RootPage() {
-  // Get accept-language header from the request
-  const headersList = await headers();
-  const acceptLanguage = headersList.get('accept-language') || '';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
+export default function RootPage() {
+  const router = useRouter();
   
-  // Simple language detection
-  // Accept-Language format: "en-US,en;q=0.9,es;q=0.8,pt;q=0.7,fr;q=0.6"
-  const lowerLang = acceptLanguage.toLowerCase();
+  useEffect(() => {
+    // Client-side language detection
+    const userLang = navigator.language.toLowerCase();
+    
+    // Check for Portuguese first (pt or pt-*)
+    if (userLang.includes('pt')) {
+      router.replace('/pt');
+      return;
+    }
+    
+    // Check for Spanish (es or es-*)
+    if (userLang.includes('es')) {
+      router.replace('/es');
+      return;
+    }
+    
+    // Check for English
+    if (userLang.includes('en')) {
+      router.replace('/en');
+      return;
+    }
+    
+    // Check for French
+    if (userLang.includes('fr')) {
+      router.replace('/fr');
+      return;
+    }
+    
+    // Default to French for all other cases
+    router.replace('/fr');
+  }, [router]);
   
-  // Check for Portuguese first (pt or pt-*)
-  if (lowerLang.includes('pt')) {
-    redirect('/pt');
-  }
-  
-  // Check for Spanish (es or es-*)
-  if (lowerLang.includes('es')) {
-    redirect('/es');
-  }
-  
-  // Check for English
-  if (lowerLang.includes('en')) {
-    redirect('/en');
-  }
-  
-  // Check for French
-  if (lowerLang.includes('fr')) {
-    redirect('/fr');
-  }
-  
-  // Default to French for all other cases
-  redirect('/fr');
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mx-auto"></div>
+        <p className="mt-4 text-gray-600">Redirecting...</p>
+      </div>
+    </div>
+  );
 }
