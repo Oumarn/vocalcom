@@ -17,14 +17,14 @@ export const metadata: Metadata = {
   title: "Vocalcom - AI-First Contact Center Platform",
   description: "Vocalcom unifies every channel, customer, and agent in an AI-native platform for faster, more human CX.",
   icons: {
-    icon: "/apple-touch-icon.png",
+    icon: "/favicon.ico",
   },
    openGraph: {
-    images: ["/apple-touch-icon.png"],
+    images: ["/icon.png"],
   },
   twitter: {
     card: "summary_large_image",
-    images: ["/apple-touch-icon.png"],
+    images: ["/icon.png"],
   },
 };
 
@@ -35,6 +35,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/icon.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/icon.png" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
