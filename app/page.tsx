@@ -6,19 +6,28 @@ export default async function RootPage() {
   const headersList = await headers();
   const acceptLanguage = headersList.get('accept-language') || '';
   
-  // Simple language detection: check if English is preferred
-  // Accept-Language format: "en-US,en;q=0.9,fr;q=0.8"
-  const isEnglish = acceptLanguage.toLowerCase().includes('en');
-  const isFrench = acceptLanguage.toLowerCase().includes('fr');
+  // Simple language detection
+  // Accept-Language format: "en-US,en;q=0.9,es;q=0.8,pt;q=0.7,fr;q=0.6"
+  const lowerLang = acceptLanguage.toLowerCase();
   
-  // Redirect based on detected language
-  // If both are present, check which has higher priority (comes first)
-  if (isEnglish && !isFrench) {
+  // Check for Portuguese first (pt or pt-*)
+  if (lowerLang.includes('pt')) {
+    redirect('/pt');
+  }
+  
+  // Check for Spanish (es or es-*)
+  if (lowerLang.includes('es')) {
+    redirect('/es');
+  }
+  
+  // Check for English
+  if (lowerLang.includes('en')) {
     redirect('/en');
-  } else if (isFrench || acceptLanguage.includes('fr')) {
+  }
+  
+  // Check for French
+  if (lowerLang.includes('fr')) {
     redirect('/fr');
-  } else if (isEnglish) {
-    redirect('/en');
   }
   
   // Default to French for all other cases
