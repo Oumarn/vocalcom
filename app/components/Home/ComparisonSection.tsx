@@ -1,24 +1,43 @@
 "use client";
 import Icon from '@mdi/react';
 import { mdiCheck, mdiClose } from '@mdi/js';
+import type { landingFR } from '@/content/landing.fr';
 
-export default function ComparisonSection() {
+type ComparisonContent = {
+  badge: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  vocalcom: string;
+  legacy: string;
+  features: Array<{
+    feature: string;
+    vocalcom: boolean | string;
+    legacy: boolean | string;
+  }>;
+  cta: {
+    title: string;
+    button: string;
+  };
+};
+
+export default function ComparisonSection({ content }: { content: ComparisonContent }) {
     return (
         <>
             <section className="py-12 lg:py-16 bg-white">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="text-center mb-16 max-w-3xl mx-auto animate-fade-up">
                         <div className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-50 to-orange-50 text-purple-700 rounded-full px-5 py-2.5 text-sm font-bold mb-6 border border-purple-200">
-                            <span>Nouvelle ère, nouveaux agents, mêmes valeurs</span>
+                            <span>{content.badge}</span>
                         </div>
                         <h2 className="text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 mb-4">
-                            Vocalcom vs Solutions Traditionnelles
+                            {content.title}
                         </h2>
                         <p className="text-lg text-gray-600 mb-3">
-                            Découvrez pourquoi les entreprises migrent vers notre plateforme AI-native
+                            {content.subtitle}
                         </p>
                         <p className="text-base text-gray-600 leading-relaxed">
-                            Du suivi immédiat de chaque lead au service client qui fournit son expertise 24/7, ensemble, humains et agents IA sont les moteurs de votre réussite. À la clé, un réel retour sur investissement, les chiffres le prouvent.
+                            {content.description}
                         </p>
                     </div>
 
@@ -27,28 +46,21 @@ export default function ComparisonSection() {
                             {/* Header */}
                             <div className="grid grid-cols-3 gap-4 md:gap-6 p-4 md:p-6 border-b-2 border-gray-200" style={{background: 'linear-gradient(90deg, rgba(139, 92, 246, 0.1), rgba(168, 85, 247, 0.1))'}}>
                                 <div className="text-center">
-                                    <p className="text-xs md:text-sm font-semibold text-gray-600 uppercase tracking-wide">Fonctionnalité</p>
+                                    <p className="text-xs md:text-sm font-semibold text-gray-600 uppercase tracking-wide">Feature</p>
                                 </div>
                                 <div className="text-center">
                                     <div className="inline-flex items-center justify-center px-3 md:px-4 py-1.5 md:py-2 text-white rounded-full font-bold text-xs md:text-sm shadow-lg" style={{background: 'linear-gradient(193deg, #7c3aed, #8b5cf6 25%, #a855f7 50%, #c084fc 75%, #d8b4fe)'}}>
-                                        ⚡ Vocalcom
+                                        {content.vocalcom}
                                     </div>
                                 </div>
                                 <div className="text-center">
-                                    <p className="text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wide">Solutions Legacy</p>
+                                    <p className="text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wide">{content.legacy}</p>
                                 </div>
                             </div>
 
                             {/* Comparison rows */}
                             <div className="divide-y divide-gray-200">
-                                {[
-                                    { feature: "Agents IA intégrés", vocalcom: true, legacy: false },
-                                    { feature: "Omnicanal natif (15+ canaux)", vocalcom: true, legacy: "Limité" },
-                                    { feature: "Tarification transparente", vocalcom: true, legacy: false },
-                                    { feature: "Analytics temps réel", vocalcom: true, legacy: "Basique" },
-                                    { feature: "Intégrations API ouvertes", vocalcom: "200+", legacy: "Limitées" },
-                                    { feature: "Support 24/7", vocalcom: true, legacy: "Limité" },
-                                ].map((row, idx) => (
+                                {content.features.map((row, idx) => (
                                     <div key={idx} className="grid grid-cols-3 gap-4 md:gap-6 p-4 md:p-6 hover:bg-blue-50/30 transition-colors">
                                         <div className="flex items-center">
                                             <p className="text-sm md:text-base text-gray-700 font-medium">{row.feature}</p>
@@ -89,9 +101,9 @@ export default function ComparisonSection() {
 
                             {/* CTA */}
                             <div className="p-8 text-center border-t-2 border-gray-200" style={{background: 'linear-gradient(90deg, rgba(139, 92, 246, 0.1), rgba(168, 85, 247, 0.1))'}}>
-                                <p className="text-gray-700 font-semibold mb-4">Prêt à passer à la vitesse supérieure?</p>
+                                <p className="text-gray-700 font-semibold mb-4">{content.cta.title}</p>
                                 <a href="#demo" className="inline-flex items-center gap-2 px-6 py-3 text-white font-bold rounded-full hover:shadow-xl transition-all transform hover:-translate-y-1" style={{background: 'linear-gradient(193deg, #7c3aed, #8b5cf6 25%, #a855f7 50%, #c084fc 75%, #d8b4fe)'}}>
-                                    Voir la Différence
+                                    {content.cta.button}
                                 </a>
                             </div>
                         </div>

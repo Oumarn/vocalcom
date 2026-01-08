@@ -4,9 +4,12 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Icon from "@mdi/react";
 import { mdiArrowRight, mdiCheck, mdiArrowLeft, mdiEmailOutline, mdiAccountOutline, mdiOfficeBuilding, mdiPhone, mdiEarth } from "@mdi/js";
+import { useLanguage } from "../../hooks/useLanguage";
 
 export default function DemoForm() {
     const router = useRouter();
+    const { content } = useLanguage();
+    const t = content.form; // Translation object
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
     const [sendDatas, setSendDatas] = useState(false);
@@ -144,19 +147,19 @@ export default function DemoForm() {
         // Validation en direct
         if (id === "email") {
             if (!value.trim()) {
-                setErrors((prev) => ({ ...prev, email: "Ce champ est obligatoire." }));
+                setErrors((prev) => ({ ...prev, email: t.required }));
             } else if (!isValidEmail(value)) {
-                setErrors((prev) => ({ ...prev, email: "Format email invalide." }));
+                setErrors((prev) => ({ ...prev, email: t.fields.email.errorFormat }));
             } else {
                 setErrors((prev) => ({ ...prev, email: "" }));
             }
             return;
         }
 
-        // Effacer l’erreur au fur et à mesure
+        // Effacer l'erreur au fur et à mesure
         setErrors((prev) => ({
             ...prev,
-            [id]: value.trim() === "" ? "Ce champ est obligatoire." : ""
+            [id]: value.trim() === "" ? t.required : ""
         }));
     };
 
@@ -164,18 +167,18 @@ export default function DemoForm() {
         const newErrors: any = {};
 
         if (currentStep === 1) {
-            if (!form.email.trim()) newErrors.email = "Veuillez entrer votre email professionnel.";
-            else if (!isValidEmail(form.email)) newErrors.email = "Format email invalide.";
-            if (!form.firstName.trim()) newErrors.firstName = "Veuillez entrer votre prénom.";
-            if (!form.lastName.trim()) newErrors.lastName = "Veuillez entrer votre nom.";
+            if (!form.email.trim()) newErrors.email = t.fields.email.error;
+            else if (!isValidEmail(form.email)) newErrors.email = t.fields.email.errorFormat;
+            if (!form.firstName.trim()) newErrors.firstName = t.fields.firstName.error;
+            if (!form.lastName.trim()) newErrors.lastName = t.fields.lastName.error;
         } else if (currentStep === 2) {
-            if (!form.jobTitle.trim()) newErrors.jobTitle = "Veuillez entrer votre fonction.";
-            if (!form.company.trim()) newErrors.company = "Veuillez entrer le nom de votre société.";
-            if (!form.country) newErrors.country = "Veuillez sélectionner votre pays.";
+            if (!form.jobTitle.trim()) newErrors.jobTitle = t.fields.jobTitle.error;
+            if (!form.company.trim()) newErrors.company = t.fields.company.error;
+            if (!form.country) newErrors.country = t.fields.country.error;
         } else if (currentStep === 3) {
             const phoneDigits = form.phone.replace(/\D/g, ''); // Remove all non-digits
             if (!form.phone.trim() || phoneDigits.length < 8) {
-                newErrors.phone = "Veuillez entrer un numéro de téléphone valide.";
+                newErrors.phone = t.fields.phone.error;
             }
         }
 
@@ -253,7 +256,7 @@ export default function DemoForm() {
         } catch (error) {
             console.error('Form submission error:', error);
             setLoading(false);
-            alert('Une erreur est survenue. Veuillez réessayer.');
+            alert(t.error);
         }
     };
 
@@ -262,8 +265,8 @@ export default function DemoForm() {
             {/* Progress bar */}
             <div className="mb-6">
                 <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs font-semibold text-gray-700">Étape {step}/{totalSteps}</span>
-                    <span className="text-xs font-medium text-[#8b5cf6]">{Math.round((step / totalSteps) * 100)}%</span>
+                    <span className="text-xs font-semibold text-gray-700">{t.steps.current} {step}/{totalSteps}</span>
+                    <span className="text-xs font-medium text-[#8b5cf6]">{Math.round((step / totalSteps) * 100)}{t.steps.percentage}</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
                     <div 
@@ -277,15 +280,15 @@ export default function DemoForm() {
             {step === 1 && (
                 <div className="space-y-4 animate-fade-in">
                     <div className="text-center mb-4">
-                        <h4 className="text-base font-bold text-gray-900">Vos informations</h4>
-                        <p className="text-xs text-gray-500 mt-1">Pour vous identifier</p>
+                        <h4 className="text-base font-bold text-gray-900">{t.step1.title}</h4>
+                        <p className="text-xs text-gray-500 mt-1">{t.step1.subtitle}</p>
                     </div>
 
                     <div>
                         <label htmlFor="email" className={`block text-xs font-medium mb-1.5 ml-1 ${errors.email ? "text-red-500" : "text-gray-700"}`}>
                             <div className="flex items-center gap-1.5">
                                 <Icon path={mdiEmailOutline} size={0.6} />
-                                E-mail professionnel
+                                {t.fields.email.label}
                             </div>
                         </label>
                         <input
@@ -298,7 +301,7 @@ export default function DemoForm() {
                                 focus:ring-2 focus:border-transparent outline-none transition-all
                                 ${errors.email ? "border-red-500 focus:ring-red-400" : "border-gray-200 focus:ring-[#8b5cf6]"}
                             `}
-                            placeholder="jean@entreprise.com"
+                            placeholder={t.fields.email.placeholder}
                         />
                         {errors.email && (
                             <p className="text-red-500 text-xs mt-1 ml-1">⚠️ {errors.email}</p>
@@ -309,7 +312,7 @@ export default function DemoForm() {
                         <label htmlFor="firstName" className={`block text-xs font-medium mb-1.5 ml-1 ${errors.firstName ? "text-red-500" : "text-gray-700"}`}>
                             <div className="flex items-center gap-1.5">
                                 <Icon path={mdiAccountOutline} size={0.6} />
-                                Prénom
+                                {t.fields.firstName.label}
                             </div>
                         </label>
                         <input
@@ -321,7 +324,7 @@ export default function DemoForm() {
                                 focus:ring-2 focus:border-transparent outline-none transition-all
                                 ${errors.firstName ? "border-red-500 focus:ring-red-400" : "border-gray-200 focus:ring-[#8b5cf6]"}
                             `}
-                            placeholder="Jean"
+                            placeholder={t.fields.firstName.placeholder}
                         />
                         {errors.firstName && (
                             <p className="text-red-500 text-xs mt-1 ml-1">⚠️ {errors.firstName}</p>
@@ -332,7 +335,7 @@ export default function DemoForm() {
                         <label htmlFor="lastName" className={`block text-xs font-medium mb-1.5 ml-1 ${errors.lastName ? "text-red-500" : "text-gray-700"}`}>
                             <div className="flex items-center gap-1.5">
                                 <Icon path={mdiAccountOutline} size={0.6} />
-                                Nom
+                                {t.fields.lastName.label}
                             </div>
                         </label>
                         <input
@@ -344,7 +347,7 @@ export default function DemoForm() {
                                 focus:ring-2 focus:border-transparent outline-none transition-all
                                 ${errors.lastName ? "border-red-500 focus:ring-red-400" : "border-gray-200 focus:ring-[#8b5cf6]"}
                             `}
-                            placeholder="Dupont"
+                            placeholder={t.fields.lastName.placeholder}
                         />
                         {errors.lastName && (
                             <p className="text-red-500 text-xs mt-1 ml-1">⚠️ {errors.lastName}</p>
@@ -357,15 +360,15 @@ export default function DemoForm() {
             {step === 2 && (
                 <div className="space-y-4 animate-fade-in">
                     <div className="text-center mb-4">
-                        <h4 className="text-base font-bold text-gray-900">Votre entreprise</h4>
-                        <p className="text-xs text-gray-500 mt-1">Pour personnaliser votre démo</p>
+                        <h4 className="text-base font-bold text-gray-900">{t.step2.title}</h4>
+                        <p className="text-xs text-gray-500 mt-1">{t.step2.subtitle}</p>
                     </div>
 
                     <div>
                         <label htmlFor="jobTitle" className={`block text-xs font-medium mb-1.5 ml-1 ${errors.jobTitle ? "text-red-500" : "text-gray-700"}`}>
                             <div className="flex items-center gap-1.5">
                                 <Icon path={mdiAccountOutline} size={0.6} />
-                                Fonction
+                                {t.fields.jobTitle.label}
                             </div>
                         </label>
                         <input
@@ -378,7 +381,7 @@ export default function DemoForm() {
                                 focus:ring-2 focus:border-transparent outline-none transition-all
                                 ${errors.jobTitle ? "border-red-500 focus:ring-red-400" : "border-gray-200 focus:ring-[#8b5cf6]"}
                             `}
-                            placeholder="Directeur Service Client"
+                            placeholder={t.fields.jobTitle.placeholder}
                         />
                         {errors.jobTitle && (
                             <p className="text-red-500 text-xs mt-1 ml-1">⚠️ {errors.jobTitle}</p>
@@ -389,7 +392,7 @@ export default function DemoForm() {
                         <label htmlFor="company" className={`block text-xs font-medium mb-1.5 ml-1 ${errors.company ? "text-red-500" : "text-gray-700"}`}>
                             <div className="flex items-center gap-1.5">
                                 <Icon path={mdiOfficeBuilding} size={0.6} />
-                                Nom de la société
+                                {t.fields.company.label}
                             </div>
                         </label>
                         <input
@@ -401,7 +404,7 @@ export default function DemoForm() {
                                 focus:ring-2 focus:border-transparent outline-none transition-all
                                 ${errors.company ? "border-red-500 focus:ring-red-400" : "border-gray-200 focus:ring-[#8b5cf6]"}
                             `}
-                            placeholder="Votre Société"
+                            placeholder={t.fields.company.placeholder}
                         />
                         {errors.company && (
                             <p className="text-red-500 text-xs mt-1 ml-1">⚠️ {errors.company}</p>
@@ -412,7 +415,7 @@ export default function DemoForm() {
                         <label htmlFor="country" className={`block text-xs font-medium mb-2 ml-1 ${errors.country ? "text-red-500" : "text-gray-700"}`}>
                             <div className="flex items-center gap-1.5">
                                 <Icon path={mdiEarth} size={0.6} />
-                                Pays
+                                {t.fields.country.label}
                             </div>
                         </label>
                         <div className="relative" ref={countryInputRef}>
@@ -427,7 +430,7 @@ export default function DemoForm() {
                                     focus:ring-2 focus:border-transparent outline-none transition-all
                                     ${errors.country ? "border-red-500 focus:ring-red-400" : "border-gray-200 focus:ring-[#8b5cf6]"}
                                 `}
-                                placeholder="Rechercher votre pays..."
+                                placeholder={t.fields.country.placeholder}
                             />
                             {showCountryDropdown && filteredCountries.length > 0 && (
                                 <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
@@ -454,15 +457,15 @@ export default function DemoForm() {
             {step === 3 && (
                 <div className="space-y-4 animate-fade-in">
                     <div className="text-center mb-4">
-                        <h4 className="text-base font-bold text-gray-900">Dernière étape !</h4>
-                        <p className="text-xs text-gray-500 mt-1">Comment vous joindre ?</p>
+                        <h4 className="text-base font-bold text-gray-900">{t.step3.title}</h4>
+                        <p className="text-xs text-gray-500 mt-1">{t.step3.subtitle}</p>
                     </div>
 
                     <div>
                         <label htmlFor="phone" className={`block text-xs font-medium mb-1.5 ml-1 ${errors.phone ? "text-red-500" : "text-gray-700"}`}>
                             <div className="flex items-center gap-1.5">
                                 <Icon path={mdiPhone} size={0.6} />
-                                Téléphone
+                                {t.fields.phone.label}
                             </div>
                         </label>
                         <input
@@ -475,7 +478,7 @@ export default function DemoForm() {
                                 focus:ring-2 focus:border-transparent outline-none transition-all
                                 ${errors.phone ? "border-red-500 focus:ring-red-400" : "border-gray-200 focus:ring-[#8b5cf6]"}
                             `}
-                            placeholder="+33 6 12 34 56 78"
+                            placeholder={t.fields.phone.placeholder}
                         />
                         {errors.phone && (
                             <p className="text-red-500 text-xs mt-1 ml-1">⚠️ {errors.phone}</p>
@@ -493,7 +496,7 @@ export default function DemoForm() {
                         className="flex-1 py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-all duration-300 flex items-center justify-center gap-2 text-sm"
                     >
                         <Icon path={mdiArrowLeft} size={0.7} />
-                        Retour
+                        {t.buttons.previous}
                     </button>
                 )}
 
@@ -503,7 +506,7 @@ export default function DemoForm() {
                         onClick={handleNext}
                         className="flex-1 py-3 bg-gradient-to-r from-[#7c3aed] to-[#a855f7] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 group text-sm"
                     >
-                        Suivant
+                        {t.buttons.next}
                         <Icon path={mdiArrowRight} size={0.7} className="group-hover:translate-x-1 transition-transform" />
                     </button>
                 ) : (
@@ -522,7 +525,7 @@ export default function DemoForm() {
                             </svg>
                         )}
                         {sendDatas && <Icon path={mdiCheck} size={0.7} />}
-                        {sendDatas ? "Demande envoyée ✓" : loading ? "Envoi..." : "Obtenir ma démo"}
+                        {sendDatas ? t.buttons.sent : loading ? t.buttons.sending : t.buttons.submit}
                         {!loading && !sendDatas && <Icon path={mdiArrowRight} size={0.7} className="group-hover:translate-x-1 transition-transform" />}
                     </button>
                 )}
@@ -530,7 +533,7 @@ export default function DemoForm() {
 
             {sendDatas && (
                 <div className="text-center p-3 bg-green-50 border border-green-200 rounded-xl animate-fade-in">
-                    <p className="text-green-700 font-semibold text-xs">✅ Merci ! Nous vous contactons sous 2h ouvrées.</p>
+                    <p className="text-green-700 font-semibold text-xs">{t.success}</p>
                 </div>
             )}
         </form>

@@ -1,16 +1,17 @@
 "use client";
+import type { landingFR } from '@/content/landing.fr';
 
-export default function LogoBillboard() {
+export default function LogoBillboard({ content }: { content: typeof landingFR.logoBillboard }) {
     return (
         <section className="py-12 bg-white">
             <div className="max-w-7xl mx-auto px-6">
                 <div className="text-center mb-12">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-violet-50 to-purple-50 border border-violet-200 shadow-lg shadow-violet-500/10 mb-4">
                         <span className="text-xs font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent uppercase tracking-wider">
-                            Trusted by Industry Leaders
+                            {content.badge}
                         </span>
                     </div>
-                    <h3 className="text-2xl font-bold text-gray-900">Ils nous font confiance</h3>
+                    <h3 className="text-2xl font-bold text-gray-900">{content.title}</h3>
                 </div>
                 <div className="relative bg-gradient-to-r from-slate-50 via-white to-slate-50 rounded-2xl py-8 shadow-xl shadow-slate-200/50 border border-slate-200/50 overflow-hidden">
                     {/* Enhanced spotlight with brand colors */}

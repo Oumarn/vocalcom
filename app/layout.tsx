@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import AppHeader from "./components/AppHeader";
-import AppFooter from "./components/AppFooter";
 import CookieConsent from "./components/CookieConsent";
 
 const geistSans = Geist({
@@ -16,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "La Plateforme de Centre de Contact IA Conçue pour l'Échelle",
-  description: "Vocalcom unifie chaque canal, client et agent dans une plateforme IA native pour une CX plus rapide et humaine.",
+  title: "Vocalcom - AI-First Contact Center Platform",
+  description: "Vocalcom unifies every channel, customer, and agent in an AI-native platform for faster, more human CX.",
   icons: {
     icon: "/apple-touch-icon.png",
   },
@@ -42,9 +40,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <CookieConsent />
-        <AppHeader />
         {children}
-        <AppFooter />
       </body>
     </html>
   );

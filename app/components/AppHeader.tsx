@@ -1,4 +1,6 @@
-export default function AppHeader() {
+import type { landingFR } from '@/content/landing.fr';
+
+export default function AppHeader({ content }: { content: typeof landingFR.header }) {
     return (
         <>
             <header className="fixed w-full top-0 z-50 bg-white/95 backdrop-blur-xl border-b border-gray-100 transition-all duration-300 shadow-sm">
@@ -10,7 +12,7 @@ export default function AppHeader() {
                     <div className="hidden md:flex items-center gap-6">
                         <a href="#demo" className="group inline-flex items-center justify-center px-7 py-3.5 text-sm font-bold text-white rounded-full hover:shadow-xl hover:shadow-violet-500/30 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105" style={{background: 'linear-gradient(90deg, #8b5cf6, #a855f7)'}}>
                             <span className="relative">
-                                Demander une démo
+                                {content.cta}
                                 <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
                             </span>
                         </a>
@@ -18,7 +20,7 @@ export default function AppHeader() {
 
                     <div className="md:hidden flex items-center">
                         <a href="#demo" className="inline-flex items-center justify-center p-2.5 text-sm text-white font-bold rounded-full px-6 py-3 hover:shadow-lg transition-all transform hover:-translate-y-0.5" style={{background: 'linear-gradient(90deg, #8b5cf6, #a855f7)'}}>
-                            Démo
+                            {content.cta}
                         </a>
                     </div>
                 </div>

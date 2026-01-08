@@ -20,17 +20,21 @@ const companies = [
   { name: "Majid", image: "/assets/majid.png", class: "w-28 h-16 object-contain" },
 ];
 
-export default function CustomerLogo() {
+import type { landingFR } from '@/content/landing.fr';
+
+export default function CustomerLogo({ content }: { content: typeof landingFR.logoBillboard }) {
   return (
     <section className="py-16 bg-gradient-to-br from-slate-50 via-white to-cyan-50">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-violet-50 to-purple-50 border border-violet-200 shadow-lg shadow-violet-500/20 mb-6">
+            <span className="text-sm font-semibold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
+              {content.badge}
+            </span>
+          </div>
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            Ils nous font confiance
+            {content.title}
           </h2>
-          <p className="text-lg text-gray-600">
-            Plus de 1200 entreprises à travers le monde utilisent notre plateforme
-          </p>
         </div>
         
         {/* Logo Grid */}

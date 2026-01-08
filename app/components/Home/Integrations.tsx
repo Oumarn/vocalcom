@@ -1,6 +1,7 @@
 "use client";
+import type { landingFR } from '@/content/landing.fr';
 
-export default function Integrations() {
+export default function Integrations({ content }: { content: typeof landingFR.integrations }) {
     const integrations = [
         { name: "Salesforce", logo: "https://upload.wikimedia.org/wikipedia/commons/f/f9/Salesforce.com_logo.svg" },
         { name: "Microsoft Dynamics", logo: "https://companieslogo.com/img/orig/MSFT-a203b22d.png?t=1720244492" },
@@ -15,13 +16,13 @@ export default function Integrations() {
                 <div className="text-center mb-20">
                     <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-50 border border-violet-200 mb-6">
                         <div className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse"></div>
-                        <p className="text-xs text-violet-700 font-medium uppercase tracking-wider">Intégrations</p>
+                        <p className="text-xs text-violet-700 font-medium uppercase tracking-wider">{content.badge}</p>
                     </div>
                     <h2 className="text-4xl lg:text-5xl font-semibold text-gray-900 mb-6 tracking-tight">
-                        Connectez votre CRM<br className="hidden sm:block" /> en quelques clics
+                        {content.title}
                     </h2>
                     <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                        Bénéficiez d'une intégration native avec les principaux CRM<br className="hidden sm:block" /> pour des workflows automatisés.
+                        {content.subtitle}
                     </p>
                 </div>
 
@@ -48,8 +49,8 @@ export default function Integrations() {
                 {/* +200 integrations with enhanced styling */}
                 <div className="text-center">
                     <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-violet-50 to-purple-50 border border-violet-200 rounded-full">
-                        <span className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">+200</span>
-                        <span className="text-sm text-gray-600">intégrations disponibles</span>
+                        <span className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">{content.count}</span>
+                        <span className="text-sm text-gray-600">{content.countLabel}</span>
                     </div>
                 </div>
             </div>

@@ -1,30 +1,26 @@
-import HeroHome from "./components/Home/Hero";
-import AIHumanSection from "./components/Home/AIHumanSection";
-import LogoBillboard from "./components/Home/LogoBillboard";
-import StatsSection from "./components/Home/StatsSection";
-import BenefitsGrid from "./components/Home/BenefitsGrid";
-import Integrations from "./components/Home/Integrations";
-import SecurityCompliance from "./components/Home/SecurityCompliance";
-import SocialProof from "./components/Home/SocialProof";
-import ComparisonSection from "./components/Home/ComparisonSection";
-import Historic from "./components/Home/Historic";
-import FinalCta from "./components/Home/FinalCta";
+import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
 
-export default function Home() {
-  return (
-    <div className="">
-      <main className="">
-        <HeroHome />
-        <LogoBillboard />
-        <AIHumanSection />
-        <BenefitsGrid />
-        <Integrations />
-        <SocialProof />
-        <SecurityCompliance />
-        <ComparisonSection />
-        <Historic />
-        <FinalCta />
-      </main>
-    </div>
-  );
+export default async function RootPage() {
+  // Get accept-language header from the request
+  const headersList = await headers();
+  const acceptLanguage = headersList.get('accept-language') || '';
+  
+  // Simple language detection: check if English is preferred
+  // Accept-Language format: "en-US,en;q=0.9,fr;q=0.8"
+  const isEnglish = acceptLanguage.toLowerCase().includes('en');
+  const isFrench = acceptLanguage.toLowerCase().includes('fr');
+  
+  // Redirect based on detected language
+  // If both are present, check which has higher priority (comes first)
+  if (isEnglish && !isFrench) {
+    redirect('/en');
+  } else if (isFrench || acceptLanguage.includes('fr')) {
+    redirect('/fr');
+  } else if (isEnglish) {
+    redirect('/en');
+  }
+  
+  // Default to French for all other cases
+  redirect('/fr');
 }
