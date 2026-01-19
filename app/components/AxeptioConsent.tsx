@@ -2,6 +2,16 @@
 
 import { useEffect } from 'react';
 
+// Extend Window interface to include Axeptio settings
+declare global {
+  interface Window {
+    axeptioSettings?: {
+      clientId: string;
+      cookiesVersion: string;
+    };
+  }
+}
+
 export default function AxeptioConsent() {
   useEffect(() => {
     // Only load Axeptio after React hydration is complete
