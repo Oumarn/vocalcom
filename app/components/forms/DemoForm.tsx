@@ -478,7 +478,7 @@ export default function DemoForm({ customButtonText }: { customButtonText?: stri
             if (!formatted.trim()) {
                 setErrors((prev) => ({ ...prev, phone: t.required }));
             } else if (!isValidPhone(formatted)) {
-                setErrors((prev) => ({ ...prev, phone: t.fields.phone.errorFormat || 'Numéro de téléphone invalide' }));
+                setErrors((prev) => ({ ...prev, phone: 'Numéro de téléphone invalide' }));
             } else {
                 setErrors((prev) => ({ ...prev, phone: "" }));
             }
@@ -528,7 +528,7 @@ export default function DemoForm({ customButtonText }: { customButtonText?: stri
             if (!form.phone.trim()) {
                 newErrors.phone = t.fields.phone.error;
             } else if (!isValidPhone(form.phone)) {
-                newErrors.phone = t.fields.phone.errorFormat || 'Format de téléphone invalide. Utilisez un numéro français mobile (06/07 ou +336/+337)';
+                newErrors.phone = 'Format de téléphone invalide. Utilisez un numéro français mobile (06/07 ou +336/+337)';
             }
         } else if (currentStep === 4) {
             // For step 4, require date and time to be selected before final submission

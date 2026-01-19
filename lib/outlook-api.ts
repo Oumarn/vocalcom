@@ -106,7 +106,7 @@ export async function fetchOutlookAvailabilityByRegion(
  * @param duration - Meeting duration in minutes
  */
 export async function fetchOutlookAvailability(
-  calendarEmails: string[],
+  calendarEmails: readonly string[],
   startDate: string,
   endDate: string,
   timezone: string,

@@ -53,7 +53,7 @@ export const CALENDLY_CONFIG = {
 // Get Calendly config based on selected country
 export function getCalendlyConfigByCountry(country: string): typeof CALENDLY_CONFIG.france {
   for (const [region, config] of Object.entries(CALENDLY_CONFIG)) {
-    if (config.countries.includes(country)) {
+    if ((config.countries as string[]).includes(country)) {
       return config;
     }
   }

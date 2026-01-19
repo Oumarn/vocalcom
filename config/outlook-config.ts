@@ -99,7 +99,7 @@ export type OutlookRegionConfig = {
   timezone: string;
   duration: number;
   bufferTime: number;
-  calendarEmails: string[];
+  calendarEmails: readonly string[];
 };
 
 // Legacy support: keep old structure for backwards compatibility

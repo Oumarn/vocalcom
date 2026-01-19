@@ -31,7 +31,7 @@ export default function DynamicFormSection({
       utm_term: params.get('utm_term'),
       intent: params.get('intent'),
       angle: params.get('angle'),
-      lang: params.get('lang') || 'en'
+      lang: (params.get('lang') || 'en') as 'fr' | 'en' | 'es' | 'pt'
     };
 
     const detectedAngle = resolveAngleFromUTM(utm);
