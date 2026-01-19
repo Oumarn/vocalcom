@@ -268,6 +268,20 @@ export const landingFR = {
       sending: "Envoi...",
       sent: "Demande envoyée ✓"
     },
+    calendar: {
+      addToCalendar: "Ajouter à votre calendrier",
+      googleCalendar: "Google Calendar",
+      outlookCalendar: "Outlook Calendar",
+      appleCalendar: "Apple Calendar",
+      confirmTitle: "Confirmez votre rendez-vous",
+      confirmSubtitle: "Vérifiez vos informations avant de soumettre",
+      appointmentScheduled: "Rendez-vous programmé",
+      modify: "Modifier",
+      minutes: "minutes",
+      eventTitle: "Démonstration Vocalcom",
+      eventDescription: "Rendez-vous de démonstration avec un expert Vocalcom",
+      eventLocation: "Visioconférence"
+    },
     success: "✅ Merci ! Nous vous contactons sous 2h ouvrées.",
     error: "Une erreur est survenue. Veuillez réessayer.",
     required: "Ce champ est obligatoire."

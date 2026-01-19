@@ -263,11 +263,25 @@ export const landingEN = {
     buttons: {
       previous: "Back",
       next: "Next",
-      submit: "Get my Demo",
+      submit: "Get my demo",
       sending: "Sending...",
       sent: "Request sent ✓"
     },
-    success: "✅ Thank you! We'll contact you within 2 business hours.",
+    calendar: {
+      addToCalendar: "Add to your calendar",
+      googleCalendar: "Google Calendar",
+      outlookCalendar: "Outlook Calendar",
+      appleCalendar: "Apple Calendar",
+      confirmTitle: "Confirm your appointment",
+      confirmSubtitle: "Review your information before submitting",
+      appointmentScheduled: "Appointment scheduled",
+      modify: "Modify",
+      minutes: "minutes",
+      eventTitle: "Vocalcom Demo",
+      eventDescription: "Demo appointment with a Vocalcom expert",
+      eventLocation: "Video conference"
+    },
+    success: "✅ Thank you! We will contact you within 2 business hours.",
     error: "An error occurred. Please try again.",
     required: "This field is required."
   },

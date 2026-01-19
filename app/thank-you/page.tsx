@@ -49,14 +49,14 @@ export default function ThankYou() {
 
                 {/* CTA Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                    <Link 
-                        href="/" 
+                    <a 
+                        href="https://vocalcom.com" 
                         className="inline-flex items-center gap-2 px-8 py-4 text-white font-bold rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5"
                         style={{background: 'linear-gradient(193deg, #00bfc3, #4488af 40%, #904b99)'}}
                     >
                         <Icon path={mdiArrowLeft} size={0.8} />
                         Retour à l'accueil
-                    </Link>
+                    </a>
                 </div>
 
                 {/* Additional Info */}

@@ -1,23 +1,20 @@
 "use client";
 
 const companies = [
-  { name: "Bouygues", image: "/assets/bouygues.png", class: "w-28 h-16 object-contain" },
-  { name: "Armatis", image: "/assets/armatis.png", class: "w-28 h-16 object-contain" },
-  { name: "AB InBev", image: "/assets/logo_ABInBev.png", class: "w-28 h-16 object-contain" },
-  { name: "anheuse", image: "/assets/anheuse.svg", class: "w-28 h-16 object-contain" },
-  { name: "Abu Dhabi", image: "/assets/abu_dhabi.svg", class: "w-28 h-16 object-contain" },
-  { name: "Bouygues Telecom", image: "/assets/bouygues_telecom.png", class: "w-28 h-16 object-contain" },
-  { name: "mcdonalds", image: "/assets/mcdonalds.svg", class: "w-28 h-16 object-contain" },
-  { name: "mm", image: "/assets/mm.png", class: "w-28 h-16 object-contain" },
-  { name: "renault", image: "/assets/renault.svg", class: "w-28 h-16 object-contain" },
-  { name: "mauritius", image: "/assets/mauritius.jpg", class: "w-28 h-16 object-contain" },
-  { name: "Vinci", image: "/assets/Vinci_Unternehmen_logo.svg", class: "w-28 h-16 object-contain" },
-  { name: "Nespresso", image: "/assets/Monogramme_Nespresso.png", class: "w-28 h-16 object-contain" },
-  { name: "FC Barcelona", image: "/assets/Logo_fcbarcelone.png", class: "w-28 h-16 object-contain" },
-  { name: "Bioderma", image: "/assets/Logo_Bioderma.png", class: "w-28 h-16 object-contain" },
-  { name: "Petroleum Institute", image: "/assets/The-Petroleum-Institute.png", class: "w-28 h-16 object-contain" },
-  { name: "AXA", image: "/assets/AXA_Logo.svg", class: "w-28 h-16 object-contain" },
-  { name: "Majid", image: "/assets/majid.png", class: "w-28 h-16 object-contain" },
+  { name: "Blancheporte", image: "/logos/Blancheporte.png", class: "w-28 h-16 object-contain" },
+  { name: "Konecta", image: "/logos/Konecta_logo.png", class: "w-28 h-16 object-contain" },
+  { name: "FC Barcelona", image: "/logos/Logo_fcbarcelone.png", class: "w-28 h-16 object-contain" },
+  { name: "Nexity", image: "/logos/Nexity_logo.png", class: "w-28 h-16 object-contain" },
+  { name: "SFR", image: "/logos/SFR_Logo.png", class: "w-28 h-16 object-contain" },
+  { name: "Stellantis", image: "/logos/Stellantis_logo.png", class: "w-28 h-16 object-contain" },
+  { name: "Vodafone", image: "/logos/Vodafone_logo.png", class: "w-28 h-16 object-contain" },
+  { name: "Volkswagen", image: "/logos/Volkswagen_logo.png", class: "w-28 h-16 object-contain" },
+  { name: "Armatis", image: "/logos/armatis.png", class: "w-28 h-16 object-contain" },
+  { name: "BNP Paribas", image: "/logos/bnp paribas logo.png", class: "w-28 h-16 object-contain" },
+  { name: "Concentrix Webhelp", image: "/logos/conentrix webhelp.png", class: "w-28 h-16 object-contain" },
+  { name: "Engie", image: "/logos/engie_logo.png", class: "w-28 h-16 object-contain" },
+  { name: "McDonald's", image: "/logos/macdonald_logo.png", class: "w-28 h-16 object-contain" },
+  { name: "Renault", image: "/logos/renault.svg", class: "w-28 h-16 object-contain" },
 ];
 
 import type { landingFR } from '@/content/landing.fr';

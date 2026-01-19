@@ -267,6 +267,20 @@ export const landingPT = {
       sending: "Enviando...",
       sent: "Solicitação enviada ✓"
     },
+    calendar: {
+      addToCalendar: "Adicionar ao seu calendário",
+      googleCalendar: "Google Calendar",
+      outlookCalendar: "Outlook Calendar",
+      appleCalendar: "Apple Calendar",
+      confirmTitle: "Confirme seu compromisso",
+      confirmSubtitle: "Revise suas informações antes de enviar",
+      appointmentScheduled: "Compromisso agendado",
+      modify: "Modificar",
+      minutes: "minutos",
+      eventTitle: "Demonstração Vocalcom",
+      eventDescription: "Reunião de demonstração com um especialista Vocalcom",
+      eventLocation: "Videoconferência"
+    },
     success: "✅ Obrigado! Entraremos em contato em 2 horas úteis.",
     error: "Ocorreu um erro. Por favor, tente novamente.",
     required: "Este campo é obrigatório."

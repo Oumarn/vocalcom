@@ -3,10 +3,13 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Icon from "@mdi/react";
-import { mdiArrowRight, mdiCheck, mdiArrowLeft, mdiEmailOutline, mdiAccountOutline, mdiOfficeBuilding, mdiPhone, mdiEarth } from "@mdi/js";
+import { mdiArrowRight, mdiCheck, mdiArrowLeft, mdiEmailOutline, mdiAccountOutline, mdiOfficeBuilding, mdiPhone, mdiEarth, mdiClock, mdiGoogle, mdiMicrosoftOutlook, mdiApple } from "@mdi/js";
 import { useLanguage } from "../../hooks/useLanguage";
+import FrenchCalendar from "./FrenchCalendar";
+import { getRegionConfig } from "@/config/outlook-config";
+import { resolveRegionFromUTM, resolveAngleFromUTM, getFormCopy, type RegionKey, type AngleType } from "@/lib/region-resolver";
 
-export default function DemoForm() {
+export default function DemoForm({ customButtonText }: { customButtonText?: string } = {}) {
     const router = useRouter();
     const { content } = useLanguage();
     const t = content.form; // Translation object
@@ -23,8 +26,30 @@ export default function DemoForm() {
         jobTitle: "",
         company: "",
         phone: "",
-        country: ""
+        country: "",
+        appointmentDate: "",
+        appointmentTime: "",
+        ownerEmail: "",
+        region: "" as RegionKey | ""
     });
+    const [utmParams, setUtmParams] = useState<{
+        campaign?: string;
+        source?: string;
+        medium?: string;
+        content?: string;
+        term?: string;
+    }>({});
+    const [attribution, setAttribution] = useState<{
+        gclid?: string;
+        utm_source?: string;
+        utm_medium?: string;
+        utm_campaign?: string;
+        utm_content?: string;
+        utm_term?: string;
+        landing_language?: string;
+    }>({});
+    const [angle, setAngle] = useState<AngleType>('ai');
+    const [formCopy, setFormCopy] = useState(getFormCopy('ai'));
 
     const [errors, setErrors] = useState({
         email: "",
@@ -36,62 +61,264 @@ export default function DemoForm() {
         country: ""
     });
 
-    const totalSteps = 3;
+    const totalSteps = 4;
+
+    // Capture UTM parameters and detect region on mount
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        
+        const params = new URLSearchParams(window.location.search);
+        const utmData = {
+            campaign: params.get('utm_campaign') || undefined,
+            source: params.get('utm_source') || undefined,
+            medium: params.get('utm_medium') || undefined,
+            content: params.get('utm_content') || undefined,
+            term: params.get('utm_term') || undefined,
+        };
+        
+        setUtmParams(utmData);
+        
+        // Build full UTM object
+        const fullUtm = {
+            utm_campaign: utmData.campaign,
+            utm_source: utmData.source,
+            utm_medium: utmData.medium,
+            utm_content: utmData.content,
+            utm_term: utmData.term,
+            intent: params.get('intent'),
+            angle: params.get('angle'),
+            lang: (content.locale || 'fr') as 'fr' | 'en' | 'es' | 'pt',
+        };
+        
+        // Detect region and angle from UTMs
+        const detectedRegion = resolveRegionFromUTM(fullUtm);
+        const detectedAngle = resolveAngleFromUTM(fullUtm);
+        
+        setForm(prev => ({ ...prev, region: detectedRegion }));
+        setAngle(detectedAngle);
+        setFormCopy(getFormCopy(detectedAngle));
+        
+        // Capture attribution data (both from URL and from window.dataLayer if GTM already ran)
+        const attributionData: any = {
+            gclid: params.get('gclid') || (window as any)._gclid || '',
+            utm_source: utmData.source || '',
+            utm_medium: utmData.medium || '',
+            utm_campaign: utmData.campaign || '',
+            utm_content: utmData.content || '',
+            utm_term: utmData.term || '',
+            landing_language: (content.locale || 'fr'),
+        };
+        
+        setAttribution(attributionData);
+        
+        console.log('🌍 Region & Angle detected from UTMs:', {
+            region: detectedRegion,
+            angle: detectedAngle,
+            utmData,
+            attribution: attributionData
+        });
+    }, []);
     
-    // Country code mapping
-    const countryCodeMap: {[key: string]: string} = {
-        "Afghanistan": "+93", "Afrique du Sud": "+27", "Albanie": "+355", "Algérie": "+213", "Allemagne": "+49", "Andorre": "+376", "Angola": "+244", "Antigua-et-Barbuda": "+1-268", "Arabie Saoudite": "+966", "Argentine": "+54", "Arménie": "+374", "Australie": "+61", "Autriche": "+43", "Azerbaïdjan": "+994",
-        "Bahamas": "+1-242", "Bahreïn": "+973", "Bangladesh": "+880", "Barbade": "+1-246", "Belgique": "+32", "Belize": "+501", "Bénin": "+229", "Bhoutan": "+975", "Biélorussie": "+375", "Birmanie": "+95", "Bolivie": "+591", "Bosnie-Herzégovine": "+387", "Botswana": "+267", "Brésil": "+55", "Brunei": "+673", "Bulgarie": "+359", "Burkina Faso": "+226", "Burundi": "+257",
-        "Cambodge": "+855", "Cameroun": "+237", "Canada": "+1", "Cap-Vert": "+238", "Chili": "+56", "Chine": "+86", "Chypre": "+357", "Colombie": "+57", "Comores": "+269", "Congo": "+242", "Corée du Nord": "+850", "Corée du Sud": "+82", "Costa Rica": "+506", "Côte d'Ivoire": "+225", "Croatie": "+385", "Cuba": "+53",
-        "Danemark": "+45", "Djibouti": "+253", "Dominique": "+1-767",
-        "Égypte": "+20", "Émirats Arabes Unis": "+971", "Équateur": "+593", "Érythrée": "+291", "Espagne": "+34", "Estonie": "+372", "Eswatini": "+268", "États-Unis": "+1", "Éthiopie": "+251",
-        "Fidji": "+679", "Finlande": "+358", "France": "+33",
-        "Gabon": "+241", "Gambie": "+220", "Géorgie": "+995", "Ghana": "+233", "Grèce": "+30", "Grenade": "+1-473", "Guatemala": "+502", "Guinée": "+224", "Guinée-Bissau": "+245", "Guinée Équatoriale": "+240", "Guyana": "+592",
-        "Haïti": "+509", "Honduras": "+504", "Hongrie": "+36",
-        "Îles Marshall": "+692", "Îles Salomon": "+677", "Inde": "+91", "Indonésie": "+62", "Irak": "+964", "Iran": "+98", "Irlande": "+353", "Islande": "+354", "Israël": "+972", "Italie": "+39",
-        "Jamaïque": "+1-876", "Japon": "+81", "Jordanie": "+962",
-        "Kazakhstan": "+7", "Kenya": "+254", "Kirghizistan": "+996", "Kiribati": "+686", "Koweït": "+965",
-        "Laos": "+856", "Lesotho": "+266", "Lettonie": "+371", "Liban": "+961", "Liberia": "+231", "Libye": "+218", "Liechtenstein": "+423", "Lituanie": "+370", "Luxembourg": "+352",
-        "Macédoine du Nord": "+389", "Madagascar": "+261", "Malaisie": "+60", "Malawi": "+265", "Maldives": "+960", "Mali": "+223", "Malte": "+356", "Maroc": "+212", "Maurice": "+230", "Mauritanie": "+222", "Mexique": "+52", "Micronésie": "+691", "Moldavie": "+373", "Monaco": "+377", "Mongolie": "+976", "Monténégro": "+382", "Mozambique": "+258",
-        "Namibie": "+264", "Nauru": "+674", "Népal": "+977", "Nicaragua": "+505", "Niger": "+227", "Nigeria": "+234", "Norvège": "+47", "Nouvelle-Zélande": "+64",
-        "Oman": "+968", "Ouganda": "+256", "Ouzbékistan": "+998",
-        "Pakistan": "+92", "Palaos": "+680", "Palestine": "+970", "Panama": "+507", "Papouasie-Nouvelle-Guinée": "+675", "Paraguay": "+595", "Pays-Bas": "+31", "Pérou": "+51", "Philippines": "+63", "Pologne": "+48", "Portugal": "+351",
-        "Qatar": "+974",
-        "République Centrafricaine": "+236", "République Démocratique du Congo": "+243", "République Dominicaine": "+1-809", "République Tchèque": "+420", "Roumanie": "+40", "Royaume-Uni": "+44", "Russie": "+7", "Rwanda": "+250",
-        "Saint-Christophe-et-Niévès": "+1-869", "Sainte-Lucie": "+1-758", "Saint-Marin": "+378", "Saint-Vincent-et-les-Grenadines": "+1-784", "Salvador": "+503", "Samoa": "+685", "São Tomé-et-Principe": "+239", "Sénégal": "+221", "Serbie": "+381", "Seychelles": "+248", "Sierra Leone": "+232", "Singapour": "+65", "Slovaquie": "+421", "Slovénie": "+386", "Somalie": "+252", "Soudan": "+249", "Soudan du Sud": "+211", "Sri Lanka": "+94", "Suède": "+46", "Suisse": "+41", "Suriname": "+597", "Syrie": "+963",
-        "Tadjikistan": "+992", "Tanzanie": "+255", "Tchad": "+235", "Thaïlande": "+66", "Timor Oriental": "+670", "Togo": "+228", "Tonga": "+676", "Trinité-et-Tobago": "+1-868", "Tunisie": "+216", "Turkménistan": "+993", "Turquie": "+90", "Tuvalu": "+688",
-        "Ukraine": "+380", "Uruguay": "+598",
-        "Vanuatu": "+678", "Vatican": "+39", "Venezuela": "+58", "Viêt Nam": "+84",
-        "Yémen": "+967",
-        "Zambie": "+260", "Zimbabwe": "+263"
+    // Country data with French display names and English normalized values for Salesforce
+    const countryData: {[key: string]: { code: string; en: string }} = {
+        "Afghanistan": { code: "+93", en: "Afghanistan" },
+        "Afrique du Sud": { code: "+27", en: "South Africa" },
+        "Albanie": { code: "+355", en: "Albania" },
+        "Algérie": { code: "+213", en: "Algeria" },
+        "Allemagne": { code: "+49", en: "Germany" },
+        "Andorre": { code: "+376", en: "Andorra" },
+        "Angola": { code: "+244", en: "Angola" },
+        "Antigua-et-Barbuda": { code: "+1-268", en: "Antigua and Barbuda" },
+        "Arabie Saoudite": { code: "+966", en: "Saudi Arabia" },
+        "Argentine": { code: "+54", en: "Argentina" },
+        "Arménie": { code: "+374", en: "Armenia" },
+        "Australie": { code: "+61", en: "Australia" },
+        "Autriche": { code: "+43", en: "Austria" },
+        "Azerbaïdjan": { code: "+994", en: "Azerbaijan" },
+        "Bahamas": { code: "+1-242", en: "Bahamas" },
+        "Bahreïn": { code: "+973", en: "Bahrain" },
+        "Bangladesh": { code: "+880", en: "Bangladesh" },
+        "Barbade": { code: "+1-246", en: "Barbados" },
+        "Belgique": { code: "+32", en: "Belgium" },
+        "Belize": { code: "+501", en: "Belize" },
+        "Bénin": { code: "+229", en: "Benin" },
+        "Bhoutan": { code: "+975", en: "Bhutan" },
+        "Biélorussie": { code: "+375", en: "Belarus" },
+        "Birmanie": { code: "+95", en: "Myanmar" },
+        "Bolivie": { code: "+591", en: "Bolivia" },
+        "Bosnie-Herzégovine": { code: "+387", en: "Bosnia and Herzegovina" },
+        "Botswana": { code: "+267", en: "Botswana" },
+        "Brésil": { code: "+55", en: "Brazil" },
+        "Brunei": { code: "+673", en: "Brunei" },
+        "Bulgarie": { code: "+359", en: "Bulgaria" },
+        "Burkina Faso": { code: "+226", en: "Burkina Faso" },
+        "Burundi": { code: "+257", en: "Burundi" },
+        "Cambodge": { code: "+855", en: "Cambodia" },
+        "Cameroun": { code: "+237", en: "Cameroon" },
+        "Canada": { code: "+1", en: "Canada" },
+        "Cap-Vert": { code: "+238", en: "Cape Verde" },
+        "Chili": { code: "+56", en: "Chile" },
+        "Chine": { code: "+86", en: "China" },
+        "Chypre": { code: "+357", en: "Cyprus" },
+        "Colombie": { code: "+57", en: "Colombia" },
+        "Comores": { code: "+269", en: "Comoros" },
+        "Congo": { code: "+242", en: "Congo" },
+        "Corée du Nord": { code: "+850", en: "North Korea" },
+        "Corée du Sud": { code: "+82", en: "South Korea" },
+        "Costa Rica": { code: "+506", en: "Costa Rica" },
+        "Côte d'Ivoire": { code: "+225", en: "Ivory Coast" },
+        "Croatie": { code: "+385", en: "Croatia" },
+        "Cuba": { code: "+53", en: "Cuba" },
+        "Danemark": { code: "+45", en: "Denmark" },
+        "Djibouti": { code: "+253", en: "Djibouti" },
+        "Dominique": { code: "+1-767", en: "Dominica" },
+        "Égypte": { code: "+20", en: "Egypt" },
+        "Émirats Arabes Unis": { code: "+971", en: "United Arab Emirates" },
+        "Équateur": { code: "+593", en: "Ecuador" },
+        "Érythrée": { code: "+291", en: "Eritrea" },
+        "Espagne": { code: "+34", en: "Spain" },
+        "Estonie": { code: "+372", en: "Estonia" },
+        "Eswatini": { code: "+268", en: "Eswatini" },
+        "États-Unis": { code: "+1", en: "United States" },
+        "Éthiopie": { code: "+251", en: "Ethiopia" },
+        "Fidji": { code: "+679", en: "Fiji" },
+        "Finlande": { code: "+358", en: "Finland" },
+        "France": { code: "+33", en: "France" },
+        "Gabon": { code: "+241", en: "Gabon" },
+        "Gambie": { code: "+220", en: "Gambia" },
+        "Géorgie": { code: "+995", en: "Georgia" },
+        "Ghana": { code: "+233", en: "Ghana" },
+        "Grèce": { code: "+30", en: "Greece" },
+        "Grenade": { code: "+1-473", en: "Grenada" },
+        "Guatemala": { code: "+502", en: "Guatemala" },
+        "Guinée": { code: "+224", en: "Guinea" },
+        "Guinée-Bissau": { code: "+245", en: "Guinea-Bissau" },
+        "Guinée Équatoriale": { code: "+240", en: "Equatorial Guinea" },
+        "Guyana": { code: "+592", en: "Guyana" },
+        "Haïti": { code: "+509", en: "Haiti" },
+        "Honduras": { code: "+504", en: "Honduras" },
+        "Hongrie": { code: "+36", en: "Hungary" },
+        "Îles Marshall": { code: "+692", en: "Marshall Islands" },
+        "Îles Salomon": { code: "+677", en: "Solomon Islands" },
+        "Inde": { code: "+91", en: "India" },
+        "Indonésie": { code: "+62", en: "Indonesia" },
+        "Irak": { code: "+964", en: "Iraq" },
+        "Iran": { code: "+98", en: "Iran" },
+        "Irlande": { code: "+353", en: "Ireland" },
+        "Islande": { code: "+354", en: "Iceland" },
+        "Israël": { code: "+972", en: "Israel" },
+        "Italie": { code: "+39", en: "Italy" },
+        "Jamaïque": { code: "+1-876", en: "Jamaica" },
+        "Japon": { code: "+81", en: "Japan" },
+        "Jordanie": { code: "+962", en: "Jordan" },
+        "Kazakhstan": { code: "+7", en: "Kazakhstan" },
+        "Kenya": { code: "+254", en: "Kenya" },
+        "Kirghizistan": { code: "+996", en: "Kyrgyzstan" },
+        "Kiribati": { code: "+686", en: "Kiribati" },
+        "Koweït": { code: "+965", en: "Kuwait" },
+        "Laos": { code: "+856", en: "Laos" },
+        "Lesotho": { code: "+266", en: "Lesotho" },
+        "Lettonie": { code: "+371", en: "Latvia" },
+        "Liban": { code: "+961", en: "Lebanon" },
+        "Liberia": { code: "+231", en: "Liberia" },
+        "Libye": { code: "+218", en: "Libya" },
+        "Liechtenstein": { code: "+423", en: "Liechtenstein" },
+        "Lituanie": { code: "+370", en: "Lithuania" },
+        "Luxembourg": { code: "+352", en: "Luxembourg" },
+        "Macédoine du Nord": { code: "+389", en: "North Macedonia" },
+        "Madagascar": { code: "+261", en: "Madagascar" },
+        "Malaisie": { code: "+60", en: "Malaysia" },
+        "Malawi": { code: "+265", en: "Malawi" },
+        "Maldives": { code: "+960", en: "Maldives" },
+        "Mali": { code: "+223", en: "Mali" },
+        "Malte": { code: "+356", en: "Malta" },
+        "Maroc": { code: "+212", en: "Morocco" },
+        "Maurice": { code: "+230", en: "Mauritius" },
+        "Mauritanie": { code: "+222", en: "Mauritania" },
+        "Mexique": { code: "+52", en: "Mexico" },
+        "Micronésie": { code: "+691", en: "Micronesia" },
+        "Moldavie": { code: "+373", en: "Moldova" },
+        "Monaco": { code: "+377", en: "Monaco" },
+        "Mongolie": { code: "+976", en: "Mongolia" },
+        "Monténégro": { code: "+382", en: "Montenegro" },
+        "Mozambique": { code: "+258", en: "Mozambique" },
+        "Namibie": { code: "+264", en: "Namibia" },
+        "Nauru": { code: "+674", en: "Nauru" },
+        "Népal": { code: "+977", en: "Nepal" },
+        "Nicaragua": { code: "+505", en: "Nicaragua" },
+        "Niger": { code: "+227", en: "Niger" },
+        "Nigeria": { code: "+234", en: "Nigeria" },
+        "Norvège": { code: "+47", en: "Norway" },
+        "Nouvelle-Zélande": { code: "+64", en: "New Zealand" },
+        "Oman": { code: "+968", en: "Oman" },
+        "Ouganda": { code: "+256", en: "Uganda" },
+        "Ouzbékistan": { code: "+998", en: "Uzbekistan" },
+        "Pakistan": { code: "+92", en: "Pakistan" },
+        "Palaos": { code: "+680", en: "Palau" },
+        "Palestine": { code: "+970", en: "Palestine" },
+        "Panama": { code: "+507", en: "Panama" },
+        "Papouasie-Nouvelle-Guinée": { code: "+675", en: "Papua New Guinea" },
+        "Paraguay": { code: "+595", en: "Paraguay" },
+        "Pays-Bas": { code: "+31", en: "Netherlands" },
+        "Pérou": { code: "+51", en: "Peru" },
+        "Philippines": { code: "+63", en: "Philippines" },
+        "Pologne": { code: "+48", en: "Poland" },
+        "Portugal": { code: "+351", en: "Portugal" },
+        "Qatar": { code: "+974", en: "Qatar" },
+        "République Centrafricaine": { code: "+236", en: "Central African Republic" },
+        "République Démocratique du Congo": { code: "+243", en: "Democratic Republic of the Congo" },
+        "République Dominicaine": { code: "+1-809", en: "Dominican Republic" },
+        "République Tchèque": { code: "+420", en: "Czech Republic" },
+        "Roumanie": { code: "+40", en: "Romania" },
+        "Royaume-Uni": { code: "+44", en: "United Kingdom" },
+        "Russie": { code: "+7", en: "Russia" },
+        "Rwanda": { code: "+250", en: "Rwanda" },
+        "Saint-Christophe-et-Niévès": { code: "+1-869", en: "Saint Kitts and Nevis" },
+        "Sainte-Lucie": { code: "+1-758", en: "Saint Lucia" },
+        "Saint-Marin": { code: "+378", en: "San Marino" },
+        "Saint-Vincent-et-les-Grenadines": { code: "+1-784", en: "Saint Vincent and the Grenadines" },
+        "Salvador": { code: "+503", en: "El Salvador" },
+        "Samoa": { code: "+685", en: "Samoa" },
+        "São Tomé-et-Principe": { code: "+239", en: "Sao Tome and Principe" },
+        "Sénégal": { code: "+221", en: "Senegal" },
+        "Serbie": { code: "+381", en: "Serbia" },
+        "Seychelles": { code: "+248", en: "Seychelles" },
+        "Sierra Leone": { code: "+232", en: "Sierra Leone" },
+        "Singapour": { code: "+65", en: "Singapore" },
+        "Slovaquie": { code: "+421", en: "Slovakia" },
+        "Slovénie": { code: "+386", en: "Slovenia" },
+        "Somalie": { code: "+252", en: "Somalia" },
+        "Soudan": { code: "+249", en: "Sudan" },
+        "Soudan du Sud": { code: "+211", en: "South Sudan" },
+        "Sri Lanka": { code: "+94", en: "Sri Lanka" },
+        "Suède": { code: "+46", en: "Sweden" },
+        "Suisse": { code: "+41", en: "Switzerland" },
+        "Suriname": { code: "+597", en: "Suriname" },
+        "Syrie": { code: "+963", en: "Syria" },
+        "Tadjikistan": { code: "+992", en: "Tajikistan" },
+        "Tanzanie": { code: "+255", en: "Tanzania" },
+        "Tchad": { code: "+235", en: "Chad" },
+        "Thaïlande": { code: "+66", en: "Thailand" },
+        "Timor Oriental": { code: "+670", en: "East Timor" },
+        "Togo": { code: "+228", en: "Togo" },
+        "Tonga": { code: "+676", en: "Tonga" },
+        "Trinité-et-Tobago": { code: "+1-868", en: "Trinidad and Tobago" },
+        "Tunisie": { code: "+216", en: "Tunisia" },
+        "Turkménistan": { code: "+993", en: "Turkmenistan" },
+        "Turquie": { code: "+90", en: "Turkey" },
+        "Tuvalu": { code: "+688", en: "Tuvalu" },
+        "Ukraine": { code: "+380", en: "Ukraine" },
+        "Uruguay": { code: "+598", en: "Uruguay" },
+        "Vanuatu": { code: "+678", en: "Vanuatu" },
+        "Vatican": { code: "+39", en: "Vatican City" },
+        "Venezuela": { code: "+58", en: "Venezuela" },
+        "Viêt Nam": { code: "+84", en: "Vietnam" },
+        "Yémen": { code: "+967", en: "Yemen" },
+        "Zambie": { code: "+260", en: "Zambia" },
+        "Zimbabwe": { code: "+263", en: "Zimbabwe" }
     };
     
-    const countries = [
-        "Afghanistan", "Afrique du Sud", "Albanie", "Algérie", "Allemagne", "Andorre", "Angola", "Antigua-et-Barbuda", "Arabie Saoudite", "Argentine", "Arménie", "Australie", "Autriche", "Azerbaïdjan",
-        "Bahamas", "Bahreïn", "Bangladesh", "Barbade", "Belgique", "Belize", "Bénin", "Bhoutan", "Biélorussie", "Birmanie", "Bolivie", "Bosnie-Herzégovine", "Botswana", "Brésil", "Brunei", "Bulgarie", "Burkina Faso", "Burundi",
-        "Cambodge", "Cameroun", "Canada", "Cap-Vert", "Chili", "Chine", "Chypre", "Colombie", "Comores", "Congo", "Corée du Nord", "Corée du Sud", "Costa Rica", "Côte d'Ivoire", "Croatie", "Cuba",
-        "Danemark", "Djibouti", "Dominique",
-        "Égypte", "Émirats Arabes Unis", "Équateur", "Érythrée", "Espagne", "Estonie", "Eswatini", "États-Unis", "Éthiopie",
-        "Fidji", "Finlande", "France",
-        "Gabon", "Gambie", "Géorgie", "Ghana", "Grèce", "Grenade", "Guatemala", "Guinée", "Guinée-Bissau", "Guinée Équatoriale", "Guyana",
-        "Haïti", "Honduras", "Hongrie",
-        "Îles Marshall", "Îles Salomon", "Inde", "Indonésie", "Irak", "Iran", "Irlande", "Islande", "Israël", "Italie",
-        "Jamaïque", "Japon", "Jordanie",
-        "Kazakhstan", "Kenya", "Kirghizistan", "Kiribati", "Koweït",
-        "Laos", "Lesotho", "Lettonie", "Liban", "Liberia", "Libye", "Liechtenstein", "Lituanie", "Luxembourg",
-        "Macédoine du Nord", "Madagascar", "Malaisie", "Malawi", "Maldives", "Mali", "Malte", "Maroc", "Maurice", "Mauritanie", "Mexique", "Micronésie", "Moldavie", "Monaco", "Mongolie", "Monténégro", "Mozambique",
-        "Namibie", "Nauru", "Népal", "Nicaragua", "Niger", "Nigeria", "Norvège", "Nouvelle-Zélande",
-        "Oman", "Ouganda", "Ouzbékistan",
-        "Pakistan", "Palaos", "Palestine", "Panama", "Papouasie-Nouvelle-Guinée", "Paraguay", "Pays-Bas", "Pérou", "Philippines", "Pologne", "Portugal",
-        "Qatar",
-        "République Centrafricaine", "République Démocratique du Congo", "République Dominicaine", "République Tchèque", "Roumanie", "Royaume-Uni", "Russie", "Rwanda",
-        "Saint-Christophe-et-Niévès", "Sainte-Lucie", "Saint-Marin", "Saint-Vincent-et-les-Grenadines", "Salvador", "Samoa", "São Tomé-et-Principe", "Sénégal", "Serbie", "Seychelles", "Sierra Leone", "Singapour", "Slovaquie", "Slovénie", "Somalie", "Soudan", "Soudan du Sud", "Sri Lanka", "Suède", "Suisse", "Suriname", "Syrie",
-        "Tadjikistan", "Tanzanie", "Tchad", "Thaïlande", "Timor Oriental", "Togo", "Tonga", "Trinité-et-Tobago", "Tunisie", "Turkménistan", "Turquie", "Tuvalu",
-        "Ukraine", "Uruguay",
-        "Vanuatu", "Vatican", "Venezuela", "Viêt Nam",
-        "Yémen",
-        "Zambie", "Zimbabwe"
-    ];
+    const countries = Object.keys(countryData);
 
     // Filter countries based on search
     const filteredCountries = countries.filter(country =>
@@ -115,6 +342,105 @@ export default function DemoForm() {
         return regex.test(email);
     };
 
+    // List of blocked generic email domains
+    const genericEmailDomains = [
+        'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'live.com',
+        'msn.com', 'aol.com', 'icloud.com', 'mail.com', 'protonmail.com',
+        'yandex.com', 'zoho.com', 'gmx.com', 'mail.ru', 'inbox.com',
+        'fastmail.com', 'tutanota.com', 'hushmail.com', 'rediffmail.com',
+        'yahoo.fr', 'yahoo.co.uk', 'yahoo.es', 'yahoo.de', 'yahoo.it',
+        'hotmail.fr', 'hotmail.co.uk', 'hotmail.es', 'hotmail.de', 'hotmail.it',
+        'outlook.fr', 'outlook.es', 'outlook.de', 'outlook.it', 'outlook.co.uk',
+        'live.fr', 'live.co.uk', 'live.es', 'live.de', 'live.it',
+        'laposte.net', 'orange.fr', 'wanadoo.fr', 'free.fr', 'sfr.fr',
+        'bbox.fr', 'aliceadsl.fr', 'club-internet.fr', 'neuf.fr', 'numericable.fr'
+    ];
+
+    // Generic/test keywords to block in email addresses
+    const genericKeywords = [
+        'test', 'example', 'sample', 'demo', 'temp', 'temporary',
+        'fake', 'dummy', 'invalid', 'noemail', 'no-reply', 'noreply',
+        'admin', 'info', 'contact', 'hello', 'support', 'mail',
+        'email', 'user', 'username', 'nom', 'prenom', 'name'
+    ];
+
+    // Check if email is professional (not generic)
+    const isProfessionalEmail = (email: string) => {
+        const emailLower = email.toLowerCase();
+        const domain = emailLower.split('@')[1];
+        const localPart = emailLower.split('@')[0];
+        
+        if (!domain || !localPart) return false;
+        
+        // Block generic email providers
+        if (genericEmailDomains.includes(domain)) return false;
+        
+        // Block domains containing generic keywords
+        if (genericKeywords.some(keyword => domain.includes(keyword))) return false;
+        
+        // Block local parts that are exactly generic keywords
+        if (genericKeywords.includes(localPart)) return false;
+        
+        // Block local parts that start or end with generic keywords
+        if (genericKeywords.some(keyword => 
+            localPart.startsWith(keyword) || 
+            localPart.endsWith(keyword) ||
+            localPart.includes(`.${keyword}`) ||
+            localPart.includes(`${keyword}.`)
+        )) return false;
+        
+        return true;
+    };
+
+    // Enhanced phone validation for French numbers
+    const isValidPhone = (phone: string) => {
+        const digits = phone.replace(/\D/g, '');
+        
+        // Check for repetitive patterns
+        const repetitivePatterns = [
+            '00000000', '11111111', '22222222', '33333333', '44444444',
+            '55555555', '66666666', '77777777', '88888888', '99999999',
+            '01010101', '02020202', '03030303', '04040404', '05050505',
+            '06060606', '07070707', '08080808', '09090909', '10101010'
+        ];
+        
+        const sequential = '12345678';
+        
+        if (repetitivePatterns.some(pattern => digits.includes(pattern))) {
+            return false;
+        }
+        
+        if (digits.includes(sequential)) {
+            return false;
+        }
+        
+        // French mobile numbers validation
+        // Accept: 06, 07, +336, +337 prefixes
+        if (digits.startsWith('336') || digits.startsWith('337')) {
+            return digits.length === 11; // +33 6 12 34 56 78
+        } else if (digits.startsWith('06') || digits.startsWith('07')) {
+            return digits.length === 10; // 06 12 34 56 78
+        }
+        
+        // Allow other international formats
+        return digits.length >= 8 && digits.length <= 15;
+    };
+
+    const formatPhoneNumber = (value: string) => {
+        const digits = value.replace(/\D/g, '');
+        
+        // Format French mobile numbers
+        if (digits.startsWith('336') || digits.startsWith('337')) {
+            // +33 6 12 34 56 78
+            return digits.replace(/(\d{2})(\d{1})(\d{2})(\d{2})(\d{2})(\d{2})/, '+$1 $2 $3 $4 $5 $6');
+        } else if (digits.startsWith('06') || digits.startsWith('07')) {
+            // 06 12 34 56 78
+            return digits.replace(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5');
+        }
+        
+        return value;
+    };
+
     const handleCountrySearch = (value: string) => {
         setCountrySearch(value);
         setShowCountryDropdown(true);
@@ -125,10 +451,11 @@ export default function DemoForm() {
     };
 
     const handleCountrySelect = (country: string) => {
-        const countryCode = countryCodeMap[country] || "";
+        const countryInfo = countryData[country];
+        const countryCode = countryInfo?.code || "";
         setForm(prev => ({ 
             ...prev, 
-            country,
+            country: countryInfo?.en || country, // Store English name for Salesforce
             phone: countryCode ? `${countryCode} ` : prev.phone
         }));
         setCountrySearch(country);
@@ -138,6 +465,25 @@ export default function DemoForm() {
 
     const handleChange = (e: any) => {
         const { id, value } = e.target;
+
+        // Format phone number on change
+        if (id === 'phone') {
+            const formatted = formatPhoneNumber(value);
+            setForm((prev) => ({
+                ...prev,
+                [id]: formatted
+            }));
+            
+            // Validate phone
+            if (!formatted.trim()) {
+                setErrors((prev) => ({ ...prev, phone: t.required }));
+            } else if (!isValidPhone(formatted)) {
+                setErrors((prev) => ({ ...prev, phone: t.fields.phone.errorFormat || 'Numéro de téléphone invalide' }));
+            } else {
+                setErrors((prev) => ({ ...prev, phone: "" }));
+            }
+            return;
+        }
 
         setForm((prev) => ({
             ...prev,
@@ -150,6 +496,8 @@ export default function DemoForm() {
                 setErrors((prev) => ({ ...prev, email: t.required }));
             } else if (!isValidEmail(value)) {
                 setErrors((prev) => ({ ...prev, email: t.fields.email.errorFormat }));
+            } else if (!isProfessionalEmail(value)) {
+                setErrors((prev) => ({ ...prev, email: "Veuillez utiliser une adresse email professionnelle" }));
             } else {
                 setErrors((prev) => ({ ...prev, email: "" }));
             }
@@ -169,6 +517,7 @@ export default function DemoForm() {
         if (currentStep === 1) {
             if (!form.email.trim()) newErrors.email = t.fields.email.error;
             else if (!isValidEmail(form.email)) newErrors.email = t.fields.email.errorFormat;
+            else if (!isProfessionalEmail(form.email)) newErrors.email = "Veuillez utiliser une adresse email professionnelle";
             if (!form.firstName.trim()) newErrors.firstName = t.fields.firstName.error;
             if (!form.lastName.trim()) newErrors.lastName = t.fields.lastName.error;
         } else if (currentStep === 2) {
@@ -176,9 +525,16 @@ export default function DemoForm() {
             if (!form.company.trim()) newErrors.company = t.fields.company.error;
             if (!form.country) newErrors.country = t.fields.country.error;
         } else if (currentStep === 3) {
-            const phoneDigits = form.phone.replace(/\D/g, ''); // Remove all non-digits
-            if (!form.phone.trim() || phoneDigits.length < 8) {
+            if (!form.phone.trim()) {
                 newErrors.phone = t.fields.phone.error;
+            } else if (!isValidPhone(form.phone)) {
+                newErrors.phone = t.fields.phone.errorFormat || 'Format de téléphone invalide. Utilisez un numéro français mobile (06/07 ou +336/+337)';
+            }
+        } else if (currentStep === 4) {
+            // For step 4, require date and time to be selected before final submission
+            if (!form.appointmentDate || !form.appointmentTime) {
+                // Don't show error, just return false - calendar handles the selection
+                return false;
             }
         }
 
@@ -193,6 +549,16 @@ export default function DemoForm() {
     };
 
     const handleBack = () => {
+        // If on final confirmation (step 4 with appointment), clear appointment and show calendar again
+        if (step === 4 && form.appointmentDate) {
+            setForm(prev => ({
+                ...prev,
+                appointmentDate: '',
+                appointmentTime: ''
+            }));
+            return;
+        }
+        
         setStep(step - 1);
         setErrors({
             email: "",
@@ -217,41 +583,73 @@ export default function DemoForm() {
 
         if (!validateStep(step)) return;
 
-        if (!validateStep(step)) return;
-
         setLoading(true);
 
         try {
-            // Submit to our Next.js API route which forwards to Pardot
-            const response = await fetch('/api/submit', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    email: form.email,
-                    firstName: form.firstName,
-                    lastName: form.lastName,
-                    jobTitle: form.jobTitle,
-                    company: form.company,
-                    country: form.country,
-                    phone: form.phone,
+            // Create appointment datetime
+            const appointmentDateTime = `${form.appointmentDate}T${form.appointmentTime}:00`;
+            
+            // Submit to all systems: Pardot, internal API, and Outlook
+            const [pardotResponse, appointmentResponse, outlookResponse] = await Promise.all([
+                fetch('/api/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: form.email,
+                        firstName: form.firstName,
+                        lastName: form.lastName,
+                        jobTitle: form.jobTitle,
+                        company: form.company,
+                        country: form.country,
+                        phone: form.phone,
+                    }),
                 }),
-            });
+                fetch('/api/save-lead/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        date: form.appointmentDate,
+                        hour: form.appointmentTime,
+                        firstname: form.firstName,
+                        lastname: form.lastName,
+                        email: form.email,
+                        phone: form.phone,
+                        company: form.company
+                    })
+                }),
+                // Book in Outlook calendar
+                fetch('/api/outlook/book', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        region: form.region,
+                        ownerEmail: form.ownerEmail,
+                        dateTime: appointmentDateTime,
+                        inviteeInfo: {
+                            name: `${form.firstName} ${form.lastName}`,
+                            email: form.email,
+                            phone: form.phone,
+                            company: form.company,
+                            notes: `Job Title: ${form.jobTitle}\nCountry: ${form.country}`
+                        },
+                        utmParams
+                    })
+                }).catch(err => {
+                    console.error('Outlook booking failed:', err);
+                    return { ok: false }; // Don't fail entire submission if Outlook fails
+                })
+            ]);
 
-            const result = await response.json();
+            const pardotResult = await pardotResponse.json();
+            console.log('Pardot Response:', pardotResult);
 
-            console.log('API Response:', result);
-
-            if (result.ok) {
-                setLoading(false);
-                setSendDatas(true);
-                // Redirect to success page
-                window.location.href = 'https://vocalcom.vercel.app/thank-you';
-            } else {
-                console.error('Submission failed:', result);
-                throw new Error(result.error || 'Submission failed');
-            }
+            setLoading(false);
+            setSendDatas(true);
+            
+            // Redirect to thank you page after successful submission
+            setTimeout(() => {
+                window.location.href = '/thank-you?date=' + encodeURIComponent(form.appointmentDate) + '&time=' + encodeURIComponent(form.appointmentTime);
+            }, 1000);
             
         } catch (error) {
             console.error('Form submission error:', error);
@@ -260,8 +658,94 @@ export default function DemoForm() {
         }
     };
 
+    const handleDateTimeSelect = (date: string, time: string, ownerEmail?: string) => {
+        setForm(prev => ({
+            ...prev,
+            appointmentDate: date,
+            appointmentTime: time,
+            ownerEmail: ownerEmail || prev.ownerEmail
+        }));
+        console.log('📅 Slot selected:', { date, time, ownerEmail });
+        // Don't change step, the calendar component being inside step 4 will show confirmation
+    };
+
+    // Calendar export helpers
+    const getCalendarEventData = () => {
+        if (!form.appointmentDate || !form.appointmentTime) return null;
+        
+        const [hours, minutes] = form.appointmentTime.split(':');
+        const startDate = new Date(form.appointmentDate);
+        startDate.setHours(parseInt(hours), parseInt(minutes), 0);
+        
+        const endDate = new Date(startDate);
+        endDate.setMinutes(endDate.getMinutes() + 15);
+        
+        const formatGoogleDate = (date: Date) => date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+        
+        return {
+            title: t.calendar.eventTitle,
+            description: t.calendar.eventDescription,
+            location: t.calendar.eventLocation,
+            startDate,
+            endDate,
+            googleStart: formatGoogleDate(startDate),
+            googleEnd: formatGoogleDate(endDate)
+        };
+    };
+
+    const getGoogleCalendarLink = () => {
+        const event = getCalendarEventData();
+        if (!event) return '';
+        return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${event.googleStart}/${event.googleEnd}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.location)}`;
+    };
+
+    const getOutlookLink = () => {
+        const event = getCalendarEventData();
+        if (!event) return '';
+        return `https://outlook.office.com/calendar/0/deeplink/compose?subject=${encodeURIComponent(event.title)}&startdt=${event.startDate.toISOString()}&enddt=${event.endDate.toISOString()}&body=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.location)}`;
+    };
+
+    const downloadICS = () => {
+        const event = getCalendarEventData();
+        if (!event) return;
+        
+        const formatICSDate = (date: Date) => date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+        
+        const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Vocalcom//Demo Meeting//EN
+BEGIN:VEVENT
+UID:${Date.now()}@vocalcom.com
+DTSTAMP:${formatICSDate(new Date())}
+DTSTART:${formatICSDate(event.startDate)}
+DTEND:${formatICSDate(event.endDate)}
+SUMMARY:${event.title}
+DESCRIPTION:${event.description}
+LOCATION:${event.location}
+END:VEVENT
+END:VCALENDAR`;
+        
+        const blob = new Blob([icsContent], { type: 'text/calendar' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'vocalcom-demo.ics';
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
     return (
         <form className="space-y-6" onSubmit={handleSubmit}>
+            {/* Hidden attribution fields for Pardot Form Handler */}
+            <input type="hidden" name="GCLID" value={attribution.gclid || ''} />
+            <input type="hidden" name="UTM_Source" value={attribution.utm_source || ''} />
+            <input type="hidden" name="UTM_Medium" value={attribution.utm_medium || ''} />
+            <input type="hidden" name="UTM_Campaign" value={attribution.utm_campaign || ''} />
+            <input type="hidden" name="UTM_Content" value={attribution.utm_content || ''} />
+            <input type="hidden" name="UTM_Term" value={attribution.utm_term || ''} />
+            <input type="hidden" name="Landing_Language" value={attribution.landing_language || ''} />
+            <input type="hidden" name="Content_Group" value="landing" />
+            
             {/* Progress bar */}
             <div className="mb-6">
                 <div className="flex justify-between items-center mb-2">
@@ -487,8 +971,127 @@ export default function DemoForm() {
                 </div>
             )}
 
+            {/* Step 3.5: Calendar - Step 4 is calendar */}
+            {step === 4 && !form.appointmentDate && (
+                <div className="animate-fade-in -mx-6 mb-6">
+                    <FrenchCalendar 
+                        form={{
+                            firstname: form.firstName,
+                            lastname: form.lastName,
+                            email: form.email,
+                            phone: form.phone,
+                            company: form.company
+                        }}
+                        onDateTimeSelect={handleDateTimeSelect}
+                        selectedDate={form.appointmentDate}
+                        selectedTime={form.appointmentTime}
+                        embedded={true}
+                        country={form.country}
+                    />
+                </div>
+            )}
+
+            {/* Step 5: Final confirmation before submit */}
+            {step === 4 && form.appointmentDate && (
+                <div className="space-y-6 animate-fade-in">
+                    <div className="text-center mb-6">
+                        <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <Icon path={mdiCheck} size={1.5} className="text-blue-600" />
+                        </div>
+                        <h4 className="text-xl font-bold text-gray-900 mb-2">{t.calendar.confirmTitle}</h4>
+                        <p className="text-sm text-gray-600">{t.calendar.confirmSubtitle}</p>
+                    </div>
+
+                    <div className="bg-gray-50 rounded-xl p-6 space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <p className="text-xs text-gray-500 mb-1">{t.fields.firstName.label} & {t.fields.lastName.label}</p>
+                                <p className="text-sm font-medium text-gray-900">{form.firstName} {form.lastName}</p>
+                            </div>
+                            <div>
+                                <p className="text-xs text-gray-500 mb-1">Email</p>
+                                <p className="text-sm font-medium text-gray-900">{form.email}</p>
+                            </div>
+                            <div>
+                                <p className="text-xs text-gray-500 mb-1">{t.fields.company.label}</p>
+                                <p className="text-sm font-medium text-gray-900">{form.company}</p>
+                            </div>
+                            <div>
+                                <p className="text-xs text-gray-500 mb-1">{t.fields.phone.label}</p>
+                                <p className="text-sm font-medium text-gray-900">{form.phone}</p>
+                            </div>
+                        </div>
+                        
+                        <div className="pt-4 border-t border-gray-200">
+                            <div className="flex items-center justify-between mb-2">
+                                <p className="text-xs text-gray-500">{t.calendar.appointmentScheduled}</p>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setForm(prev => ({
+                                            ...prev,
+                                            appointmentDate: '',
+                                            appointmentTime: ''
+                                        }));
+                                    }}
+                                    className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                                >
+                                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                    {t.calendar.modify}
+                                </button>
+                            </div>
+                            <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg">
+                                <Icon path={mdiClock} size={1} className="text-blue-600" />
+                                <div>
+                                    <p className="text-sm font-semibold text-gray-900">
+                                        {new Date(form.appointmentDate).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                                    </p>
+                                    <p className="text-sm text-gray-600">{form.appointmentTime} • 15 {t.calendar.minutes}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="pt-4 border-t border-gray-200">
+                            <p className="text-xs font-semibold text-gray-700 mb-3 uppercase tracking-wide">{t.calendar.addToCalendar}</p>
+                            <div className="space-y-2">
+                                <a
+                                    href={getGoogleCalendarLink()}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-3 px-4 py-2.5 bg-white rounded-lg hover:shadow-sm transition-all border border-gray-200 hover:border-gray-300"
+                                >
+                                    <Icon path={mdiGoogle} size={0.8} className="text-blue-600" />
+                                    <span className="text-xs font-medium text-gray-900">{t.calendar.googleCalendar}</span>
+                                </a>
+
+                                <a
+                                    href={getOutlookLink()}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-3 px-4 py-2.5 bg-white rounded-lg hover:shadow-sm transition-all border border-gray-200 hover:border-gray-300"
+                                >
+                                    <Icon path={mdiMicrosoftOutlook} size={0.8} className="text-blue-600" />
+                                    <span className="text-xs font-medium text-gray-900">{t.calendar.outlookCalendar}</span>
+                                </a>
+
+                                <button
+                                    type="button"
+                                    onClick={downloadICS}
+                                    className="w-full flex items-center gap-3 px-4 py-2.5 bg-white rounded-lg hover:shadow-sm transition-all border border-gray-200 hover:border-gray-300"
+                                >
+                                    <Icon path={mdiApple} size={0.8} className="text-gray-700" />
+                                    <span className="text-xs font-medium text-gray-900">{t.calendar.appleCalendar}</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Navigation Buttons */}
-            <div className="flex gap-3 pt-2">
+            <div className={`flex gap-3 ${step === 4 ? 'pt-6' : 'pt-2'}`}>
                 {step > 1 && !sendDatas && (
                     <button
                         type="button"
@@ -500,7 +1103,7 @@ export default function DemoForm() {
                     </button>
                 )}
 
-                {step < totalSteps ? (
+                {step < totalSteps || (step === totalSteps && !form.appointmentDate) ? (
                     <button
                         type="button"
                         onClick={handleNext}
@@ -525,7 +1128,7 @@ export default function DemoForm() {
                             </svg>
                         )}
                         {sendDatas && <Icon path={mdiCheck} size={0.7} />}
-                        {sendDatas ? t.buttons.sent : loading ? t.buttons.sending : t.buttons.submit}
+                        {sendDatas ? t.buttons.sent : loading ? t.buttons.sending : (customButtonText || t.buttons.submit)}
                         {!loading && !sendDatas && <Icon path={mdiArrowRight} size={0.7} className="group-hover:translate-x-1 transition-transform" />}
                     </button>
                 )}

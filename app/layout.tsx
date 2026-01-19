@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import CookieConsent from "./components/CookieConsent";
+import AxeptioConsent from "./components/AxeptioConsent";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -63,7 +63,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           />
         </noscript>
         {/* End Google Tag Manager (noscript) */}
-        <CookieConsent />
+        <AxeptioConsent />
         {children}
       </body>
     </html>

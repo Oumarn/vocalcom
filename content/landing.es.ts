@@ -267,7 +267,21 @@ export const landingES = {
       sending: "Enviando...",
       sent: "Solicitud enviada ✓"
     },
-    success: "✅ ¡Gracias! Te contactaremos en 2 horas hábiles.",
+    calendar: {
+      addToCalendar: "Agregar a tu calendario",
+      googleCalendar: "Google Calendar",
+      outlookCalendar: "Outlook Calendar",
+      appleCalendar: "Apple Calendar",
+      confirmTitle: "Confirma tu cita",
+      confirmSubtitle: "Revisa tu información antes de enviar",
+      appointmentScheduled: "Cita programada",
+      modify: "Modificar",
+      minutes: "minutos",
+      eventTitle: "Demostración Vocalcom",
+      eventDescription: "Cita de demostración con un experto de Vocalcom",
+      eventLocation: "Videoconferencia"
+    },
+    success: "✅ ¡Gracias! Te contactaremos en 2 horas laborales.",
     error: "Ocurrió un error. Por favor intenta nuevamente.",
     required: "Este campo es obligatorio."
   },
