@@ -11,7 +11,7 @@ import { resolveRegionFromUTM, resolveAngleFromUTM, getFormCopy, type RegionKey,
 
 export default function DemoForm({ customButtonText }: { customButtonText?: string } = {}) {
     const router = useRouter();
-    const { content } = useLanguage();
+    const { content, locale } = useLanguage();
     const t = content.form; // Translation object
     const [step, setStep] = useState(1);
     const [loading, setLoading] = useState(false);
@@ -87,7 +87,7 @@ export default function DemoForm({ customButtonText }: { customButtonText?: stri
             utm_term: utmData.term,
             intent: params.get('intent'),
             angle: params.get('angle'),
-            lang: (content.locale || 'fr') as 'fr' | 'en' | 'es' | 'pt',
+            lang: (locale || 'fr') as 'fr' | 'en' | 'es' | 'pt',
         };
         
         // Detect region and angle from UTMs
@@ -106,7 +106,7 @@ export default function DemoForm({ customButtonText }: { customButtonText?: stri
             utm_campaign: utmData.campaign || '',
             utm_content: utmData.content || '',
             utm_term: utmData.term || '',
-            landing_language: (content.locale || 'fr'),
+            landing_language: (locale || 'fr'),
         };
         
         setAttribution(attributionData);
