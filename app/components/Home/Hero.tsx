@@ -1,62 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import DemoForm from '../forms/DemoForm';
 import type { landingFR } from '@/content/landing.fr';
-import { resolveIntentFromUTM, resolveAngleFromUTM, getLandingPageVariant, type IntentType, type AngleType } from '@/lib/region-resolver';
 
 export default function HeroHome({ content }: { content: typeof landingFR.hero }) {
-    const [mounted, setMounted] = useState(false);
-    const [heroContent, setHeroContent] = useState({
-        title: content.title,
-        subtitle: content.subtitle,
-        formTitle: content.formTitle
-    });
-
-    useEffect(() => {
-        setMounted(true);
-        
-        if (typeof window === 'undefined') return;
-
-        const params = new URLSearchParams(window.location.search);
-        
-        // Detect language from URL path (e.g., /fr, /en, /es, /pt)
-        const pathSegments = window.location.pathname.split('/').filter(Boolean);
-        const langFromPath = pathSegments[0];
-        const detectedLang = (['fr', 'en', 'es', 'pt'].includes(langFromPath) ? langFromPath : 'en') as 'fr' | 'en' | 'es' | 'pt';
-        
-        // Build UTM object
-        const utm = {
-            utm_campaign: params.get('utm_campaign'),
-            utm_source: params.get('utm_source'),
-            utm_medium: params.get('utm_medium'),
-            utm_content: params.get('utm_content'),
-            utm_term: params.get('utm_term'),
-            intent: params.get('intent'),
-            angle: params.get('angle'),
-            lang: detectedLang
-        };
-
-        // Detect intent and angle
-        const detectedIntent = resolveIntentFromUTM(utm);
-        const detectedAngle = resolveAngleFromUTM(utm);
-        
-        // Get variant with language and update content
-        const variant = getLandingPageVariant(detectedIntent, detectedAngle, detectedLang);
-        
-        setHeroContent({
-            title: variant.hero,
-            subtitle: variant.subHero,
-            formTitle: content.formTitle // Keep original form title for now
-        });
-
-        console.log('🎯 Hero Personalization:', {
-            intent: detectedIntent,
-            angle: detectedAngle,
-            lang: detectedLang,
-            hero: variant.hero
-        });
-    }, [content]);
 
     return (
         <>
@@ -86,9 +33,9 @@ export default function HeroHome({ content }: { content: typeof landingFR.hero }
 
                         <div className="flex flex-col gap-4">
                             <h1 className="text-3xl lg:text-5xl xl:text-6xl font-bold tracking-tight leading-[1.1] text-gray-900">
-                                {heroContent.title}
+                                {content.title}
                             </h1>
-                            <p className="text-lg lg:text-xl text-gray-600 font-light leading-relaxed">{heroContent.subtitle}</p>
+                            <p className="text-lg lg:text-xl text-gray-600 font-light leading-relaxed">{content.subtitle}</p>
                         </div>
 
                         <div className="grid grid-cols-3 gap-2 pt-4">
@@ -114,7 +61,7 @@ export default function HeroHome({ content }: { content: typeof landingFR.hero }
 
                     <div className="bg-white rounded-3xl p-8 shadow-2xl animate-slide-in w-full max-w-lg mx-auto lg:mr-0 border border-gray-100" id="demo">
                         <div className="mb-8">
-                            <h3 className="text-xl lg:text-2xl font-bold tracking-tight text-center text-gray-900">{heroContent.formTitle}</h3>
+                            <h3 className="text-xl lg:text-2xl font-bold tracking-tight text-center text-gray-900">{content.formTitle}</h3>
                         </div>
 
                         <DemoForm />

@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
 import { landingEN } from '@/content/landing.en';
-import DynamicHero from "../components/landing/DynamicHero";
-import DynamicSections from "../components/landing/DynamicSections";
-import DynamicFormSection from "../components/landing/DynamicFormSection";
+import HeroHome from "../components/Home/Hero";
+import AIHumanSection from "../components/Home/AIHumanSection";
 import LogoBillboard from "../components/Home/LogoBillboard";
 import StatsSection from "../components/Home/StatsSection";
+import BenefitsGrid from "../components/Home/BenefitsGrid";
 import Integrations from "../components/Home/Integrations";
 import SecurityCompliance from "../components/Home/SecurityCompliance";
 import SocialProof from "../components/Home/SocialProof";
@@ -19,14 +19,17 @@ export default function AiLandingPage() {
   return (
     <div>
       <main>
-        {/* Dynamic Hero - changes based on intent from UTM params */}
-        <DynamicHero />
+        {/* Hero Section */}
+        <HeroHome content={landingEN.hero} />
         
         {/* Logo billboard for social proof */}
         <LogoBillboard content={landingEN.logoBillboard} />
         
-        {/* Dynamic content sections - changes based on angle */}
-        <DynamicSections />
+        {/* AI + Human Section */}
+        <AIHumanSection content={landingEN.aiHuman} />
+        
+        {/* Benefits Grid */}
+        <BenefitsGrid content={landingEN.benefits} />
         
         {/* Integrations section */}
         <Integrations content={landingEN.integrations} />
@@ -36,15 +39,6 @@ export default function AiLandingPage() {
         
         {/* Security & compliance */}
         <SecurityCompliance content={landingEN.security} />
-        
-        {/* Dynamic form with personalized copy */}
-        <section className="py-20 bg-gradient-to-br from-violet-50 via-purple-50 to-blue-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-2xl mx-auto">
-              <DynamicFormSection />
-            </div>
-          </div>
-        </section>
         
         {/* Final CTA */}
         <FinalCta content={landingEN.finalCta} />
