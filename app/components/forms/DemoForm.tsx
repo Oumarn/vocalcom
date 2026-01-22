@@ -7,7 +7,7 @@ import { mdiArrowRight, mdiCheck, mdiArrowLeft, mdiEmailOutline, mdiAccountOutli
 import { useLanguage } from "../../hooks/useLanguage";
 import FrenchCalendar from "./FrenchCalendar";
 import { getRegionConfig } from "@/config/outlook-config";
-import { resolveRegionFromUTM, resolveAngleFromUTM, getFormCopy, type RegionKey, type AngleType } from "@/lib/region-resolver";
+import { resolveRegionFromUTM, resolveRegionFromCountry, resolveAngleFromUTM, getFormCopy, type RegionKey, type AngleType } from "@/lib/region-resolver";
 
 export default function DemoForm({ customButtonText }: { customButtonText?: string } = {}) {
     const router = useRouter();
@@ -30,7 +30,8 @@ export default function DemoForm({ customButtonText }: { customButtonText?: stri
         appointmentDate: "",
         appointmentTime: "",
         ownerEmail: "",
-        region: "" as RegionKey | ""
+        region: "" as RegionKey | "",
+        bookingId: ""
     });
     const [utmParams, setUtmParams] = useState<{
         campaign?: string;
@@ -453,10 +454,22 @@ export default function DemoForm({ customButtonText }: { customButtonText?: stri
     const handleCountrySelect = (country: string) => {
         const countryInfo = countryData[country];
         const countryCode = countryInfo?.code || "";
+        const englishCountryName = countryInfo?.en || country;
+        
+        // Update region based on selected country
+        const newRegion = resolveRegionFromCountry(englishCountryName);
+        
+        console.log('🌍 Country selected → Region updated:', {
+            country: englishCountryName,
+            previousRegion: form.region,
+            newRegion
+        });
+        
         setForm(prev => ({ 
             ...prev, 
-            country: countryInfo?.en || country, // Store English name for Salesforce
-            phone: countryCode ? `${countryCode} ` : prev.phone
+            country: englishCountryName, // Store English name for Salesforce
+            phone: countryCode ? `${countryCode} ` : prev.phone,
+            region: newRegion // Update region based on country
         }));
         setCountrySearch(country);
         setShowCountryDropdown(false);
@@ -589,8 +602,63 @@ export default function DemoForm({ customButtonText }: { customButtonText?: stri
             // Create appointment datetime
             const appointmentDateTime = `${form.appointmentDate}T${form.appointmentTime}:00`;
             
-            // Submit to all systems: Pardot, internal API, and Outlook
-            const [pardotResponse, appointmentResponse, outlookResponse] = await Promise.all([
+            console.log('📤 Submitting form with booking details:', {
+                region: form.region,
+                ownerEmail: form.ownerEmail,
+                dateTime: appointmentDateTime,
+                hasRegion: !!form.region,
+                hasOwner: !!form.ownerEmail
+            });
+            
+            // Step 1: Book in Outlook calendar first to get booking ID
+            let bookingId = '';
+            let meetingLink = '';
+            
+            if (form.region && form.ownerEmail) {
+                try {
+                    const outlookResponse = await fetch('/api/outlook/book', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            region: form.region,
+                            ownerEmail: form.ownerEmail,
+                            dateTime: appointmentDateTime,
+                            inviteeInfo: {
+                                name: `${form.firstName} ${form.lastName}`,
+                                email: form.email,
+                                phone: form.phone,
+                                company: form.company,
+                                notes: `Job Title: ${form.jobTitle}\nCountry: ${form.country}`
+                            },
+                            utmParams
+                        })
+                    });
+                    
+                    if (outlookResponse.ok) {
+                        const data = await outlookResponse.json();
+                        console.log('✅ Outlook booking successful:', data);
+                        bookingId = data.appointment?.id || '';
+                        meetingLink = data.meetingLink || '';
+                        if (bookingId) {
+                            setForm(prev => ({ ...prev, bookingId }));
+                            console.log('📋 Booking ID:', bookingId);
+                        }
+                        if (meetingLink) {
+                            console.log('🔗 Meeting link:', meetingLink);
+                        }
+                    } else {
+                        const error = await outlookResponse.json();
+                        console.error('❌ Outlook booking failed:', error);
+                    }
+                } catch (err) {
+                    console.error('❌ Outlook booking error:', err);
+                }
+            } else {
+                console.warn('⚠️ Skipping Outlook booking - missing region or ownerEmail');
+            }
+            
+            // Step 2: Submit to Pardot and internal API with booking details
+            const [pardotResponse, appointmentResponse] = await Promise.all([
                 fetch('/api/submit', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -602,6 +670,21 @@ export default function DemoForm({ customButtonText }: { customButtonText?: stri
                         company: form.company,
                         country: form.country,
                         phone: form.phone,
+                        // Add UTM parameters for attribution
+                        gclid: attribution.gclid,
+                        utm_source: attribution.utm_source,
+                        utm_medium: attribution.utm_medium,
+                        utm_campaign: attribution.utm_campaign,
+                        utm_content: attribution.utm_content,
+                        utm_term: attribution.utm_term,
+                        landing_language: attribution.landing_language,
+                        // Add appointment details
+                        appointmentDate: form.appointmentDate,
+                        appointmentTime: form.appointmentTime,
+                        region: form.region,
+                        ownerEmail: form.ownerEmail,
+                        bookingId: bookingId,
+                        meetingLink: meetingLink,
                     }),
                 }),
                 fetch('/api/save-lead/save', {
@@ -614,34 +697,19 @@ export default function DemoForm({ customButtonText }: { customButtonText?: stri
                         lastname: form.lastName,
                         email: form.email,
                         phone: form.phone,
-                        company: form.company
+                        company: form.company,
+                        bookingId: bookingId
                     })
-                }),
-                // Book in Outlook calendar
-                fetch('/api/outlook/book', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        region: form.region,
-                        ownerEmail: form.ownerEmail,
-                        dateTime: appointmentDateTime,
-                        inviteeInfo: {
-                            name: `${form.firstName} ${form.lastName}`,
-                            email: form.email,
-                            phone: form.phone,
-                            company: form.company,
-                            notes: `Job Title: ${form.jobTitle}\nCountry: ${form.country}`
-                        },
-                        utmParams
-                    })
-                }).catch(err => {
-                    console.error('Outlook booking failed:', err);
-                    return { ok: false }; // Don't fail entire submission if Outlook fails
                 })
             ]);
 
             const pardotResult = await pardotResponse.json();
-            console.log('Pardot Response:', pardotResult);
+            console.log('✅ Pardot Response:', pardotResult);
+            console.log('📊 All responses received:', {
+                pardot: pardotResponse.ok,
+                appointment: appointmentResponse.ok,
+                outlookBooked: !!bookingId
+            });
 
             setLoading(false);
             setSendDatas(true);
@@ -987,6 +1055,7 @@ END:VCALENDAR`;
                         selectedTime={form.appointmentTime}
                         embedded={true}
                         country={form.country}
+                        region={form.region || undefined}
                     />
                 </div>
             )}

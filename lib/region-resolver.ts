@@ -68,6 +68,130 @@ type UTM = {
  * - GA | FR Africa | FR | Category | Contact Center Software → africa_francophone
  * - GA | EN MEA | EN | Problem | CX Platform → mea_english
  */
+/**
+ * Map country to sales region
+ * Based on actual sales team territories
+ */
+export function resolveRegionFromCountry(country: string): RegionKey {
+  const countryLower = country.toLowerCase();
+  
+  // France Core: France, Belgium, Switzerland, Luxembourg, North Europe
+  const franceCoreCountries = [
+    'france', 'belgique', 'belgium', 'suisse', 'switzerland', 'luxembourg',
+    'norvège', 'norway', 'suède', 'sweden', 'finlande', 'finland', 
+    'danemark', 'denmark', 'islande', 'iceland', 'pays-bas', 'netherlands'
+  ];
+  if (franceCoreCountries.some(c => countryLower.includes(c))) {
+    return 'france_core';
+  }
+  
+  // Spain & LATAM
+  const esLatamCountries = [
+    'espagne', 'spain', 'españa',
+    'mexique', 'mexico', 'méxico',
+    'colombie', 'colombia',
+    'argentine', 'argentina',
+    'chili', 'chile',
+    'pérou', 'peru', 'perú',
+    'équateur', 'ecuador',
+    'bolivie', 'bolivia',
+    'paraguay',
+    'uruguay',
+    'venezuela',
+    'costa rica',
+    'panama', 'panamá',
+    'guatemala',
+    'honduras',
+    'salvador', 'el salvador',
+    'nicaragua',
+    'république dominicaine', 'dominican republic'
+  ];
+  if (esLatamCountries.some(c => countryLower.includes(c))) {
+    return 'es_latam';
+  }
+  
+  // Brazil
+  if (countryLower.includes('brésil') || countryLower.includes('brazil')) {
+    return 'brazil_pt';
+  }
+  
+  // Middle East
+  const meaCountries = [
+    'émirats', 'emirates', 'uae', 'dubai',
+    'arabie', 'saudi', 'arabia',
+    'qatar',
+    'koweït', 'kuwait',
+    'bahreïn', 'bahrain',
+    'oman',
+    'jordanie', 'jordan',
+    'liban', 'lebanon',
+    'égypte', 'egypt',
+    'irak', 'iraq',
+    'yémen', 'yemen'
+  ];
+  if (meaCountries.some(c => countryLower.includes(c))) {
+    return 'mea_english';
+  }
+  
+  // Africa Francophone
+  const africaFrCountries = [
+    'maroc', 'morocco',
+    'algérie', 'algeria',
+    'tunisie', 'tunisia',
+    'sénégal', 'senegal',
+    'côte d\'ivoire', 'ivory coast',
+    'mali',
+    'burkina',
+    'niger',
+    'tchad', 'chad',
+    'cameroun', 'cameroon',
+    'gabon',
+    'congo',
+    'bénin', 'benin',
+    'togo',
+    'mauritanie', 'mauritania',
+    'madagascar',
+    'guinée', 'guinea',
+    'rwanda'
+  ];
+  if (africaFrCountries.some(c => countryLower.includes(c))) {
+    return 'africa_francophone';
+  }
+  
+  // Africa English
+  const africaEnCountries = [
+    'afrique du sud', 'south africa',
+    'nigeria',
+    'kenya',
+    'ghana',
+    'tanzanie', 'tanzania',
+    'ouganda', 'uganda',
+    'éthiopie', 'ethiopia',
+    'zambie', 'zambia',
+    'zimbabwe',
+    'botswana',
+    'namibie', 'namibia',
+    'mozambique'
+  ];
+  if (africaEnCountries.some(c => countryLower.includes(c))) {
+    return 'africa_english';
+  }
+  
+  // English Europe (UK, Ireland, other English-speaking European countries)
+  const enEuropeCountries = [
+    'royaume-uni', 'united kingdom', 'uk', 'angleterre', 'england',
+    'irlande', 'ireland',
+    'malte', 'malta',
+    'chypre', 'cyprus'
+  ];
+  if (enEuropeCountries.some(c => countryLower.includes(c))) {
+    return 'en_europe';
+  }
+  
+  // Default fallback: France Core
+  return 'france_core';
+}
+
 export function resolveRegionFromUTM(utm: UTM): RegionKey {
   const campaign = (utm.utm_campaign ?? "").toLowerCase();
 
@@ -82,13 +206,13 @@ export function resolveRegionFromUTM(utm: UTM): RegionKey {
   if (campaign.includes("es spain") || campaign.includes("es latam")) return "es_latam";
   if (campaign.includes("pt brazil")) return "brazil_pt";
 
-  // Fallback: use language if region not detected in campaign
-  // (Security fallback for direct traffic or malformed UTMs)
+  // Fallback: use language as a hint but not definitive
+  // This will be overridden by country-based detection later
   switch (utm.lang) {
     case "fr":
       return "france_core";
     case "en":
-      return "mea_english"; // Default EN → MEA as per business logic
+      return "en_europe"; // Changed from mea_english to en_europe as better default
     case "es":
       return "es_latam";
     case "pt":

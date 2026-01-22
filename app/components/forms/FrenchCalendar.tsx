@@ -27,6 +27,7 @@ interface Props {
   selectedTime?: string;
   embedded?: boolean;
   country?: string;
+  region?: RegionKey; // Accept region from parent
 }
 
 const FRENCH_HOLIDAYS = ['01-01', '05-01', '05-08', '07-14', '08-15', '11-01', '11-11', '12-25', '04-01', '05-20'];
@@ -78,7 +79,7 @@ const TRANSLATIONS = {
   }
 };
 
-export default function FrenchCalendar({ form, onBack, onDateTimeSelect, selectedDate: initialDate, selectedTime: initialTime, embedded = false, country }: Props) {
+export default function FrenchCalendar({ form, onBack, onDateTimeSelect, selectedDate: initialDate, selectedTime: initialTime, embedded = false, country, region: propRegion }: Props) {
   const { locale } = useLanguage();
   const t = TRANSLATIONS[locale];
   
@@ -93,11 +94,20 @@ export default function FrenchCalendar({ form, onBack, onDateTimeSelect, selecte
   const [selectedOwnerEmail, setSelectedOwnerEmail] = useState<string | null>(null);
   const [outlookAvailability, setOutlookAvailability] = useState<{[key: string]: SlotWithOwner[]}>({});
   const [loadingAvailability, setLoadingAvailability] = useState(false);
-  const [region, setRegion] = useState<RegionKey | null>(null);
+  const [region, setRegion] = useState<RegionKey | null>(propRegion || null);
 
-  // Detect region from UTM parameters on mount
+  // Update region when prop changes (from parent form after country selection)
+  useEffect(() => {
+    if (propRegion && propRegion !== region) {
+      console.log('🔄 Region updated from parent:', propRegion);
+      setRegion(propRegion);
+    }
+  }, [propRegion]);
+
+  // Detect region from UTM parameters on mount (initial detection)
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    if (propRegion) return; // Skip if parent already provided region
     
     const params = new URLSearchParams(window.location.search);
     const detectedRegion = resolveRegionFromUTM({
@@ -110,12 +120,15 @@ export default function FrenchCalendar({ form, onBack, onDateTimeSelect, selecte
     });
     
     setRegion(detectedRegion);
-    console.log('🌍 Region detected:', detectedRegion);
-  }, [locale]);
+    console.log('🌍 Calendar region detected from UTM:', detectedRegion, '| Locale:', locale);
+  }, [locale, propRegion]);
 
   // Fetch availability from Outlook when month changes or component mounts
   useEffect(() => {
-    if (!region) return;
+    if (!region) {
+      console.warn('⚠️ No region detected, skipping Outlook availability fetch');
+      return;
+    }
 
     const fetchAvailability = async () => {
       setLoadingAvailability(true);
@@ -141,13 +154,17 @@ export default function FrenchCalendar({ form, onBack, onDateTimeSelect, selecte
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-          console.error('❌ API Error:', errorData);
+          console.error('❌ API Error:', response.status, errorData);
           throw new Error(errorData.error || 'Failed to fetch availability');
         }
 
         const { availability } = await response.json();
         
-        console.log('✅ Availability received:', availability);
+        console.log('✅ Availability received:', {
+          totalDays: availability.length,
+          totalSlots: availability.reduce((acc: number, day: any) => acc + day.slots.length, 0),
+          sampleDay: availability[0]
+        });
 
         // Convert to map of date -> available slots with owner
         const availabilityMap: {[key: string]: SlotWithOwner[]} = {};
@@ -157,7 +174,8 @@ export default function FrenchCalendar({ form, onBack, onDateTimeSelect, selecte
         
         setOutlookAvailability(availabilityMap);
       } catch (error) {
-        console.error('Failed to fetch Outlook availability:', error);
+        console.error('❌ Failed to fetch Outlook availability:', error);
+        setOutlookAvailability({}); // Clear availability on error
       } finally {
         setLoadingAvailability(false);
       }
@@ -318,6 +336,7 @@ export default function FrenchCalendar({ form, onBack, onDateTimeSelect, selecte
     setSelectedSlot(slot);
     
     // Find the owner email for this slot
+    let ownerEmail: string | undefined;
     if (region && selectedDate) {
       const dateStr = formatDateForOutlook(selectedDate);
       const slotsWithOwner = outlookAvailability[dateStr] || [];
@@ -325,7 +344,13 @@ export default function FrenchCalendar({ form, onBack, onDateTimeSelect, selecte
       
       if (slotData) {
         setSelectedOwnerEmail(slotData.ownerEmail);
+        ownerEmail = slotData.ownerEmail;
+        console.log('📧 Owner email found for slot:', ownerEmail);
+      } else {
+        console.warn('⚠️ No owner email found for slot:', slot, '(region:', region, ')');
       }
+    } else {
+      console.warn('⚠️ No region or selectedDate, cannot determine owner email');
     }
     
     if (onDateTimeSelect && selectedDate) {
@@ -336,12 +361,13 @@ export default function FrenchCalendar({ form, onBack, onDateTimeSelect, selecte
         return `${year}-${month}-${day}`;
       };
       
-      // Pass owner email if available
-      const dateStr = formatDateForOutlook(selectedDate);
-      const slotsWithOwner = outlookAvailability[dateStr] || [];
-      const slotData = slotsWithOwner.find(s => s.time === slot);
+      console.log('✅ Calling onDateTimeSelect with:', {
+        date: formatDate(selectedDate),
+        time: slot,
+        ownerEmail
+      });
       
-      onDateTimeSelect(formatDate(selectedDate), slot, slotData?.ownerEmail);
+      onDateTimeSelect(formatDate(selectedDate), slot, ownerEmail);
     }
   };
 

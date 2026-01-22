@@ -50,6 +50,22 @@ export async function POST(request: NextRequest) {
     const cleanPhone = (body.phone || '').replace(/[\s+()-]/g, '');
     params.append('phone', cleanPhone);
     
+    // Add UTM parameters for attribution tracking
+    if (body.gclid) params.append('GCLID', body.gclid);
+    if (body.utm_source) params.append('UTM_Source', body.utm_source);
+    if (body.utm_medium) params.append('UTM_Medium', body.utm_medium);
+    if (body.utm_campaign) params.append('UTM_Campaign', body.utm_campaign);
+    if (body.utm_content) params.append('UTM_Content', body.utm_content);
+    if (body.utm_term) params.append('UTM_Term', body.utm_term);
+    if (body.landing_language) params.append('Landing_Language', body.landing_language);
+    
+    // Add appointment and booking details
+    if (body.appointmentDate) params.append('Appointment_Date', body.appointmentDate);
+    if (body.appointmentTime) params.append('Appointment_Time', body.appointmentTime);
+    if (body.region) params.append('Sales_Region', body.region);
+    if (body.ownerEmail) params.append('Sales_Owner', body.ownerEmail);
+    if (body.bookingId) params.append('Booking_ID', body.bookingId);
+    
     // Add success and error locations for Pardot
     params.append('success_location', 'https://vocalcom.vercel.app/thank-you');
     params.append('error_location', 'https://www.vocalcom.com');
