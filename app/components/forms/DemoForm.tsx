@@ -47,6 +47,12 @@ export default function DemoForm({ customButtonText }: { customButtonText?: stri
         utm_campaign?: string;
         utm_content?: string;
         utm_term?: string;
+        utm_matchtype?: string;
+        utm_network?: string;
+        utm_device?: string;
+        utm_creative?: string;
+        content_group?: string;
+        li_fat_id?: string;
         landing_language?: string;
     }>({});
     const [angle, setAngle] = useState<AngleType>('ai');
@@ -69,12 +75,31 @@ export default function DemoForm({ customButtonText }: { customButtonText?: stri
         if (typeof window === 'undefined') return;
         
         const params = new URLSearchParams(window.location.search);
+        
+        // Persist UTMs to localStorage to prevent loss on navigation/refresh
+        const saveIfPresent = (key: string) => {
+            const value = params.get(key);
+            if (value) {
+                localStorage.setItem(`vocalcom_${key}`, value);
+            }
+        };
+        
+        // Save all tracking parameters
+        ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 
+         'utm_matchtype', 'utm_network', 'utm_device', 'utm_creative', 
+         'gclid', 'li_fat_id', 'content_group'].forEach(saveIfPresent);
+        
+        // Helper to get value from URL or localStorage fallback
+        const getStored = (key: string): string => {
+            return params.get(key) || localStorage.getItem(`vocalcom_${key}`) || '';
+        };
+        
         const utmData = {
-            campaign: params.get('utm_campaign') || undefined,
-            source: params.get('utm_source') || undefined,
-            medium: params.get('utm_medium') || undefined,
-            content: params.get('utm_content') || undefined,
-            term: params.get('utm_term') || undefined,
+            campaign: getStored('utm_campaign') || undefined,
+            source: getStored('utm_source') || undefined,
+            medium: getStored('utm_medium') || undefined,
+            content: getStored('utm_content') || undefined,
+            term: getStored('utm_term') || undefined,
         };
         
         setUtmParams(utmData);
@@ -99,14 +124,20 @@ export default function DemoForm({ customButtonText }: { customButtonText?: stri
         setAngle(detectedAngle);
         setFormCopy(getFormCopy(detectedAngle));
         
-        // Capture attribution data (both from URL and from window.dataLayer if GTM already ran)
+        // Capture comprehensive attribution data including Google Ads & LinkedIn parameters
         const attributionData: any = {
-            gclid: params.get('gclid') || (window as any)._gclid || '',
-            utm_source: utmData.source || '',
-            utm_medium: utmData.medium || '',
-            utm_campaign: utmData.campaign || '',
-            utm_content: utmData.content || '',
-            utm_term: utmData.term || '',
+            gclid: getStored('gclid') || (window as any)._gclid || '',
+            utm_source: getStored('utm_source'),
+            utm_medium: getStored('utm_medium'),
+            utm_campaign: getStored('utm_campaign'),
+            utm_content: getStored('utm_content'),
+            utm_term: getStored('utm_term'),
+            utm_matchtype: getStored('utm_matchtype'),
+            utm_network: getStored('utm_network'),
+            utm_device: getStored('utm_device'),
+            utm_creative: getStored('utm_creative'),
+            content_group: getStored('content_group') || 'landing',
+            li_fat_id: getStored('li_fat_id'),
             landing_language: (locale || 'fr'),
         };
         
@@ -354,7 +385,8 @@ export default function DemoForm({ customButtonText }: { customButtonText?: stri
         'outlook.fr', 'outlook.es', 'outlook.de', 'outlook.it', 'outlook.co.uk',
         'live.fr', 'live.co.uk', 'live.es', 'live.de', 'live.it',
         'laposte.net', 'orange.fr', 'wanadoo.fr', 'free.fr', 'sfr.fr',
-        'bbox.fr', 'aliceadsl.fr', 'club-internet.fr', 'neuf.fr', 'numericable.fr'
+        'bbox.fr', 'aliceadsl.fr', 'club-internet.fr', 'neuf.fr', 'numericable.fr',
+        'enterisin.com', 'entreprise.com'
     ];
 
     // Generic/test keywords to block in email addresses
@@ -393,16 +425,17 @@ export default function DemoForm({ customButtonText }: { customButtonText?: stri
         return true;
     };
 
-    // Enhanced phone validation for French numbers
+    // Enhanced phone validation with country-specific formats
     const isValidPhone = (phone: string) => {
         const digits = phone.replace(/\D/g, '');
         
-        // Check for repetitive patterns
+        // Check for repetitive patterns (invalid numbers)
         const repetitivePatterns = [
             '00000000', '11111111', '22222222', '33333333', '44444444',
             '55555555', '66666666', '77777777', '88888888', '99999999',
             '01010101', '02020202', '03030303', '04040404', '05050505',
-            '06060606', '07070707', '08080808', '09090909', '10101010'
+            '06060606', '07070707', '08080808', '09090909', '10101010',
+            '12341234', '12121212'
         ];
         
         const sequential = '12345678';
@@ -415,28 +448,172 @@ export default function DemoForm({ customButtonText }: { customButtonText?: stri
             return false;
         }
         
-        // French mobile numbers validation
-        // Accept: 06, 07, +336, +337 prefixes
-        if (digits.startsWith('336') || digits.startsWith('337')) {
-            return digits.length === 11; // +33 6 12 34 56 78
-        } else if (digits.startsWith('06') || digits.startsWith('07')) {
-            return digits.length === 10; // 06 12 34 56 78
+        // Country-specific validation
+        
+        // France (+33): 06/07 XXXXXXXX or +336/+337 XXXXXXXX or 01-05/08/09 XXXXXXXX
+        if (digits.startsWith('33')) {
+            // +33 format: must be 11 digits total
+            if (digits.length !== 11) return false;
+            const firstDigitAfterCode = digits[2];
+            // Valid French prefixes: 1-9
+            return ['1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(firstDigitAfterCode);
+        } else if (digits.startsWith('0') && digits.length === 10) {
+            // Local format: 0X XXXXXXXX
+            const secondDigit = digits[1];
+            return ['1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(secondDigit);
         }
         
-        // Allow other international formats
+        // Spain (+34): 9 digits, starts with 6, 7, 8, or 9
+        if (digits.startsWith('34')) {
+            if (digits.length !== 11) return false;
+            const firstDigitAfterCode = digits[2];
+            return ['6', '7', '8', '9'].includes(firstDigitAfterCode);
+        } else if (digits.length === 9 && ['6', '7', '8', '9'].includes(digits[0])) {
+            return true; // Spanish local format
+        }
+        
+        // Portugal (+351): 9 digits, mobile starts with 9
+        if (digits.startsWith('351')) {
+            return digits.length === 12; // +351 9XX XXX XXX
+        } else if (digits.length === 9 && digits.startsWith('9')) {
+            return true; // Portuguese mobile local format
+        } else if (digits.length === 9 && digits.startsWith('2')) {
+            return true; // Portuguese landline local format
+        }
+        
+        // UK (+44): 10 digits after +44, or 11 digits starting with 07
+        if (digits.startsWith('44')) {
+            return digits.length >= 12 && digits.length <= 13;
+        } else if (digits.startsWith('07') && digits.length === 11) {
+            return true; // UK mobile local format
+        }
+        
+        // US/Canada (+1): 10 digits after +1
+        if (digits.startsWith('1') && digits.length === 11) {
+            const areaCode = digits.substring(1, 4);
+            // Ensure area code doesn't start with 0 or 1
+            return !['0', '1'].includes(areaCode[0]);
+        }
+        
+        // Germany (+49): 10-11 digits after +49
+        if (digits.startsWith('49')) {
+            return digits.length >= 11 && digits.length <= 13;
+        }
+        
+        // Italy (+39): 9-10 digits after +39, mobile starts with 3
+        if (digits.startsWith('39')) {
+            return digits.length >= 11 && digits.length <= 13;
+        }
+        
+        // Belgium (+32): 9 digits after +32, mobile starts with 4
+        if (digits.startsWith('32')) {
+            return digits.length === 11;
+        }
+        
+        // Switzerland (+41): 9 digits after +41
+        if (digits.startsWith('41')) {
+            return digits.length === 11;
+        }
+        
+        // Netherlands (+31): 9 digits after +31
+        if (digits.startsWith('31')) {
+            return digits.length === 11;
+        }
+        
+        // Brazil (+55): 11 digits after +55 (mobile), 10 for landline
+        if (digits.startsWith('55')) {
+            return digits.length >= 12 && digits.length <= 13;
+        }
+        
+        // Mexico (+52): 10 digits after +52
+        if (digits.startsWith('52')) {
+            return digits.length === 12;
+        }
+        
+        // Generic international validation
         return digits.length >= 8 && digits.length <= 15;
     };
 
     const formatPhoneNumber = (value: string) => {
         const digits = value.replace(/\D/g, '');
         
-        // Format French mobile numbers
-        if (digits.startsWith('336') || digits.startsWith('337')) {
-            // +33 6 12 34 56 78
+        // France (+33): Format as +33 X XX XX XX XX
+        if (digits.startsWith('33') && digits.length === 11) {
             return digits.replace(/(\d{2})(\d{1})(\d{2})(\d{2})(\d{2})(\d{2})/, '+$1 $2 $3 $4 $5 $6');
-        } else if (digits.startsWith('06') || digits.startsWith('07')) {
-            // 06 12 34 56 78
+        } else if ((digits.startsWith('06') || digits.startsWith('07')) && digits.length === 10) {
+            // Local French mobile: 0X XX XX XX XX
             return digits.replace(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5');
+        } else if (digits.startsWith('0') && digits.length === 10) {
+            // Other French numbers: 0X XX XX XX XX
+            return digits.replace(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5');
+        }
+        
+        // Spain (+34): Format as +34 XXX XXX XXX
+        if (digits.startsWith('34') && digits.length === 11) {
+            return digits.replace(/(\d{2})(\d{3})(\d{3})(\d{3})/, '+$1 $2 $3 $4');
+        } else if (digits.length === 9 && ['6', '7', '8', '9'].includes(digits[0])) {
+            // Spanish local format: XXX XXX XXX
+            return digits.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
+        }
+        
+        // Portugal (+351): Format as +351 XXX XXX XXX
+        if (digits.startsWith('351') && digits.length === 12) {
+            return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{3})/, '+$1 $2 $3 $4');
+        } else if (digits.length === 9 && (digits.startsWith('9') || digits.startsWith('2'))) {
+            // Portuguese local format: XXX XXX XXX
+            return digits.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
+        }
+        
+        // UK (+44): Format as +44 XXXX XXXXXX
+        if (digits.startsWith('44') && digits.length >= 12) {
+            return digits.replace(/(\d{2})(\d{4})(\d{6})/, '+$1 $2 $3');
+        } else if (digits.startsWith('07') && digits.length === 11) {
+            // UK mobile local format: 07XXX XXXXXX
+            return digits.replace(/(\d{5})(\d{6})/, '$1 $2');
+        }
+        
+        // US/Canada (+1): Format as +1 (XXX) XXX-XXXX
+        if (digits.startsWith('1') && digits.length === 11) {
+            return digits.replace(/(\d{1})(\d{3})(\d{3})(\d{4})/, '+$1 ($2) $3-$4');
+        }
+        
+        // Germany (+49): Format as +49 XXX XXXXXXXX
+        if (digits.startsWith('49') && digits.length >= 11) {
+            return digits.replace(/(\d{2})(\d{3})(\d+)/, '+$1 $2 $3');
+        }
+        
+        // Italy (+39): Format as +39 XXX XXX XXXX
+        if (digits.startsWith('39') && digits.length >= 11) {
+            return digits.replace(/(\d{2})(\d{3})(\d{3})(\d+)/, '+$1 $2 $3 $4');
+        }
+        
+        // Belgium (+32): Format as +32 XXX XX XX XX
+        if (digits.startsWith('32') && digits.length === 11) {
+            return digits.replace(/(\d{2})(\d{3})(\d{2})(\d{2})(\d{2})/, '+$1 $2 $3 $4 $5');
+        }
+        
+        // Switzerland (+41): Format as +41 XX XXX XX XX
+        if (digits.startsWith('41') && digits.length === 11) {
+            return digits.replace(/(\d{2})(\d{2})(\d{3})(\d{2})(\d{2})/, '+$1 $2 $3 $4 $5');
+        }
+        
+        // Netherlands (+31): Format as +31 X XX XX XX XX
+        if (digits.startsWith('31') && digits.length === 11) {
+            return digits.replace(/(\d{2})(\d{1})(\d{2})(\d{2})(\d{2})(\d{2})/, '+$1 $2 $3 $4 $5 $6');
+        }
+        
+        // Brazil (+55): Format as +55 XX XXXXX-XXXX (mobile) or +55 XX XXXX-XXXX (landline)
+        if (digits.startsWith('55')) {
+            if (digits.length === 13) {
+                return digits.replace(/(\d{2})(\d{2})(\d{5})(\d{4})/, '+$1 $2 $3-$4');
+            } else if (digits.length === 12) {
+                return digits.replace(/(\d{2})(\d{2})(\d{4})(\d{4})/, '+$1 $2 $3-$4');
+            }
+        }
+        
+        // Mexico (+52): Format as +52 XX XXXX XXXX
+        if (digits.startsWith('52') && digits.length === 12) {
+            return digits.replace(/(\d{2})(\d{2})(\d{4})(\d{4})/, '+$1 $2 $3 $4');
         }
         
         return value;
@@ -670,13 +847,19 @@ export default function DemoForm({ customButtonText }: { customButtonText?: stri
                         company: form.company,
                         country: form.country,
                         phone: form.phone,
-                        // Add UTM parameters for attribution
+                        // Add comprehensive UTM parameters for attribution
                         gclid: attribution.gclid,
                         utm_source: attribution.utm_source,
                         utm_medium: attribution.utm_medium,
                         utm_campaign: attribution.utm_campaign,
                         utm_content: attribution.utm_content,
                         utm_term: attribution.utm_term,
+                        utm_matchtype: attribution.utm_matchtype,
+                        utm_network: attribution.utm_network,
+                        utm_device: attribution.utm_device,
+                        utm_creative: attribution.utm_creative,
+                        content_group: attribution.content_group,
+                        li_fat_id: attribution.li_fat_id,
                         landing_language: attribution.landing_language,
                         // Add appointment details
                         appointmentDate: form.appointmentDate,
@@ -811,8 +994,13 @@ END:VCALENDAR`;
             <input type="hidden" name="UTM_Campaign" value={attribution.utm_campaign || ''} />
             <input type="hidden" name="UTM_Content" value={attribution.utm_content || ''} />
             <input type="hidden" name="UTM_Term" value={attribution.utm_term || ''} />
+            <input type="hidden" name="UTM_Matchtype" value={attribution.utm_matchtype || ''} />
+            <input type="hidden" name="UTM_Network" value={attribution.utm_network || ''} />
+            <input type="hidden" name="UTM_Device" value={attribution.utm_device || ''} />
+            <input type="hidden" name="UTM_Creative" value={attribution.utm_creative || ''} />
+            <input type="hidden" name="Content_Group" value={attribution.content_group || ''} />
+            <input type="hidden" name="Li_Fat_Id" value={attribution.li_fat_id || ''} />
             <input type="hidden" name="Landing_Language" value={attribution.landing_language || ''} />
-            <input type="hidden" name="Content_Group" value="landing" />
             
             {/* Progress bar */}
             <div className="mb-6">
