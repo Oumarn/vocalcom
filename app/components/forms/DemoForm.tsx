@@ -846,19 +846,20 @@ export default function DemoForm({ customButtonText }: { customButtonText?: stri
             pardotParams.append('phone', form.phone.replace(/[\s+()-]/g, ''));
             
             // Add all attribution parameters with exact Pardot field names
-            if (attribution.gclid) pardotParams.append('GCLID', attribution.gclid);
-            if (attribution.utm_source) pardotParams.append('utm_source', attribution.utm_source);
-            if (attribution.utm_medium) pardotParams.append('utm_medium', attribution.utm_medium);
-            if (attribution.utm_campaign) pardotParams.append('utm_campaign', attribution.utm_campaign);
-            if (attribution.utm_content) pardotParams.append('utm_content', attribution.utm_content);
-            if (attribution.utm_term) pardotParams.append('utm_term', attribution.utm_term);
-            if (attribution.utm_matchtype) pardotParams.append('utm_matchtype', attribution.utm_matchtype);
-            if (attribution.utm_network) pardotParams.append('utm_network', attribution.utm_network);
-            if (attribution.utm_device) pardotParams.append('utm_device', attribution.utm_device);
-            if (attribution.utm_creative) pardotParams.append('utm_creative', attribution.utm_creative);
-            if (attribution.content_group) pardotParams.append('content_group', attribution.content_group);
-            if (attribution.li_fat_id) pardotParams.append('li_fat_id', attribution.li_fat_id);
-            if (attribution.landing_language) pardotParams.append('landing_language', attribution.landing_language);
+            // Always send all fields (even if empty) because Pardot may have them marked as required
+            pardotParams.append('GCLID', attribution.gclid || '');
+            pardotParams.append('utm_source', attribution.utm_source || '');
+            pardotParams.append('utm_medium', attribution.utm_medium || '');
+            pardotParams.append('utm_campaign', attribution.utm_campaign || '');
+            pardotParams.append('utm_content', attribution.utm_content || '');
+            pardotParams.append('utm_term', attribution.utm_term || '');
+            pardotParams.append('utm_matchtype', attribution.utm_matchtype || '');
+            pardotParams.append('utm_network', attribution.utm_network || '');
+            pardotParams.append('utm_device', attribution.utm_device || '');
+            pardotParams.append('utm_creative', attribution.utm_creative || '');
+            pardotParams.append('content_group', attribution.content_group || '');
+            pardotParams.append('li_fat_id', attribution.li_fat_id || '');
+            pardotParams.append('landing_language', attribution.landing_language || '');
             
             console.log('📋 Pardot form data:', Object.fromEntries(pardotParams.entries()));
             

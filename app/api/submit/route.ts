@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
     if (body.bookingId) params.append('Booking_ID', body.bookingId);
     
     // Add success and error locations for Pardot
-    params.append('success_location', 'https://vocalcom.vercel.app/thank-you');
+    params.append('success_location', 'https://ai.vocalcom.com/thank-you');
     params.append('error_location', 'https://www.vocalcom.com');
 
     console.log('Sending to Pardot:', params.toString());
