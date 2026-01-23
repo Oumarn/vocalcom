@@ -836,37 +836,42 @@ export default function DemoForm({ customButtonText }: { customButtonText?: stri
             
             // Step 2A: POST DIRECTLY to Pardot Form Handler (browser-side, no-cors)
             console.log('📤 Submitting directly to Pardot Form Handler...');
-            const pardotFormData = new FormData();
-            pardotFormData.append('email', form.email);
-            pardotFormData.append('first_name', form.firstName);
-            pardotFormData.append('last_name', form.lastName);
-            pardotFormData.append('job_title', form.jobTitle);
-            pardotFormData.append('company', form.company);
-            pardotFormData.append('country', form.country);
-            pardotFormData.append('phone', form.phone.replace(/[\s+()-]/g, ''));
+            const pardotParams = new URLSearchParams();
+            pardotParams.append('email', form.email);
+            pardotParams.append('first_name', form.firstName);
+            pardotParams.append('last_name', form.lastName);
+            pardotParams.append('job_title', form.jobTitle);
+            pardotParams.append('company', form.company);
+            pardotParams.append('country', form.country);
+            pardotParams.append('phone', form.phone.replace(/[\s+()-]/g, ''));
             
             // Add all attribution parameters with exact Pardot field names
-            if (attribution.gclid) pardotFormData.append('GCLID', attribution.gclid);
-            if (attribution.utm_source) pardotFormData.append('utm_source', attribution.utm_source);
-            if (attribution.utm_medium) pardotFormData.append('utm_medium', attribution.utm_medium);
-            if (attribution.utm_campaign) pardotFormData.append('utm_campaign', attribution.utm_campaign);
-            if (attribution.utm_content) pardotFormData.append('utm_content', attribution.utm_content);
-            if (attribution.utm_term) pardotFormData.append('utm_term', attribution.utm_term);
-            if (attribution.utm_matchtype) pardotFormData.append('utm_matchtype', attribution.utm_matchtype);
-            if (attribution.utm_network) pardotFormData.append('utm_network', attribution.utm_network);
-            if (attribution.utm_device) pardotFormData.append('utm_device', attribution.utm_device);
-            if (attribution.utm_creative) pardotFormData.append('utm_creative', attribution.utm_creative);
-            if (attribution.content_group) pardotFormData.append('content_group', attribution.content_group);
-            if (attribution.li_fat_id) pardotFormData.append('li_fat_id', attribution.li_fat_id);
-            if (attribution.landing_language) pardotFormData.append('landing_language', attribution.landing_language);
+            if (attribution.gclid) pardotParams.append('GCLID', attribution.gclid);
+            if (attribution.utm_source) pardotParams.append('utm_source', attribution.utm_source);
+            if (attribution.utm_medium) pardotParams.append('utm_medium', attribution.utm_medium);
+            if (attribution.utm_campaign) pardotParams.append('utm_campaign', attribution.utm_campaign);
+            if (attribution.utm_content) pardotParams.append('utm_content', attribution.utm_content);
+            if (attribution.utm_term) pardotParams.append('utm_term', attribution.utm_term);
+            if (attribution.utm_matchtype) pardotParams.append('utm_matchtype', attribution.utm_matchtype);
+            if (attribution.utm_network) pardotParams.append('utm_network', attribution.utm_network);
+            if (attribution.utm_device) pardotParams.append('utm_device', attribution.utm_device);
+            if (attribution.utm_creative) pardotParams.append('utm_creative', attribution.utm_creative);
+            if (attribution.content_group) pardotParams.append('content_group', attribution.content_group);
+            if (attribution.li_fat_id) pardotParams.append('li_fat_id', attribution.li_fat_id);
+            if (attribution.landing_language) pardotParams.append('landing_language', attribution.landing_language);
             
-            // Direct POST to Pardot (no-cors mode means we won't see response, but Pardot will receive it)
+            console.log('📋 Pardot form data:', Object.fromEntries(pardotParams.entries()));
+            
+            // Direct POST to Pardot using application/x-www-form-urlencoded (Pardot standard format)
             fetch('https://go.vocalcom.com/l/1029911/2026-01-04/363cd', {
                 method: 'POST',
-                body: pardotFormData,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: pardotParams.toString(),
                 mode: 'no-cors'
             }).then(() => {
-                console.log('✅ Direct Pardot POST sent');
+                console.log('✅ Direct Pardot POST sent (application/x-www-form-urlencoded)');
             }).catch(err => {
                 console.error('❌ Direct Pardot POST failed:', err);
             });
