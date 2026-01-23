@@ -50,14 +50,20 @@ export async function POST(request: NextRequest) {
     const cleanPhone = (body.phone || '').replace(/[\s+()-]/g, '');
     params.append('phone', cleanPhone);
     
-    // Add UTM parameters for attribution tracking
+    // Add UTM parameters for attribution tracking (matching Pardot field names exactly)
     if (body.gclid) params.append('GCLID', body.gclid);
-    if (body.utm_source) params.append('UTM_Source', body.utm_source);
-    if (body.utm_medium) params.append('UTM_Medium', body.utm_medium);
-    if (body.utm_campaign) params.append('UTM_Campaign', body.utm_campaign);
-    if (body.utm_content) params.append('UTM_Content', body.utm_content);
-    if (body.utm_term) params.append('UTM_Term', body.utm_term);
-    if (body.landing_language) params.append('Landing_Language', body.landing_language);
+    if (body.utm_source) params.append('utm_source', body.utm_source);
+    if (body.utm_medium) params.append('utm_medium', body.utm_medium);
+    if (body.utm_campaign) params.append('utm_campaign', body.utm_campaign);
+    if (body.utm_content) params.append('utm_content', body.utm_content);
+    if (body.utm_term) params.append('utm_term', body.utm_term);
+    if (body.utm_matchtype) params.append('utm_matchtype', body.utm_matchtype);
+    if (body.utm_network) params.append('utm_network', body.utm_network);
+    if (body.utm_device) params.append('utm_device', body.utm_device);
+    if (body.utm_creative) params.append('utm_creative', body.utm_creative);
+    if (body.li_fat_id) params.append('li_fat_id', body.li_fat_id);
+    if (body.content_group) params.append('content_group', body.content_group);
+    if (body.landing_language) params.append('landing_language', body.landing_language);
     
     // Add appointment and booking details
     if (body.appointmentDate) params.append('Appointment_Date', body.appointmentDate);
