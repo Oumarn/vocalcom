@@ -935,9 +935,12 @@ export default function DemoForm({ customButtonText }: { customButtonText?: stri
             setSendDatas(true);
             
             // Redirect to thank you page after successful submission
+            // Delay increased to 5 seconds to allow network inspection
+            console.log('⏳ Redirecting to thank-you page in 5 seconds...');
+            console.log('💡 Check Network tab now for POST to go.vocalcom.com');
             setTimeout(() => {
                 window.location.href = '/thank-you?date=' + encodeURIComponent(form.appointmentDate) + '&time=' + encodeURIComponent(form.appointmentTime);
-            }, 1000);
+            }, 5000);
             
         } catch (error) {
             console.error('Form submission error:', error);
