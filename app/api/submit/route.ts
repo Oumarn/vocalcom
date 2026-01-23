@@ -82,8 +82,9 @@ export async function POST(request: NextRequest) {
       console.log(`  ${key}: "${value}"`);
     });
 
-    // Forward to Pardot Form Handler - use HTTP not HTTPS
-    const response = await fetch('http://go.vocalcom.com/l/1029911/2026-01-04/363cd', {
+    // Forward to Pardot Form Handler - use HTTPS
+    console.log('📤 Posting to Pardot Form Handler...');
+    const response = await fetch('https://go.vocalcom.com/l/1029911/2026-01-04/363cd', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -91,7 +92,7 @@ export async function POST(request: NextRequest) {
       body: params.toString(),
     });
 
-    console.log('Pardot response status:', response.status);
+    console.log('✅ Pardot response status:', response.status);
     const responseText = await response.text();
     console.log('Pardot response body length:', responseText.length);
     console.log('Pardot response preview:', responseText.substring(0, 500));
