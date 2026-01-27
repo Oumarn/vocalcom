@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Icon from '@mdi/react';
 import { mdiArrowLeft, mdiArrowRight, mdiClock, mdiCheck, mdiGoogle, mdiMicrosoftOutlook, mdiApple } from '@mdi/js';
 import { useLanguage } from '@/app/hooks/useLanguage';
-import { formatDateForOutlook } from '@/lib/outlook-api';
+import { getCalendlyConfig } from '@/config/calendly-config';
 import { resolveRegionFromUTM, type RegionKey } from '@/lib/region-resolver';
 
 interface FormData {
@@ -16,7 +16,7 @@ interface FormData {
 
 interface SlotWithOwner {
   time: string;
-  ownerEmail: string;
+  ownerEmail?: string; // Optional for Calendly (not needed)
 }
 
 interface Props {
@@ -92,7 +92,7 @@ export default function FrenchCalendar({ form, onBack, onDateTimeSelect, selecte
   const [selectedDate, setSelectedDate] = useState<Date | null>(initialDate ? new Date(initialDate) : null);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(initialTime || null);
   const [selectedOwnerEmail, setSelectedOwnerEmail] = useState<string | null>(null);
-  const [outlookAvailability, setOutlookAvailability] = useState<{[key: string]: SlotWithOwner[]}>({});
+  const [calendlyAvailability, setCalendlyAvailability] = useState<{[key: string]: SlotWithOwner[]}>({});
   const [loadingAvailability, setLoadingAvailability] = useState(false);
   const [region, setRegion] = useState<RegionKey | null>(propRegion || null);
 
@@ -123,59 +123,122 @@ export default function FrenchCalendar({ form, onBack, onDateTimeSelect, selecte
     console.log('🌍 Calendar region detected from UTM:', detectedRegion, '| Locale:', locale);
   }, [locale, propRegion]);
 
-  // Fetch availability from Outlook when month changes or component mounts
+  // Fetch availability from Calendly when month changes or component mounts
   useEffect(() => {
     if (!region) {
-      console.warn('⚠️ No region detected, skipping Outlook availability fetch');
+      console.warn('⚠️ No region detected, skipping Calendly availability fetch');
       return;
     }
 
     const fetchAvailability = async () => {
       setLoadingAvailability(true);
       try {
+        // Calendly requires start_time to be in the future
+        const now = new Date();
         const startDate = new Date(displayYear, displayMonth, 1);
+        
+        // If the first day of the month is in the past, start from today
+        const effectiveStartDate = startDate < now ? now : startDate;
+        
+        // Calendly only allows fetching 7 days at a time
+        // We'll fetch multiple weeks to cover the month
         const endDate = new Date(displayYear, displayMonth + 1, 0);
         
-        console.log('🔍 Fetching Outlook availability for:', {
+        // Get Calendly config for this region
+        const calendlyConfig = getCalendlyConfig(region);
+        
+        // Extract event URI from Calendly URL
+        const eventUri = calendlyConfig.eventUrl.replace('https://calendly.com/', '');
+        
+        const formatDate = (date: Date) => date.toISOString().split('T')[0];
+        
+        console.log('🔍 Fetching Calendly availability for:', {
           region,
-          startDate: formatDateForOutlook(startDate),
-          endDate: formatDateForOutlook(endDate)
+          eventUrl: calendlyConfig.eventUrl,
+          startDate: formatDate(effectiveStartDate),
+          endDate: formatDate(endDate)
         });
         
-        const response = await fetch('/api/outlook/availability', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            region,
-            startDate: formatDateForOutlook(startDate),
-            endDate: formatDateForOutlook(endDate),
-          }),
-        });
+        // Fetch availability in 7-day chunks (Calendly's limit)
+        const allAvailability: {[key: string]: SlotWithOwner[]} = {};
+        let currentStart = new Date(effectiveStartDate);
+        
+        while (currentStart <= endDate) {
+          const currentEnd = new Date(currentStart);
+          currentEnd.setDate(currentEnd.getDate() + 6); // 7 days total (inclusive)
+          
+          // Don't go beyond the end of the month
+          const chunkEnd = currentEnd > endDate ? endDate : currentEnd;
+          
+          console.log('📤 Requesting availability chunk:', {
+            startDate: formatDate(currentStart),
+            endDate: formatDate(chunkEnd),
+            eventUri
+          });
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-          console.error('❌ API Error:', response.status, errorData);
-          throw new Error(errorData.error || 'Failed to fetch availability');
+          const chunkResponse = await fetch('/api/calendly/availability', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              eventUri,
+              startDate: formatDate(currentStart),
+              endDate: formatDate(chunkEnd),
+            }),
+          });
+
+          console.log('📥 Chunk response status:', chunkResponse.status);
+
+          if (!chunkResponse.ok) {
+            const responseText = await chunkResponse.text();
+            console.error('❌ Calendly API Error:', {
+              status: chunkResponse.status,
+              statusText: chunkResponse.statusText,
+              responseText: responseText,
+              responseTextLength: responseText.length,
+              requestParams: {
+                eventUri,
+                startDate: formatDate(currentStart),
+                endDate: formatDate(chunkEnd)
+              }
+            });
+            
+            // Try to parse as JSON, otherwise use the text
+            let errorData;
+            try {
+              errorData = responseText ? JSON.parse(responseText) : { error: 'Empty response' };
+            } catch (e) {
+              errorData = { error: responseText || 'Unknown error' };
+            }
+            
+            const errorMessage = errorData.error || errorData.message || errorData.details?.message || 'Failed to fetch availability';
+            console.error('❌ Error message:', errorMessage);
+            throw new Error(errorMessage);
+          }
+
+          const { availability } = await chunkResponse.json();
+          
+          // Merge this chunk's availability into the overall map
+          availability.forEach((day: any) => {
+            allAvailability[day.date] = day.slots.map((time: string) => ({
+              time,
+              ownerEmail: undefined
+            }));
+          });
+          
+          // Move to next week
+          currentStart.setDate(currentStart.getDate() + 7);
         }
-
-        const { availability } = await response.json();
         
-        console.log('✅ Availability received:', {
-          totalDays: availability.length,
-          totalSlots: availability.reduce((acc: number, day: any) => acc + day.slots.length, 0),
-          sampleDay: availability[0]
+        console.log('✅ Calendly availability received:', {
+          totalDays: Object.keys(allAvailability).length,
+          totalSlots: Object.values(allAvailability).reduce((acc, slots) => acc + slots.length, 0),
+          dateRange: Object.keys(allAvailability).sort()
         });
 
-        // Convert to map of date -> available slots with owner
-        const availabilityMap: {[key: string]: SlotWithOwner[]} = {};
-        availability.forEach((day: any) => {
-          availabilityMap[day.date] = day.slots;
-        });
-        
-        setOutlookAvailability(availabilityMap);
+        setCalendlyAvailability(allAvailability);
       } catch (error) {
-        console.error('❌ Failed to fetch Outlook availability:', error);
-        setOutlookAvailability({}); // Clear availability on error
+        console.error('❌ Failed to fetch Calendly availability:', error);
+        setCalendlyAvailability({}); // Clear availability on error
       } finally {
         setLoadingAvailability(false);
       }
@@ -203,11 +266,16 @@ export default function FrenchCalendar({ form, onBack, onDateTimeSelect, selecte
     date.getMonth() === currentDate.getMonth() &&
     date.getFullYear() === currentDate.getFullYear();
 
+  // Format date as YYYY-MM-DD for Calendly API
+  const formatDateString = (date: Date): string => {
+    return date.toISOString().split('T')[0];
+  };
+
   const isSelectable = (date: Date) => {
-    // If Outlook is connected, check availability from Outlook
-    if (region && Object.keys(outlookAvailability).length > 0) {
-      const dateStr = formatDateForOutlook(date);
-      return outlookAvailability[dateStr] && outlookAvailability[dateStr].length > 0;
+    // If Calendly is connected, check availability from Calendly
+    if (region && Object.keys(calendlyAvailability).length > 0) {
+      const dateStr = formatDateString(date);
+      return calendlyAvailability[dateStr] && calendlyAvailability[dateStr].length > 0;
     }
 
     // Fallback to original logic if no region detected
@@ -269,11 +337,11 @@ export default function FrenchCalendar({ form, onBack, onDateTimeSelect, selecte
   };
 
   const generateTimeSlots = () => {
-    // If Outlook is connected and we have a selected date, use Outlook slots
-    if (region && selectedDate && Object.keys(outlookAvailability).length > 0) {
-      const dateStr = formatDateForOutlook(selectedDate);
-      const slotsWithOwner = outlookAvailability[dateStr] || [];
-      // Return just the time strings for display (owner will be used on selection)
+    // If Calendly is connected and we have a selected date, use Calendly slots
+    if (region && selectedDate && Object.keys(calendlyAvailability).length > 0) {
+      const dateStr = formatDateString(selectedDate);
+      const slotsWithOwner = calendlyAvailability[dateStr] || [];
+      // Return just the time strings for display
       return slotsWithOwner.map(s => s.time);
     }
 
@@ -335,19 +403,19 @@ export default function FrenchCalendar({ form, onBack, onDateTimeSelect, selecte
   const handleSlotClick = (slot: string) => {
     setSelectedSlot(slot);
     
-    // Find the owner email for this slot
+    // For Calendly, we don't need owner email (handled by Calendly)
     let ownerEmail: string | undefined;
     if (region && selectedDate) {
-      const dateStr = formatDateForOutlook(selectedDate);
-      const slotsWithOwner = outlookAvailability[dateStr] || [];
+      const dateStr = formatDateString(selectedDate);
+      const slotsWithOwner = calendlyAvailability[dateStr] || [];
       const slotData = slotsWithOwner.find(s => s.time === slot);
       
       if (slotData) {
-        setSelectedOwnerEmail(slotData.ownerEmail);
+        setSelectedOwnerEmail(slotData.ownerEmail || '');
         ownerEmail = slotData.ownerEmail;
-        console.log('📧 Owner email found for slot:', ownerEmail);
+        console.log('📧 Calendly slot selected:', slot);
       } else {
-        console.warn('⚠️ No owner email found for slot:', slot, '(region:', region, ')');
+        console.warn('⚠️ No slot data found for:', slot, '(region:', region, ')');
       }
     } else {
       console.warn('⚠️ No region or selectedDate, cannot determine owner email');

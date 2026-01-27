@@ -1,1447 +1,991 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Icon from "@mdi/react";
-import { mdiArrowRight, mdiCheck, mdiArrowLeft, mdiEmailOutline, mdiAccountOutline, mdiOfficeBuilding, mdiPhone, mdiEarth, mdiClock, mdiGoogle, mdiMicrosoftOutlook, mdiApple } from "@mdi/js";
+import { useState, useEffect } from "react";
 import { useLanguage } from "../../hooks/useLanguage";
-import FrenchCalendar from "./FrenchCalendar";
-import { getRegionConfig } from "@/config/outlook-config";
-import { resolveRegionFromUTM, resolveRegionFromCountry, resolveAngleFromUTM, getFormCopy, type RegionKey, type AngleType } from "@/lib/region-resolver";
+import { getCalendlyConfig, type CalendlyRegion } from "@/config/calendly-config";
+import { resolveRegionFromUTM } from "@/lib/region-resolver";
 
-export default function DemoForm({ customButtonText }: { customButtonText?: string } = {}) {
-    const router = useRouter();
-    const { content, locale } = useLanguage();
-    const t = content.form; // Translation object
-    const [step, setStep] = useState(1);
-    const [loading, setLoading] = useState(false);
-    const [sendDatas, setSendDatas] = useState(false);
-    const [countrySearch, setCountrySearch] = useState("");
-    const [showCountryDropdown, setShowCountryDropdown] = useState(false);
-    const countryInputRef = useRef<HTMLInputElement>(null);
-    const [form, setForm] = useState({
-        email: "",
-        firstName: "",
-        lastName: "",
-        jobTitle: "",
-        company: "",
-        phone: "",
-        country: "",
-        appointmentDate: "",
-        appointmentTime: "",
-        ownerEmail: "",
-        region: "" as RegionKey | "",
-        bookingId: ""
-    });
-    const [utmParams, setUtmParams] = useState<{
-        campaign?: string;
-        source?: string;
-        medium?: string;
-        content?: string;
-        term?: string;
-    }>({});
-    const [attribution, setAttribution] = useState<{
-        gclid?: string;
-        utm_source?: string;
-        utm_medium?: string;
-        utm_campaign?: string;
-        utm_content?: string;
-        utm_term?: string;
-        utm_matchtype?: string;
-        utm_network?: string;
-        utm_device?: string;
-        utm_creative?: string;
-        content_group?: string;
-        li_fat_id?: string;
-        landing_language?: string;
-    }>({});
-    const [angle, setAngle] = useState<AngleType>('ai');
-    const [formCopy, setFormCopy] = useState(getFormCopy('ai'));
+// Declare Calendly global
+declare global {
+    interface Window {
+        Calendly?: {
+            initInlineWidget: (options: { url: string; parentElement: HTMLElement; utm?: any }) => void;
+        };
+    }
+}
 
-    const [errors, setErrors] = useState({
-        email: "",
-        firstName: "",
-        lastName: "",
-        jobTitle: "",
-        company: "",
-        phone: "",
-        country: ""
-    });
+interface DemoFormProps {
+  customButtonText?: string;
+}
 
-    const totalSteps = 4;
+export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
+  const { locale } = useLanguage();
+  const [step, setStep] = useState(1);
+  const [showCalendly, setShowCalendly] = useState(false);
+  const [calendlyUrl, setCalendlyUrl] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Form data state
+  const [formData, setFormData] = useState({
+    email: "",
+    firstName: "",
+    lastName: "",
+    company: "",
+    phone: "",
+    country: "",
+    jobTitle: "",
+  });
 
-    // Capture UTM parameters and detect region on mount
-    useEffect(() => {
-        if (typeof window === 'undefined') return;
-        
-        const params = new URLSearchParams(window.location.search);
-        
-        // Persist UTMs to localStorage to prevent loss on navigation/refresh
-        const saveIfPresent = (key: string) => {
-            const value = params.get(key);
-            if (value) {
-                localStorage.setItem(`vocalcom_${key}`, value);
-            }
-        };
-        
-        // Save all tracking parameters
-        ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 
-         'utm_matchtype', 'utm_network', 'utm_device', 'utm_creative', 
-         'gclid', 'li_fat_id', 'content_group'].forEach(saveIfPresent);
-        
-        // Helper to get value from URL or localStorage fallback
-        const getStored = (key: string): string => {
-            return params.get(key) || localStorage.getItem(`vocalcom_${key}`) || '';
-        };
-        
-        const utmData = {
-            campaign: getStored('utm_campaign') || undefined,
-            source: getStored('utm_source') || undefined,
-            medium: getStored('utm_medium') || undefined,
-            content: getStored('utm_content') || undefined,
-            term: getStored('utm_term') || undefined,
-        };
-        
-        setUtmParams(utmData);
-        
-        // Build full UTM object
-        const fullUtm = {
-            utm_campaign: utmData.campaign,
-            utm_source: utmData.source,
-            utm_medium: utmData.medium,
-            utm_content: utmData.content,
-            utm_term: utmData.term,
-            intent: params.get('intent'),
-            angle: params.get('angle'),
-            lang: (locale || 'fr') as 'fr' | 'en' | 'es' | 'pt',
-        };
-        
-        // Detect region and angle from UTMs
-        const detectedRegion = resolveRegionFromUTM(fullUtm);
-        const detectedAngle = resolveAngleFromUTM(fullUtm);
-        
-        setForm(prev => ({ ...prev, region: detectedRegion }));
-        setAngle(detectedAngle);
-        setFormCopy(getFormCopy(detectedAngle));
-        
-        // Capture comprehensive attribution data including Google Ads & LinkedIn parameters
-        const attributionData: any = {
-            gclid: getStored('gclid') || (window as any)._gclid || '',
-            utm_source: getStored('utm_source'),
-            utm_medium: getStored('utm_medium'),
-            utm_campaign: getStored('utm_campaign'),
-            utm_content: getStored('utm_content'),
-            utm_term: getStored('utm_term'),
-            utm_matchtype: getStored('utm_matchtype'),
-            utm_network: getStored('utm_network'),
-            utm_device: getStored('utm_device'),
-            utm_creative: getStored('utm_creative'),
-            content_group: getStored('content_group') || 'landing',
-            li_fat_id: getStored('li_fat_id'),
-            landing_language: (locale || 'fr'),
-        };
-        
-        setAttribution(attributionData);
-        
-        console.log('🌍 Region & Angle detected from UTMs:', {
-            region: detectedRegion,
-            angle: detectedAngle,
-            utmData,
-            attribution: attributionData
-        });
-    }, []);
+  // Validation errors
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  
+  // Autocomplete state
+  const [countrySearch, setCountrySearch] = useState("");
+  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
+  const [filteredCountries, setFilteredCountries] = useState<Array<{ value: string; label: any; phonePrefix: string }>>([]);
+  
+  // Phone formatting state
+  const [phonePrefix, setPhonePrefix] = useState("+33");
+  
+  // Attribution tracking state
+  const [attribution, setAttribution] = useState<{
+    utm_source?: string;
+    utm_medium?: string;
+    utm_campaign?: string;
+    utm_term?: string;
+    utm_content?: string;
+    gclid?: string;
+    fbclid?: string;
+  }>({});
+
+  // Capture UTM parameters and resolve region on mount
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
     
-    // Country data with French display names and English normalized values for Salesforce
-    const countryData: {[key: string]: { code: string; en: string }} = {
-        "Afghanistan": { code: "+93", en: "Afghanistan" },
-        "Afrique du Sud": { code: "+27", en: "South Africa" },
-        "Albanie": { code: "+355", en: "Albania" },
-        "Algérie": { code: "+213", en: "Algeria" },
-        "Allemagne": { code: "+49", en: "Germany" },
-        "Andorre": { code: "+376", en: "Andorra" },
-        "Angola": { code: "+244", en: "Angola" },
-        "Antigua-et-Barbuda": { code: "+1-268", en: "Antigua and Barbuda" },
-        "Arabie Saoudite": { code: "+966", en: "Saudi Arabia" },
-        "Argentine": { code: "+54", en: "Argentina" },
-        "Arménie": { code: "+374", en: "Armenia" },
-        "Australie": { code: "+61", en: "Australia" },
-        "Autriche": { code: "+43", en: "Austria" },
-        "Azerbaïdjan": { code: "+994", en: "Azerbaijan" },
-        "Bahamas": { code: "+1-242", en: "Bahamas" },
-        "Bahreïn": { code: "+973", en: "Bahrain" },
-        "Bangladesh": { code: "+880", en: "Bangladesh" },
-        "Barbade": { code: "+1-246", en: "Barbados" },
-        "Belgique": { code: "+32", en: "Belgium" },
-        "Belize": { code: "+501", en: "Belize" },
-        "Bénin": { code: "+229", en: "Benin" },
-        "Bhoutan": { code: "+975", en: "Bhutan" },
-        "Biélorussie": { code: "+375", en: "Belarus" },
-        "Birmanie": { code: "+95", en: "Myanmar" },
-        "Bolivie": { code: "+591", en: "Bolivia" },
-        "Bosnie-Herzégovine": { code: "+387", en: "Bosnia and Herzegovina" },
-        "Botswana": { code: "+267", en: "Botswana" },
-        "Brésil": { code: "+55", en: "Brazil" },
-        "Brunei": { code: "+673", en: "Brunei" },
-        "Bulgarie": { code: "+359", en: "Bulgaria" },
-        "Burkina Faso": { code: "+226", en: "Burkina Faso" },
-        "Burundi": { code: "+257", en: "Burundi" },
-        "Cambodge": { code: "+855", en: "Cambodia" },
-        "Cameroun": { code: "+237", en: "Cameroon" },
-        "Canada": { code: "+1", en: "Canada" },
-        "Cap-Vert": { code: "+238", en: "Cape Verde" },
-        "Chili": { code: "+56", en: "Chile" },
-        "Chine": { code: "+86", en: "China" },
-        "Chypre": { code: "+357", en: "Cyprus" },
-        "Colombie": { code: "+57", en: "Colombia" },
-        "Comores": { code: "+269", en: "Comoros" },
-        "Congo": { code: "+242", en: "Congo" },
-        "Corée du Nord": { code: "+850", en: "North Korea" },
-        "Corée du Sud": { code: "+82", en: "South Korea" },
-        "Costa Rica": { code: "+506", en: "Costa Rica" },
-        "Côte d'Ivoire": { code: "+225", en: "Ivory Coast" },
-        "Croatie": { code: "+385", en: "Croatia" },
-        "Cuba": { code: "+53", en: "Cuba" },
-        "Danemark": { code: "+45", en: "Denmark" },
-        "Djibouti": { code: "+253", en: "Djibouti" },
-        "Dominique": { code: "+1-767", en: "Dominica" },
-        "Égypte": { code: "+20", en: "Egypt" },
-        "Émirats Arabes Unis": { code: "+971", en: "United Arab Emirates" },
-        "Équateur": { code: "+593", en: "Ecuador" },
-        "Érythrée": { code: "+291", en: "Eritrea" },
-        "Espagne": { code: "+34", en: "Spain" },
-        "Estonie": { code: "+372", en: "Estonia" },
-        "Eswatini": { code: "+268", en: "Eswatini" },
-        "États-Unis": { code: "+1", en: "United States" },
-        "Éthiopie": { code: "+251", en: "Ethiopia" },
-        "Fidji": { code: "+679", en: "Fiji" },
-        "Finlande": { code: "+358", en: "Finland" },
-        "France": { code: "+33", en: "France" },
-        "Gabon": { code: "+241", en: "Gabon" },
-        "Gambie": { code: "+220", en: "Gambia" },
-        "Géorgie": { code: "+995", en: "Georgia" },
-        "Ghana": { code: "+233", en: "Ghana" },
-        "Grèce": { code: "+30", en: "Greece" },
-        "Grenade": { code: "+1-473", en: "Grenada" },
-        "Guatemala": { code: "+502", en: "Guatemala" },
-        "Guinée": { code: "+224", en: "Guinea" },
-        "Guinée-Bissau": { code: "+245", en: "Guinea-Bissau" },
-        "Guinée Équatoriale": { code: "+240", en: "Equatorial Guinea" },
-        "Guyana": { code: "+592", en: "Guyana" },
-        "Haïti": { code: "+509", en: "Haiti" },
-        "Honduras": { code: "+504", en: "Honduras" },
-        "Hongrie": { code: "+36", en: "Hungary" },
-        "Îles Marshall": { code: "+692", en: "Marshall Islands" },
-        "Îles Salomon": { code: "+677", en: "Solomon Islands" },
-        "Inde": { code: "+91", en: "India" },
-        "Indonésie": { code: "+62", en: "Indonesia" },
-        "Irak": { code: "+964", en: "Iraq" },
-        "Iran": { code: "+98", en: "Iran" },
-        "Irlande": { code: "+353", en: "Ireland" },
-        "Islande": { code: "+354", en: "Iceland" },
-        "Israël": { code: "+972", en: "Israel" },
-        "Italie": { code: "+39", en: "Italy" },
-        "Jamaïque": { code: "+1-876", en: "Jamaica" },
-        "Japon": { code: "+81", en: "Japan" },
-        "Jordanie": { code: "+962", en: "Jordan" },
-        "Kazakhstan": { code: "+7", en: "Kazakhstan" },
-        "Kenya": { code: "+254", en: "Kenya" },
-        "Kirghizistan": { code: "+996", en: "Kyrgyzstan" },
-        "Kiribati": { code: "+686", en: "Kiribati" },
-        "Koweït": { code: "+965", en: "Kuwait" },
-        "Laos": { code: "+856", en: "Laos" },
-        "Lesotho": { code: "+266", en: "Lesotho" },
-        "Lettonie": { code: "+371", en: "Latvia" },
-        "Liban": { code: "+961", en: "Lebanon" },
-        "Liberia": { code: "+231", en: "Liberia" },
-        "Libye": { code: "+218", en: "Libya" },
-        "Liechtenstein": { code: "+423", en: "Liechtenstein" },
-        "Lituanie": { code: "+370", en: "Lithuania" },
-        "Luxembourg": { code: "+352", en: "Luxembourg" },
-        "Macédoine du Nord": { code: "+389", en: "North Macedonia" },
-        "Madagascar": { code: "+261", en: "Madagascar" },
-        "Malaisie": { code: "+60", en: "Malaysia" },
-        "Malawi": { code: "+265", en: "Malawi" },
-        "Maldives": { code: "+960", en: "Maldives" },
-        "Mali": { code: "+223", en: "Mali" },
-        "Malte": { code: "+356", en: "Malta" },
-        "Maroc": { code: "+212", en: "Morocco" },
-        "Maurice": { code: "+230", en: "Mauritius" },
-        "Mauritanie": { code: "+222", en: "Mauritania" },
-        "Mexique": { code: "+52", en: "Mexico" },
-        "Micronésie": { code: "+691", en: "Micronesia" },
-        "Moldavie": { code: "+373", en: "Moldova" },
-        "Monaco": { code: "+377", en: "Monaco" },
-        "Mongolie": { code: "+976", en: "Mongolia" },
-        "Monténégro": { code: "+382", en: "Montenegro" },
-        "Mozambique": { code: "+258", en: "Mozambique" },
-        "Namibie": { code: "+264", en: "Namibia" },
-        "Nauru": { code: "+674", en: "Nauru" },
-        "Népal": { code: "+977", en: "Nepal" },
-        "Nicaragua": { code: "+505", en: "Nicaragua" },
-        "Niger": { code: "+227", en: "Niger" },
-        "Nigeria": { code: "+234", en: "Nigeria" },
-        "Norvège": { code: "+47", en: "Norway" },
-        "Nouvelle-Zélande": { code: "+64", en: "New Zealand" },
-        "Oman": { code: "+968", en: "Oman" },
-        "Ouganda": { code: "+256", en: "Uganda" },
-        "Ouzbékistan": { code: "+998", en: "Uzbekistan" },
-        "Pakistan": { code: "+92", en: "Pakistan" },
-        "Palaos": { code: "+680", en: "Palau" },
-        "Palestine": { code: "+970", en: "Palestine" },
-        "Panama": { code: "+507", en: "Panama" },
-        "Papouasie-Nouvelle-Guinée": { code: "+675", en: "Papua New Guinea" },
-        "Paraguay": { code: "+595", en: "Paraguay" },
-        "Pays-Bas": { code: "+31", en: "Netherlands" },
-        "Pérou": { code: "+51", en: "Peru" },
-        "Philippines": { code: "+63", en: "Philippines" },
-        "Pologne": { code: "+48", en: "Poland" },
-        "Portugal": { code: "+351", en: "Portugal" },
-        "Qatar": { code: "+974", en: "Qatar" },
-        "République Centrafricaine": { code: "+236", en: "Central African Republic" },
-        "République Démocratique du Congo": { code: "+243", en: "Democratic Republic of the Congo" },
-        "République Dominicaine": { code: "+1-809", en: "Dominican Republic" },
-        "République Tchèque": { code: "+420", en: "Czech Republic" },
-        "Roumanie": { code: "+40", en: "Romania" },
-        "Royaume-Uni": { code: "+44", en: "United Kingdom" },
-        "Russie": { code: "+7", en: "Russia" },
-        "Rwanda": { code: "+250", en: "Rwanda" },
-        "Saint-Christophe-et-Niévès": { code: "+1-869", en: "Saint Kitts and Nevis" },
-        "Sainte-Lucie": { code: "+1-758", en: "Saint Lucia" },
-        "Saint-Marin": { code: "+378", en: "San Marino" },
-        "Saint-Vincent-et-les-Grenadines": { code: "+1-784", en: "Saint Vincent and the Grenadines" },
-        "Salvador": { code: "+503", en: "El Salvador" },
-        "Samoa": { code: "+685", en: "Samoa" },
-        "São Tomé-et-Principe": { code: "+239", en: "Sao Tome and Principe" },
-        "Sénégal": { code: "+221", en: "Senegal" },
-        "Serbie": { code: "+381", en: "Serbia" },
-        "Seychelles": { code: "+248", en: "Seychelles" },
-        "Sierra Leone": { code: "+232", en: "Sierra Leone" },
-        "Singapour": { code: "+65", en: "Singapore" },
-        "Slovaquie": { code: "+421", en: "Slovakia" },
-        "Slovénie": { code: "+386", en: "Slovenia" },
-        "Somalie": { code: "+252", en: "Somalia" },
-        "Soudan": { code: "+249", en: "Sudan" },
-        "Soudan du Sud": { code: "+211", en: "South Sudan" },
-        "Sri Lanka": { code: "+94", en: "Sri Lanka" },
-        "Suède": { code: "+46", en: "Sweden" },
-        "Suisse": { code: "+41", en: "Switzerland" },
-        "Suriname": { code: "+597", en: "Suriname" },
-        "Syrie": { code: "+963", en: "Syria" },
-        "Tadjikistan": { code: "+992", en: "Tajikistan" },
-        "Tanzanie": { code: "+255", en: "Tanzania" },
-        "Tchad": { code: "+235", en: "Chad" },
-        "Thaïlande": { code: "+66", en: "Thailand" },
-        "Timor Oriental": { code: "+670", en: "East Timor" },
-        "Togo": { code: "+228", en: "Togo" },
-        "Tonga": { code: "+676", en: "Tonga" },
-        "Trinité-et-Tobago": { code: "+1-868", en: "Trinidad and Tobago" },
-        "Tunisie": { code: "+216", en: "Tunisia" },
-        "Turkménistan": { code: "+993", en: "Turkmenistan" },
-        "Turquie": { code: "+90", en: "Turkey" },
-        "Tuvalu": { code: "+688", en: "Tuvalu" },
-        "Ukraine": { code: "+380", en: "Ukraine" },
-        "Uruguay": { code: "+598", en: "Uruguay" },
-        "Vanuatu": { code: "+678", en: "Vanuatu" },
-        "Vatican": { code: "+39", en: "Vatican City" },
-        "Venezuela": { code: "+58", en: "Venezuela" },
-        "Viêt Nam": { code: "+84", en: "Vietnam" },
-        "Yémen": { code: "+967", en: "Yemen" },
-        "Zambie": { code: "+260", en: "Zambia" },
-        "Zimbabwe": { code: "+263", en: "Zimbabwe" }
-    };
+    const params = new URLSearchParams(window.location.search);
     
-    const countries = Object.keys(countryData);
-
-    // Filter countries based on search
-    const filteredCountries = countries.filter(country =>
-        country.toLowerCase().includes(countrySearch.toLowerCase())
-    );
-
-    // Close dropdown when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (countryInputRef.current && !countryInputRef.current.contains(event.target as Node)) {
-                setShowCountryDropdown(false);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
-
-    // Vérification du format email
-    const isValidEmail = (email: string) => {
-        const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        return regex.test(email);
-    };
-
-    // List of blocked generic email domains
-    const genericEmailDomains = [
-        'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'live.com',
-        'msn.com', 'aol.com', 'icloud.com', 'mail.com', 'protonmail.com',
-        'yandex.com', 'zoho.com', 'gmx.com', 'mail.ru', 'inbox.com',
-        'fastmail.com', 'tutanota.com', 'hushmail.com', 'rediffmail.com',
-        'yahoo.fr', 'yahoo.co.uk', 'yahoo.es', 'yahoo.de', 'yahoo.it',
-        'hotmail.fr', 'hotmail.co.uk', 'hotmail.es', 'hotmail.de', 'hotmail.it',
-        'outlook.fr', 'outlook.es', 'outlook.de', 'outlook.it', 'outlook.co.uk',
-        'live.fr', 'live.co.uk', 'live.es', 'live.de', 'live.it',
-        'laposte.net', 'orange.fr', 'wanadoo.fr', 'free.fr', 'sfr.fr',
-        'bbox.fr', 'aliceadsl.fr', 'club-internet.fr', 'neuf.fr', 'numericable.fr',
-        'enterisin.com', 'entreprise.com'
-    ];
-
-    // Generic/test keywords to block in email addresses
-    const genericKeywords = [
-        'test', 'example', 'sample', 'demo', 'temp', 'temporary',
-        'fake', 'dummy', 'invalid', 'noemail', 'no-reply', 'noreply',
-        'admin', 'info', 'contact', 'hello', 'support', 'mail',
-        'email', 'user', 'username', 'nom', 'prenom', 'name'
-    ];
-
-    // Check if email is professional (not generic)
-    const isProfessionalEmail = (email: string) => {
-        const emailLower = email.toLowerCase();
-        const domain = emailLower.split('@')[1];
-        const localPart = emailLower.split('@')[0];
-        
-        if (!domain || !localPart) return false;
-        
-        // Block generic email providers
-        if (genericEmailDomains.includes(domain)) return false;
-        
-        // Block domains containing generic keywords
-        if (genericKeywords.some(keyword => domain.includes(keyword))) return false;
-        
-        // Block local parts that are exactly generic keywords
-        if (genericKeywords.includes(localPart)) return false;
-        
-        // Block local parts that start or end with generic keywords
-        if (genericKeywords.some(keyword => 
-            localPart.startsWith(keyword) || 
-            localPart.endsWith(keyword) ||
-            localPart.includes(`.${keyword}`) ||
-            localPart.includes(`${keyword}.`)
-        )) return false;
-        
-        return true;
-    };
-
-    // Enhanced phone validation with country-specific formats
-    const isValidPhone = (phone: string) => {
-        const digits = phone.replace(/\D/g, '');
-        
-        // Check for repetitive patterns (invalid numbers)
-        const repetitivePatterns = [
-            '00000000', '11111111', '22222222', '33333333', '44444444',
-            '55555555', '66666666', '77777777', '88888888', '99999999',
-            '01010101', '02020202', '03030303', '04040404', '05050505',
-            '06060606', '07070707', '08080808', '09090909', '10101010',
-            '12341234', '12121212'
-        ];
-        
-        const sequential = '12345678';
-        
-        if (repetitivePatterns.some(pattern => digits.includes(pattern))) {
-            return false;
-        }
-        
-        if (digits.includes(sequential)) {
-            return false;
-        }
-        
-        // Country-specific validation
-        
-        // France (+33): 06/07 XXXXXXXX or +336/+337 XXXXXXXX or 01-05/08/09 XXXXXXXX
-        if (digits.startsWith('33')) {
-            // +33 format: must be 11 digits total
-            if (digits.length !== 11) return false;
-            const firstDigitAfterCode = digits[2];
-            // Valid French prefixes: 1-9
-            return ['1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(firstDigitAfterCode);
-        } else if (digits.startsWith('0') && digits.length === 10) {
-            // Local format: 0X XXXXXXXX
-            const secondDigit = digits[1];
-            return ['1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(secondDigit);
-        }
-        
-        // Spain (+34): 9 digits, starts with 6, 7, 8, or 9
-        if (digits.startsWith('34')) {
-            if (digits.length !== 11) return false;
-            const firstDigitAfterCode = digits[2];
-            return ['6', '7', '8', '9'].includes(firstDigitAfterCode);
-        } else if (digits.length === 9 && ['6', '7', '8', '9'].includes(digits[0])) {
-            return true; // Spanish local format
-        }
-        
-        // Portugal (+351): 9 digits, mobile starts with 9
-        if (digits.startsWith('351')) {
-            return digits.length === 12; // +351 9XX XXX XXX
-        } else if (digits.length === 9 && digits.startsWith('9')) {
-            return true; // Portuguese mobile local format
-        } else if (digits.length === 9 && digits.startsWith('2')) {
-            return true; // Portuguese landline local format
-        }
-        
-        // UK (+44): 10 digits after +44, or 11 digits starting with 07
-        if (digits.startsWith('44')) {
-            return digits.length >= 12 && digits.length <= 13;
-        } else if (digits.startsWith('07') && digits.length === 11) {
-            return true; // UK mobile local format
-        }
-        
-        // US/Canada (+1): 10 digits after +1
-        if (digits.startsWith('1') && digits.length === 11) {
-            const areaCode = digits.substring(1, 4);
-            // Ensure area code doesn't start with 0 or 1
-            return !['0', '1'].includes(areaCode[0]);
-        }
-        
-        // Germany (+49): 10-11 digits after +49
-        if (digits.startsWith('49')) {
-            return digits.length >= 11 && digits.length <= 13;
-        }
-        
-        // Italy (+39): 9-10 digits after +39, mobile starts with 3
-        if (digits.startsWith('39')) {
-            return digits.length >= 11 && digits.length <= 13;
-        }
-        
-        // Belgium (+32): 9 digits after +32, mobile starts with 4
-        if (digits.startsWith('32')) {
-            return digits.length === 11;
-        }
-        
-        // Switzerland (+41): 9 digits after +41
-        if (digits.startsWith('41')) {
-            return digits.length === 11;
-        }
-        
-        // Netherlands (+31): 9 digits after +31
-        if (digits.startsWith('31')) {
-            return digits.length === 11;
-        }
-        
-        // Brazil (+55): 11 digits after +55 (mobile), 10 for landline
-        if (digits.startsWith('55')) {
-            return digits.length >= 12 && digits.length <= 13;
-        }
-        
-        // Mexico (+52): 10 digits after +52
-        if (digits.startsWith('52')) {
-            return digits.length === 12;
-        }
-        
-        // Generic international validation
-        return digits.length >= 8 && digits.length <= 15;
-    };
-
-    const formatPhoneNumber = (value: string) => {
-        const digits = value.replace(/\D/g, '');
-        
-        // France (+33): Format as +33 X XX XX XX XX
-        if (digits.startsWith('33') && digits.length === 11) {
-            return digits.replace(/(\d{2})(\d{1})(\d{2})(\d{2})(\d{2})(\d{2})/, '+$1 $2 $3 $4 $5 $6');
-        } else if ((digits.startsWith('06') || digits.startsWith('07')) && digits.length === 10) {
-            // Local French mobile: 0X XX XX XX XX
-            return digits.replace(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5');
-        } else if (digits.startsWith('0') && digits.length === 10) {
-            // Other French numbers: 0X XX XX XX XX
-            return digits.replace(/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/, '$1 $2 $3 $4 $5');
-        }
-        
-        // Spain (+34): Format as +34 XXX XXX XXX
-        if (digits.startsWith('34') && digits.length === 11) {
-            return digits.replace(/(\d{2})(\d{3})(\d{3})(\d{3})/, '+$1 $2 $3 $4');
-        } else if (digits.length === 9 && ['6', '7', '8', '9'].includes(digits[0])) {
-            // Spanish local format: XXX XXX XXX
-            return digits.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
-        }
-        
-        // Portugal (+351): Format as +351 XXX XXX XXX
-        if (digits.startsWith('351') && digits.length === 12) {
-            return digits.replace(/(\d{3})(\d{3})(\d{3})(\d{3})/, '+$1 $2 $3 $4');
-        } else if (digits.length === 9 && (digits.startsWith('9') || digits.startsWith('2'))) {
-            // Portuguese local format: XXX XXX XXX
-            return digits.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3');
-        }
-        
-        // UK (+44): Format as +44 XXXX XXXXXX
-        if (digits.startsWith('44') && digits.length >= 12) {
-            return digits.replace(/(\d{2})(\d{4})(\d{6})/, '+$1 $2 $3');
-        } else if (digits.startsWith('07') && digits.length === 11) {
-            // UK mobile local format: 07XXX XXXXXX
-            return digits.replace(/(\d{5})(\d{6})/, '$1 $2');
-        }
-        
-        // US/Canada (+1): Format as +1 (XXX) XXX-XXXX
-        if (digits.startsWith('1') && digits.length === 11) {
-            return digits.replace(/(\d{1})(\d{3})(\d{3})(\d{4})/, '+$1 ($2) $3-$4');
-        }
-        
-        // Germany (+49): Format as +49 XXX XXXXXXXX
-        if (digits.startsWith('49') && digits.length >= 11) {
-            return digits.replace(/(\d{2})(\d{3})(\d+)/, '+$1 $2 $3');
-        }
-        
-        // Italy (+39): Format as +39 XXX XXX XXXX
-        if (digits.startsWith('39') && digits.length >= 11) {
-            return digits.replace(/(\d{2})(\d{3})(\d{3})(\d+)/, '+$1 $2 $3 $4');
-        }
-        
-        // Belgium (+32): Format as +32 XXX XX XX XX
-        if (digits.startsWith('32') && digits.length === 11) {
-            return digits.replace(/(\d{2})(\d{3})(\d{2})(\d{2})(\d{2})/, '+$1 $2 $3 $4 $5');
-        }
-        
-        // Switzerland (+41): Format as +41 XX XXX XX XX
-        if (digits.startsWith('41') && digits.length === 11) {
-            return digits.replace(/(\d{2})(\d{2})(\d{3})(\d{2})(\d{2})/, '+$1 $2 $3 $4 $5');
-        }
-        
-        // Netherlands (+31): Format as +31 X XX XX XX XX
-        if (digits.startsWith('31') && digits.length === 11) {
-            return digits.replace(/(\d{2})(\d{1})(\d{2})(\d{2})(\d{2})(\d{2})/, '+$1 $2 $3 $4 $5 $6');
-        }
-        
-        // Brazil (+55): Format as +55 XX XXXXX-XXXX (mobile) or +55 XX XXXX-XXXX (landline)
-        if (digits.startsWith('55')) {
-            if (digits.length === 13) {
-                return digits.replace(/(\d{2})(\d{2})(\d{5})(\d{4})/, '+$1 $2 $3-$4');
-            } else if (digits.length === 12) {
-                return digits.replace(/(\d{2})(\d{2})(\d{4})(\d{4})/, '+$1 $2 $3-$4');
-            }
-        }
-        
-        // Mexico (+52): Format as +52 XX XXXX XXXX
-        if (digits.startsWith('52') && digits.length === 12) {
-            return digits.replace(/(\d{2})(\d{2})(\d{4})(\d{4})/, '+$1 $2 $3 $4');
-        }
-        
+    // Helper to get value and persist to localStorage
+    const getStored = (key: string): string | undefined => {
+      const value = params.get(key);
+      if (value) {
+        localStorage.setItem(`vocalcom_${key}`, value);
         return value;
+      }
+      return localStorage.getItem(`vocalcom_${key}`) || undefined;
     };
-
-    const handleCountrySearch = (value: string) => {
-        setCountrySearch(value);
-        setShowCountryDropdown(true);
-        // Clear country selection if user is typing
-        if (form.country && !countries.includes(value)) {
-            setForm(prev => ({ ...prev, country: "" }));
-        }
+    
+    const fullUtm = {
+      utm_source: getStored('utm_source'),
+      utm_medium: getStored('utm_medium'),
+      utm_campaign: getStored('utm_campaign'),
+      utm_term: getStored('utm_term'),
+      utm_content: getStored('utm_content'),
+      gclid: getStored('gclid'),
+      fbclid: getStored('fbclid'),
     };
+    
+    setAttribution(fullUtm);
 
-    const handleCountrySelect = (country: string) => {
-        const countryInfo = countryData[country];
-        const countryCode = countryInfo?.code || "";
-        const englishCountryName = countryInfo?.en || country;
-        
-        // Update region based on selected country
-        const newRegion = resolveRegionFromCountry(englishCountryName);
-        
-        console.log('🌍 Country selected → Region updated:', {
-            country: englishCountryName,
-            previousRegion: form.region,
-            newRegion
-        });
-        
-        setForm(prev => ({ 
-            ...prev, 
-            country: englishCountryName, // Store English name for Salesforce
-            phone: countryCode ? `${countryCode} ` : prev.phone,
-            region: newRegion // Update region based on country
-        }));
-        setCountrySearch(country);
-        setShowCountryDropdown(false);
-        setErrors(prev => ({ ...prev, country: "" }));
-    };
+    // Resolve region from UTM parameters
+    const detectedRegion = resolveRegionFromUTM({
+      utm_campaign: fullUtm.utm_campaign,
+      utm_source: fullUtm.utm_source,
+      utm_medium: fullUtm.utm_medium,
+      utm_content: fullUtm.utm_content,
+      utm_term: fullUtm.utm_term,
+      lang: (locale || 'fr') as 'fr' | 'en' | 'es' | 'pt',
+    });
+    
+    if (detectedRegion) {
+      console.log('[DemoForm] Detected region from UTM:', detectedRegion);
+      const config = getCalendlyConfig(detectedRegion);
+      setCalendlyUrl(config.eventUrl);
+    } else {
+      // Fallback to locale-based mapping
+      console.log('[DemoForm] No UTM region detected, using locale fallback:', locale);
+      
+      const localeToRegion: { [key: string]: CalendlyRegion } = {
+        'fr': 'france_core',
+        'es': 'spain',
+        'pt': 'portugal',
+        'en': 'france_core',
+      };
+      
+      const mappedRegion = localeToRegion[locale || 'fr'] || 'france_core';
+      console.log('[DemoForm] Mapped locale to region:', mappedRegion);
+      
+      const config = getCalendlyConfig(mappedRegion);
+      setCalendlyUrl(config.eventUrl);
+    }
+  }, [locale]);
 
-    const handleChange = (e: any) => {
-        const { id, value } = e.target;
+  // Listen for Calendly booking events and handle Pardot submission
+  useEffect(() => {
+    if (!showCalendly) return;
 
-        // Format phone number on change
-        if (id === 'phone') {
-            const formatted = formatPhoneNumber(value);
-            setForm((prev) => ({
-                ...prev,
-                [id]: formatted
-            }));
-            
-            // Validate phone
-            if (!formatted.trim()) {
-                setErrors((prev) => ({ ...prev, phone: t.required }));
-            } else if (!isValidPhone(formatted)) {
-                setErrors((prev) => ({ ...prev, phone: 'Numéro de téléphone invalide' }));
-            } else {
-                setErrors((prev) => ({ ...prev, phone: "" }));
-            }
-            return;
-        }
-
-        setForm((prev) => ({
-            ...prev,
-            [id]: value
-        }));
-
-        // Validation en direct
-        if (id === "email") {
-            if (!value.trim()) {
-                setErrors((prev) => ({ ...prev, email: t.required }));
-            } else if (!isValidEmail(value)) {
-                setErrors((prev) => ({ ...prev, email: t.fields.email.errorFormat }));
-            } else if (!isProfessionalEmail(value)) {
-                setErrors((prev) => ({ ...prev, email: "Veuillez utiliser une adresse email professionnelle" }));
-            } else {
-                setErrors((prev) => ({ ...prev, email: "" }));
-            }
-            return;
+    // Function to submit to Pardot
+    const submitToPardot = async (bookingData?: any) => {
+      try {
+        const storedData = localStorage.getItem('vocalcom_form_submission');
+        if (!storedData) {
+          console.error('[DemoForm] No form data found in localStorage');
+          return;
         }
 
-        // Effacer l'erreur au fur et à mesure
-        setErrors((prev) => ({
-            ...prev,
-            [id]: value.trim() === "" ? t.required : ""
-        }));
-    };
-
-    const validateStep = (currentStep: number) => {
-        const newErrors: any = {};
-
-        if (currentStep === 1) {
-            if (!form.email.trim()) newErrors.email = t.fields.email.error;
-            else if (!isValidEmail(form.email)) newErrors.email = t.fields.email.errorFormat;
-            else if (!isProfessionalEmail(form.email)) newErrors.email = "Veuillez utiliser une adresse email professionnelle";
-            if (!form.firstName.trim()) newErrors.firstName = t.fields.firstName.error;
-            if (!form.lastName.trim()) newErrors.lastName = t.fields.lastName.error;
-        } else if (currentStep === 2) {
-            if (!form.jobTitle.trim()) newErrors.jobTitle = t.fields.jobTitle.error;
-            if (!form.company.trim()) newErrors.company = t.fields.company.error;
-            if (!form.country) newErrors.country = t.fields.country.error;
-        } else if (currentStep === 3) {
-            if (!form.phone.trim()) {
-                newErrors.phone = t.fields.phone.error;
-            } else if (!isValidPhone(form.phone)) {
-                newErrors.phone = 'Format de téléphone invalide. Utilisez un numéro français mobile (06/07 ou +336/+337)';
-            }
-        } else if (currentStep === 4) {
-            // For step 4, require date and time to be selected before final submission
-            if (!form.appointmentDate || !form.appointmentTime) {
-                // Don't show error, just return false - calendar handles the selection
-                return false;
-            }
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
-    const handleNext = () => {
-        if (validateStep(step)) {
-            setStep(step + 1);
-        }
-    };
-
-    const handleBack = () => {
-        // If on final confirmation (step 4 with appointment), clear appointment and show calendar again
-        if (step === 4 && form.appointmentDate) {
-            setForm(prev => ({
-                ...prev,
-                appointmentDate: '',
-                appointmentTime: ''
-            }));
-            return;
-        }
+        const formSubmission = JSON.parse(storedData);
+        const pardotUrl = 'https://go.vocalcom.com/l/1029911/2026-01-04/363cd';
         
-        setStep(step - 1);
-        setErrors({
-            email: "",
-            firstName: "",
-            lastName: "",
-            jobTitle: "",
-            company: "",
-            phone: "",
-            country: ""
-        });
-    };
-
-    const handleSubmit = async (e: any) => {
-        e.preventDefault();
-        
-        // Only submit if we're on the last step
-        if (step !== totalSteps) {
-            return;
-        }
-        
-        setSendDatas(false);
-
-        if (!validateStep(step)) return;
-
-        setLoading(true);
-
-        try {
-            // Create appointment datetime
-            const appointmentDateTime = `${form.appointmentDate}T${form.appointmentTime}:00`;
-            
-            console.log('📤 Submitting form with booking details:', {
-                region: form.region,
-                ownerEmail: form.ownerEmail,
-                dateTime: appointmentDateTime,
-                hasRegion: !!form.region,
-                hasOwner: !!form.ownerEmail
-            });
-            
-            // Step 1: Book in Outlook calendar first to get booking ID
-            let bookingId = '';
-            let meetingLink = '';
-            
-            if (form.region && form.ownerEmail) {
-                try {
-                    const outlookResponse = await fetch('/api/outlook/book', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            region: form.region,
-                            ownerEmail: form.ownerEmail,
-                            dateTime: appointmentDateTime,
-                            inviteeInfo: {
-                                name: `${form.firstName} ${form.lastName}`,
-                                email: form.email,
-                                phone: form.phone,
-                                company: form.company,
-                                notes: `Job Title: ${form.jobTitle}\nCountry: ${form.country}`
-                            },
-                            utmParams
-                        })
-                    });
-                    
-                    if (outlookResponse.ok) {
-                        const data = await outlookResponse.json();
-                        console.log('✅ Outlook booking successful:', data);
-                        bookingId = data.appointment?.id || '';
-                        meetingLink = data.meetingLink || '';
-                        if (bookingId) {
-                            setForm(prev => ({ ...prev, bookingId }));
-                            console.log('📋 Booking ID:', bookingId);
-                        }
-                        if (meetingLink) {
-                            console.log('🔗 Meeting link:', meetingLink);
-                        }
-                    } else {
-                        const error = await outlookResponse.json();
-                        console.error('❌ Outlook booking failed:', error);
-                    }
-                } catch (err) {
-                    console.error('❌ Outlook booking error:', err);
-                }
-            } else {
-                console.warn('⚠️ Skipping Outlook booking - missing region or ownerEmail');
-            }
-            
-            // Step 2A: POST DIRECTLY to Pardot Form Handler (browser-side, no-cors)
-            console.log('📤 Submitting directly to Pardot Form Handler...');
-            const pardotParams = new URLSearchParams();
-            pardotParams.append('email', form.email);
-            pardotParams.append('first_name', form.firstName);
-            pardotParams.append('last_name', form.lastName);
-            pardotParams.append('job_title', form.jobTitle);
-            pardotParams.append('company', form.company);
-            pardotParams.append('country', form.country);
-            pardotParams.append('phone', form.phone.replace(/[\s+()-]/g, ''));
-            
-            // Add all attribution parameters with exact Pardot field names
-            // Always send all fields (even if empty) because Pardot may have them marked as required
-            pardotParams.append('GCLID', attribution.gclid || '');
-            pardotParams.append('utm_source', attribution.utm_source || '');
-            pardotParams.append('utm_medium', attribution.utm_medium || '');
-            pardotParams.append('utm_campaign', attribution.utm_campaign || '');
-            pardotParams.append('utm_content', attribution.utm_content || '');
-            pardotParams.append('utm_term', attribution.utm_term || '');
-            pardotParams.append('utm_matchtype', attribution.utm_matchtype || '');
-            pardotParams.append('utm_network', attribution.utm_network || '');
-            pardotParams.append('utm_device', attribution.utm_device || '');
-            pardotParams.append('utm_creative', attribution.utm_creative || '');
-            pardotParams.append('content_group', attribution.content_group || '');
-            pardotParams.append('li_fat_id', attribution.li_fat_id || '');
-            pardotParams.append('landing_language', attribution.landing_language || '');
-            
-            console.log('📋 Pardot form data:', Object.fromEntries(pardotParams.entries()));
-            
-            // Direct POST to Pardot using application/x-www-form-urlencoded (Pardot standard format)
-            fetch('https://go.vocalcom.com/l/1029911/2026-01-04/363cd', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: pardotParams.toString(),
-                mode: 'no-cors'
-            }).then(() => {
-                console.log('✅ Direct Pardot POST sent (application/x-www-form-urlencoded)');
-            }).catch(err => {
-                console.error('❌ Direct Pardot POST failed:', err);
-            });
-            
-            // Step 2B: Submit to internal API with booking details
-            const [pardotResponse, appointmentResponse] = await Promise.all([
-                fetch('/api/submit', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: form.email,
-                        firstName: form.firstName,
-                        lastName: form.lastName,
-                        jobTitle: form.jobTitle,
-                        company: form.company,
-                        country: form.country,
-                        phone: form.phone,
-                        // Add comprehensive UTM parameters for attribution
-                        gclid: attribution.gclid,
-                        utm_source: attribution.utm_source,
-                        utm_medium: attribution.utm_medium,
-                        utm_campaign: attribution.utm_campaign,
-                        utm_content: attribution.utm_content,
-                        utm_term: attribution.utm_term,
-                        utm_matchtype: attribution.utm_matchtype,
-                        utm_network: attribution.utm_network,
-                        utm_device: attribution.utm_device,
-                        utm_creative: attribution.utm_creative,
-                        content_group: attribution.content_group,
-                        li_fat_id: attribution.li_fat_id,
-                        landing_language: attribution.landing_language,
-                        // Add appointment details
-                        appointmentDate: form.appointmentDate,
-                        appointmentTime: form.appointmentTime,
-                        region: form.region,
-                        ownerEmail: form.ownerEmail,
-                        bookingId: bookingId,
-                        meetingLink: meetingLink,
-                    }),
-                }),
-                fetch('/api/save-lead/save', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        date: form.appointmentDate,
-                        hour: form.appointmentTime,
-                        firstname: form.firstName,
-                        lastname: form.lastName,
-                        email: form.email,
-                        phone: form.phone,
-                        company: form.company,
-                        bookingId: bookingId
-                    })
-                })
-            ]);
-
-            const pardotResult = await pardotResponse.json();
-            console.log('✅ Pardot Response:', pardotResult);
-            console.log('📊 All responses received:', {
-                pardot: pardotResponse.ok,
-                appointment: appointmentResponse.ok,
-                outlookBooked: !!bookingId
-            });
-
-            setLoading(false);
-            setSendDatas(true);
-            
-            // Redirect to thank you page after successful submission
-            // Delay increased to 5 seconds to allow network inspection
-            console.log('⏳ Redirecting to thank-you page in 5 seconds...');
-            console.log('💡 Check Network tab now for POST to go.vocalcom.com');
-            setTimeout(() => {
-                window.location.href = '/thank-you?date=' + encodeURIComponent(form.appointmentDate) + '&time=' + encodeURIComponent(form.appointmentTime);
-            }, 5000);
-            
-        } catch (error) {
-            console.error('Form submission error:', error);
-            setLoading(false);
-            alert(t.error);
-        }
-    };
-
-    const handleDateTimeSelect = (date: string, time: string, ownerEmail?: string) => {
-        setForm(prev => ({
-            ...prev,
-            appointmentDate: date,
-            appointmentTime: time,
-            ownerEmail: ownerEmail || prev.ownerEmail
-        }));
-        console.log('📅 Slot selected:', { date, time, ownerEmail });
-        // Don't change step, the calendar component being inside step 4 will show confirmation
-    };
-
-    // Calendar export helpers
-    const getCalendarEventData = () => {
-        if (!form.appointmentDate || !form.appointmentTime) return null;
-        
-        const [hours, minutes] = form.appointmentTime.split(':');
-        const startDate = new Date(form.appointmentDate);
-        startDate.setHours(parseInt(hours), parseInt(minutes), 0);
-        
-        const endDate = new Date(startDate);
-        endDate.setMinutes(endDate.getMinutes() + 15);
-        
-        const formatGoogleDate = (date: Date) => date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-        
-        return {
-            title: t.calendar.eventTitle,
-            description: t.calendar.eventDescription,
-            location: t.calendar.eventLocation,
-            startDate,
-            endDate,
-            googleStart: formatGoogleDate(startDate),
-            googleEnd: formatGoogleDate(endDate)
+        const pardotFields: { [key: string]: string } = {
+          email: formSubmission.email,
+          first_name: formSubmission.firstName,
+          last_name: formSubmission.lastName,
+          company: formSubmission.company,
+          phone: formSubmission.phone,
         };
+
+        // Add booking details if available
+        if (bookingData) {
+          console.log('[DemoForm] Including booking details:', bookingData);
+          
+          // Map to Pardot form handler fields
+          if (bookingData.event?.start_time) {
+            const meetingDate = new Date(bookingData.event.start_time);
+            pardotFields.meeting_date = meetingDate.toISOString();
+          }
+          if (bookingData.event?.uri) {
+            pardotFields.calendly_event = bookingData.event.uri;
+          }
+          if (bookingData.invitee?.uri) {
+            pardotFields.calendly_invitee_uri = bookingData.invitee.uri;
+          }
+          pardotFields.calendly_booking_status = 'completed';
+        } else {
+          pardotFields.calendly_booking_status = 'form_only';
+        }
+
+        // Add optional fields
+        if (formSubmission.country) pardotFields.country = formSubmission.country;
+        if (formSubmission.jobTitle) pardotFields.job_title = formSubmission.jobTitle;
+        if (formSubmission.attribution?.utm_source) pardotFields.utm_source = formSubmission.attribution.utm_source;
+        if (formSubmission.attribution?.utm_medium) pardotFields.utm_medium = formSubmission.attribution.utm_medium;
+        if (formSubmission.attribution?.utm_campaign) pardotFields.utm_campaign = formSubmission.attribution.utm_campaign;
+        if (formSubmission.attribution?.gclid) pardotFields.gclid = formSubmission.attribution.gclid;
+
+        const pardotData = new URLSearchParams(pardotFields);
+
+        console.log('[DemoForm] Submitting to Pardot:', Object.fromEntries(pardotData));
+
+        await fetch(pardotUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: pardotData.toString(),
+          mode: 'no-cors',
+        });
+
+        console.log('[DemoForm] Pardot submission completed');
+        
+        // Clear the stored data after successful submission
+        localStorage.removeItem('vocalcom_form_submission');
+      } catch (error) {
+        console.error('[DemoForm] Error submitting to Pardot:', error);
+      }
     };
 
-    const getGoogleCalendarLink = () => {
-        const event = getCalendarEventData();
-        if (!event) return '';
-        return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${event.googleStart}/${event.googleEnd}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.location)}`;
+    // Handle Calendly booking event
+    const handleMessage = async (e: MessageEvent) => {
+      // Only handle events from Calendly
+      if (e.origin !== 'https://calendly.com') return;
+      
+      if (e.data.event === 'calendly.event_scheduled') {
+        console.log('[DemoForm] Event scheduled:', e.data);
+        
+        // Submit to Pardot with booking details (async but don't wait)
+        submitToPardot(e.data.payload).catch(err => 
+          console.error('[DemoForm] Failed to submit to Pardot:', err)
+        );
+
+        // Store language preference and redirect immediately
+        localStorage.setItem('vocalcom_landing_language', locale || 'fr');
+        
+        // Brief delay to ensure Pardot submission starts before redirect
+        setTimeout(() => {
+          window.location.href = '/thank-you';
+        }, 100);
+      }
     };
 
-    const getOutlookLink = () => {
-        const event = getCalendarEventData();
-        if (!event) return '';
-        return `https://outlook.office.com/calendar/0/deeplink/compose?subject=${encodeURIComponent(event.title)}&startdt=${event.startDate.toISOString()}&enddt=${event.endDate.toISOString()}&body=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.location)}`;
-    };
+    // Handle user leaving without booking
+    const handleBeforeUnload = () => {
+      const storedData = localStorage.getItem('vocalcom_form_submission');
+      if (storedData) {
+        console.log('[DemoForm] User leaving without booking, submitting to Pardot');
+        // Submit synchronously before page unloads
+        const formSubmission = JSON.parse(storedData);
+        const pardotUrl = 'https://go.vocalcom.com/l/1029911/2026-01-04/363cd';
+        
+        const pardotFields: { [key: string]: string } = {
+          email: formSubmission.email,
+          first_name: formSubmission.firstName,
+          last_name: formSubmission.lastName,
+          company: formSubmission.company,
+          phone: formSubmission.phone,
+          calendly_booking_status: 'abandoned',
+        };
 
-    const downloadICS = () => {
-        const event = getCalendarEventData();
-        if (!event) return;
-        
-        const formatICSDate = (date: Date) => date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-        
-        const icsContent = `BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Vocalcom//Demo Meeting//EN
-BEGIN:VEVENT
-UID:${Date.now()}@vocalcom.com
-DTSTAMP:${formatICSDate(new Date())}
-DTSTART:${formatICSDate(event.startDate)}
-DTEND:${formatICSDate(event.endDate)}
-SUMMARY:${event.title}
-DESCRIPTION:${event.description}
-LOCATION:${event.location}
-END:VEVENT
-END:VCALENDAR`;
-        
-        const blob = new Blob([icsContent], { type: 'text/calendar' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'vocalcom-demo.ics';
-        a.click();
-        URL.revokeObjectURL(url);
+        if (formSubmission.country) pardotFields.country = formSubmission.country;
+        if (formSubmission.jobTitle) pardotFields.job_title = formSubmission.jobTitle;
+        if (formSubmission.attribution?.utm_source) pardotFields.utm_source = formSubmission.attribution.utm_source;
+        if (formSubmission.attribution?.utm_medium) pardotFields.utm_medium = formSubmission.attribution.utm_medium;
+        if (formSubmission.attribution?.utm_campaign) pardotFields.utm_campaign = formSubmission.attribution.utm_campaign;
+
+        const pardotData = new URLSearchParams(pardotFields);
+
+        // Use sendBeacon for reliable submission before unload
+        navigator.sendBeacon(pardotUrl, pardotData);
+        localStorage.removeItem('vocalcom_form_submission');
+      }
     };
+    
+    window.addEventListener('message', handleMessage);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    return () => {
+      window.removeEventListener('message', handleMessage);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [showCalendly, locale]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    
+    // Special handling for phone to maintain format
+    if (name === 'phone') {
+      // Remove all non-digit and non-space characters except plus at start
+      const cleaned = value.replace(/[^\d\s]/g, '');
+      setFormData(prev => ({ ...prev, [name]: cleaned }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const handleCountrySearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setCountrySearch(value);
+    setShowCountryDropdown(true);
+    
+    // Filter countries based on search
+    if (value.trim() === '') {
+      setFilteredCountries(countries.slice(1)); // Exclude placeholder
+    } else {
+      const searchLower = value.toLowerCase();
+      const filtered = countries.filter((country) => {
+        if (country.value === '') return false; // Exclude placeholder
+        const labels = Object.values(country.label);
+        return labels.some(label => 
+          typeof label === 'string' && label.toLowerCase().includes(searchLower)
+        ) || country.value.toLowerCase().includes(searchLower);
+      });
+      setFilteredCountries(filtered);
+    }
+  };
+
+  const handleCountrySelect = (country: { value: string; label: any; phonePrefix: string }) => {
+    setFormData(prev => ({ ...prev, country: country.value }));
+    setCountrySearch(country.label[locale as keyof typeof country.label] || country.label.en);
+    setShowCountryDropdown(false);
+    
+    // Update phone prefix when country changes
+    if (country.phonePrefix) {
+      setPhonePrefix(country.phonePrefix);
+      // Clear phone field when country changes to avoid mixing prefixes
+      setFormData(prev => ({ ...prev, phone: '' }));
+    }
+    
+    if (errors.country) {
+      setErrors(prev => ({ ...prev, country: '' }));
+    }
+  };
+
+  const handleCountryBlur = () => {
+    // Delay to allow click on dropdown item
+    setTimeout(() => {
+      setShowCountryDropdown(false);
+    }, 200);
+  };
+
+  const handleCountryFocus = () => {
+    setShowCountryDropdown(true);
+    if (countrySearch === '' && filteredCountries.length === 0) {
+      setFilteredCountries(countries.slice(1)); // Show all except placeholder
+    }
+  };
+
+  const validateStep = (currentStep: number): boolean => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (currentStep === 1) {
+      if (!formData.email) {
+        newErrors.email = 'Email is required';
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        newErrors.email = 'Please enter a valid email';
+      }
+    }
+
+    if (currentStep === 2) {
+      if (!formData.firstName) newErrors.firstName = 'First name is required';
+      if (!formData.lastName) newErrors.lastName = 'Last name is required';
+    }
+
+    if (currentStep === 3) {
+      if (!formData.company) newErrors.company = 'Company is required';
+      if (!formData.phone) {
+        newErrors.phone = 'Phone is required';
+      } else {
+        // Validate the complete phone number (prefix + user input)
+        const fullPhone = `${phonePrefix} ${formData.phone}`.trim();
+        if (!fullPhone.match(/^\+\d{1,4}\s?\d{6,14}$/)) {
+          newErrors.phone = 'Please enter a valid phone number';
+        }
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = () => {
+    if (validateStep(step)) {
+      setStep(step + 1);
+    }
+  };
+
+  const handleBack = () => {
+    setStep(step - 1);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateStep(step)) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Store form data in localStorage for later Pardot submission
+      const submissionData = {
+        email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        company: formData.company,
+        phone: `${phonePrefix}${formData.phone.replace(/\s/g, '')}`,
+        country: formData.country,
+        jobTitle: formData.jobTitle,
+        attribution,
+        submittedAt: new Date().toISOString(),
+      };
+      
+      localStorage.setItem('vocalcom_form_submission', JSON.stringify(submissionData));
+      console.log('[DemoForm] Form data saved to localStorage');
+
+      // Show Calendly widget immediately
+      setTimeout(() => {
+        setShowCalendly(true);
+        setIsSubmitting(false);
+      }, 300);
+
+    } catch (error) {
+      console.error('[DemoForm] Error processing form:', error);
+      setShowCalendly(true);
+      setIsSubmitting(false);
+    }
+  };
+
+  // Countries list with phone prefixes - values use Salesforce standard naming (English)
+  const countries = [
+    { value: '', label: { fr: 'Sélectionnez un pays', en: 'Select a country', es: 'Selecciona un país', pt: 'Selecione um país' }, phonePrefix: '' },
+    
+    // Europe - Western
+    { value: 'France', label: { fr: 'France', en: 'France', es: 'Francia', pt: 'França' }, phonePrefix: '+33' },
+    { value: 'Spain', label: { fr: 'Espagne', en: 'Spain', es: 'España', pt: 'Espanha' }, phonePrefix: '+34' },
+    { value: 'Portugal', label: { fr: 'Portugal', en: 'Portugal', es: 'Portugal', pt: 'Portugal' }, phonePrefix: '+351' },
+    { value: 'United Kingdom', label: { fr: 'Royaume-Uni', en: 'United Kingdom', es: 'Reino Unido', pt: 'Reino Unido' }, phonePrefix: '+44' },
+    { value: 'Ireland', label: { fr: 'Irlande', en: 'Ireland', es: 'Irlanda', pt: 'Irlanda' }, phonePrefix: '+353' },
+    { value: 'Germany', label: { fr: 'Allemagne', en: 'Germany', es: 'Alemania', pt: 'Alemanha' }, phonePrefix: '+49' },
+    { value: 'Belgium', label: { fr: 'Belgique', en: 'Belgium', es: 'Bélgica', pt: 'Bélgica' }, phonePrefix: '+32' },
+    { value: 'Netherlands', label: { fr: 'Pays-Bas', en: 'Netherlands', es: 'Países Bajos', pt: 'Países Baixos' }, phonePrefix: '+31' },
+    { value: 'Luxembourg', label: { fr: 'Luxembourg', en: 'Luxembourg', es: 'Luxemburgo', pt: 'Luxemburgo' }, phonePrefix: '+352' },
+    { value: 'Switzerland', label: { fr: 'Suisse', en: 'Switzerland', es: 'Suiza', pt: 'Suíça' }, phonePrefix: '+41' },
+    { value: 'Austria', label: { fr: 'Autriche', en: 'Austria', es: 'Austria', pt: 'Áustria' }, phonePrefix: '+43' },
+    
+    // Europe - Southern
+    { value: 'Italy', label: { fr: 'Italie', en: 'Italy', es: 'Italia', pt: 'Itália' }, phonePrefix: '+39' },
+    { value: 'Greece', label: { fr: 'Grèce', en: 'Greece', es: 'Grecia', pt: 'Grécia' }, phonePrefix: '+30' },
+    { value: 'Malta', label: { fr: 'Malte', en: 'Malta', es: 'Malta', pt: 'Malta' }, phonePrefix: '+356' },
+    { value: 'Cyprus', label: { fr: 'Chypre', en: 'Cyprus', es: 'Chipre', pt: 'Chipre' }, phonePrefix: '+357' },
+    
+    // Europe - Nordic
+    { value: 'Sweden', label: { fr: 'Suède', en: 'Sweden', es: 'Suecia', pt: 'Suécia' }, phonePrefix: '+46' },
+    { value: 'Norway', label: { fr: 'Norvège', en: 'Norway', es: 'Noruega', pt: 'Noruega' }, phonePrefix: '+47' },
+    { value: 'Denmark', label: { fr: 'Danemark', en: 'Denmark', es: 'Dinamarca', pt: 'Dinamarca' }, phonePrefix: '+45' },
+    { value: 'Finland', label: { fr: 'Finlande', en: 'Finland', es: 'Finlandia', pt: 'Finlândia' }, phonePrefix: '+358' },
+    { value: 'Iceland', label: { fr: 'Islande', en: 'Iceland', es: 'Islandia', pt: 'Islândia' }, phonePrefix: '+354' },
+    
+    // Europe - Eastern
+    { value: 'Poland', label: { fr: 'Pologne', en: 'Poland', es: 'Polonia', pt: 'Polônia' }, phonePrefix: '+48' },
+    { value: 'Czech Republic', label: { fr: 'République Tchèque', en: 'Czech Republic', es: 'República Checa', pt: 'República Checa' }, phonePrefix: '+420' },
+    { value: 'Hungary', label: { fr: 'Hongrie', en: 'Hungary', es: 'Hungría', pt: 'Hungria' }, phonePrefix: '+36' },
+    { value: 'Romania', label: { fr: 'Roumanie', en: 'Romania', es: 'Rumanía', pt: 'Romênia' }, phonePrefix: '+40' },
+    { value: 'Bulgaria', label: { fr: 'Bulgarie', en: 'Bulgaria', es: 'Bulgaria', pt: 'Bulgária' }, phonePrefix: '+359' },
+    { value: 'Croatia', label: { fr: 'Croatie', en: 'Croatia', es: 'Croacia', pt: 'Croácia' }, phonePrefix: '+385' },
+    { value: 'Slovenia', label: { fr: 'Slovénie', en: 'Slovenia', es: 'Eslovenia', pt: 'Eslovênia' }, phonePrefix: '+386' },
+    { value: 'Slovakia', label: { fr: 'Slovaquie', en: 'Slovakia', es: 'Eslovaquia', pt: 'Eslováquia' }, phonePrefix: '+421' },
+    { value: 'Serbia', label: { fr: 'Serbie', en: 'Serbia', es: 'Serbia', pt: 'Sérvia' }, phonePrefix: '+381' },
+    { value: 'Bosnia and Herzegovina', label: { fr: 'Bosnie-Herzégovine', en: 'Bosnia and Herzegovina', es: 'Bosnia y Herzegovina', pt: 'Bósnia e Herzegovina' }, phonePrefix: '+387' },
+    { value: 'Montenegro', label: { fr: 'Monténégro', en: 'Montenegro', es: 'Montenegro', pt: 'Montenegro' }, phonePrefix: '+382' },
+    { value: 'North Macedonia', label: { fr: 'Macédoine du Nord', en: 'North Macedonia', es: 'Macedonia del Norte', pt: 'Macedônia do Norte' }, phonePrefix: '+389' },
+    { value: 'Albania', label: { fr: 'Albanie', en: 'Albania', es: 'Albania', pt: 'Albânia' }, phonePrefix: '+355' },
+    { value: 'Kosovo', label: { fr: 'Kosovo', en: 'Kosovo', es: 'Kosovo', pt: 'Kosovo' }, phonePrefix: '+383' },
+    { value: 'Moldova', label: { fr: 'Moldavie', en: 'Moldova', es: 'Moldavia', pt: 'Moldávia' }, phonePrefix: '+373' },
+    { value: 'Ukraine', label: { fr: 'Ukraine', en: 'Ukraine', es: 'Ucrania', pt: 'Ucrânia' }, phonePrefix: '+380' },
+    { value: 'Belarus', label: { fr: 'Biélorussie', en: 'Belarus', es: 'Bielorrusia', pt: 'Bielorrússia' }, phonePrefix: '+375' },
+    { value: 'Russia', label: { fr: 'Russie', en: 'Russia', es: 'Rusia', pt: 'Rússia' }, phonePrefix: '+7' },
+    { value: 'Georgia', label: { fr: 'Géorgie', en: 'Georgia', es: 'Georgia', pt: 'Geórgia' }, phonePrefix: '+995' },
+    { value: 'Armenia', label: { fr: 'Arménie', en: 'Armenia', es: 'Armenia', pt: 'Armênia' }, phonePrefix: '+374' },
+    { value: 'Azerbaijan', label: { fr: 'Azerbaïdjan', en: 'Azerbaijan', es: 'Azerbaiyán', pt: 'Azerbaijão' }, phonePrefix: '+994' },
+    { value: 'Estonia', label: { fr: 'Estonie', en: 'Estonia', es: 'Estonia', pt: 'Estônia' }, phonePrefix: '+372' },
+    { value: 'Latvia', label: { fr: 'Lettonie', en: 'Latvia', es: 'Letonia', pt: 'Letônia' }, phonePrefix: '+371' },
+    { value: 'Lithuania', label: { fr: 'Lituanie', en: 'Lithuania', es: 'Lituania', pt: 'Lituânia' }, phonePrefix: '+370' },
+    
+    // Africa - North
+    { value: 'Morocco', label: { fr: 'Maroc', en: 'Morocco', es: 'Marruecos', pt: 'Marrocos' }, phonePrefix: '+212' },
+    { value: 'Algeria', label: { fr: 'Algérie', en: 'Algeria', es: 'Argelia', pt: 'Argélia' }, phonePrefix: '+213' },
+    { value: 'Tunisia', label: { fr: 'Tunisie', en: 'Tunisia', es: 'Túnez', pt: 'Tunísia' }, phonePrefix: '+216' },
+    { value: 'Libya', label: { fr: 'Libye', en: 'Libya', es: 'Libia', pt: 'Líbia' }, phonePrefix: '+218' },
+    { value: 'Egypt', label: { fr: 'Égypte', en: 'Egypt', es: 'Egipto', pt: 'Egito' }, phonePrefix: '+20' },
+    
+    // Africa - West
+    { value: 'Senegal', label: { fr: 'Sénégal', en: 'Senegal', es: 'Senegal', pt: 'Senegal' }, phonePrefix: '+221' },
+    { value: 'Cote d\'Ivoire', label: { fr: 'Côte d\'Ivoire', en: 'Ivory Coast', es: 'Costa de Marfil', pt: 'Costa do Marfim' }, phonePrefix: '+225' },
+    { value: 'Ghana', label: { fr: 'Ghana', en: 'Ghana', es: 'Ghana', pt: 'Gana' }, phonePrefix: '+233' },
+    { value: 'Nigeria', label: { fr: 'Nigéria', en: 'Nigeria', es: 'Nigeria', pt: 'Nigéria' }, phonePrefix: '+234' },
+    { value: 'Cameroon', label: { fr: 'Cameroun', en: 'Cameroon', es: 'Camerún', pt: 'Camarões' }, phonePrefix: '+237' },
+    { value: 'Benin', label: { fr: 'Bénin', en: 'Benin', es: 'Benín', pt: 'Benin' }, phonePrefix: '+229' },
+    { value: 'Togo', label: { fr: 'Togo', en: 'Togo', es: 'Togo', pt: 'Togo' }, phonePrefix: '+228' },
+    { value: 'Mali', label: { fr: 'Mali', en: 'Mali', es: 'Malí', pt: 'Mali' }, phonePrefix: '+223' },
+    { value: 'Burkina Faso', label: { fr: 'Burkina Faso', en: 'Burkina Faso', es: 'Burkina Faso', pt: 'Burkina Faso' }, phonePrefix: '+226' },
+    { value: 'Niger', label: { fr: 'Niger', en: 'Niger', es: 'Níger', pt: 'Níger' }, phonePrefix: '+227' },
+    { value: 'Guinea', label: { fr: 'Guinée', en: 'Guinea', es: 'Guinea', pt: 'Guiné' }, phonePrefix: '+224' },
+    { value: 'Liberia', label: { fr: 'Libéria', en: 'Liberia', es: 'Liberia', pt: 'Libéria' }, phonePrefix: '+231' },
+    { value: 'Sierra Leone', label: { fr: 'Sierra Leone', en: 'Sierra Leone', es: 'Sierra Leona', pt: 'Serra Leoa' }, phonePrefix: '+232' },
+    { value: 'Gambia', label: { fr: 'Gambie', en: 'Gambia', es: 'Gambia', pt: 'Gâmbia' }, phonePrefix: '+220' },
+    { value: 'Guinea-Bissau', label: { fr: 'Guinée-Bissau', en: 'Guinea-Bissau', es: 'Guinea-Bisáu', pt: 'Guiné-Bissau' }, phonePrefix: '+245' },
+    { value: 'Mauritania', label: { fr: 'Mauritanie', en: 'Mauritania', es: 'Mauritania', pt: 'Mauritânia' }, phonePrefix: '+222' },
+    { value: 'Cape Verde', label: { fr: 'Cap-Vert', en: 'Cape Verde', es: 'Cabo Verde', pt: 'Cabo Verde' }, phonePrefix: '+238' },
+    
+    // Africa - Central
+    { value: 'Democratic Republic of the Congo', label: { fr: 'République Démocratique du Congo', en: 'Democratic Republic of the Congo', es: 'República Democrática del Congo', pt: 'República Democrática do Congo' }, phonePrefix: '+243' },
+    { value: 'Republic of the Congo', label: { fr: 'République du Congo', en: 'Republic of the Congo', es: 'República del Congo', pt: 'República do Congo' }, phonePrefix: '+242' },
+    { value: 'Central African Republic', label: { fr: 'République Centrafricaine', en: 'Central African Republic', es: 'República Centroafricana', pt: 'República Centro-Africana' }, phonePrefix: '+236' },
+    { value: 'Chad', label: { fr: 'Tchad', en: 'Chad', es: 'Chad', pt: 'Chade' }, phonePrefix: '+235' },
+    { value: 'Gabon', label: { fr: 'Gabon', en: 'Gabon', es: 'Gabón', pt: 'Gabão' }, phonePrefix: '+241' },
+    { value: 'Equatorial Guinea', label: { fr: 'Guinée Équatoriale', en: 'Equatorial Guinea', es: 'Guinea Ecuatorial', pt: 'Guiné Equatorial' }, phonePrefix: '+240' },
+    
+    // Africa - East
+    { value: 'Kenya', label: { fr: 'Kenya', en: 'Kenya', es: 'Kenia', pt: 'Quênia' }, phonePrefix: '+254' },
+    { value: 'Tanzania', label: { fr: 'Tanzanie', en: 'Tanzania', es: 'Tanzania', pt: 'Tanzânia' }, phonePrefix: '+255' },
+    { value: 'Uganda', label: { fr: 'Ouganda', en: 'Uganda', es: 'Uganda', pt: 'Uganda' }, phonePrefix: '+256' },
+    { value: 'Ethiopia', label: { fr: 'Éthiopie', en: 'Ethiopia', es: 'Etiopía', pt: 'Etiópia' }, phonePrefix: '+251' },
+    { value: 'Rwanda', label: { fr: 'Rwanda', en: 'Rwanda', es: 'Ruanda', pt: 'Ruanda' }, phonePrefix: '+250' },
+    { value: 'Burundi', label: { fr: 'Burundi', en: 'Burundi', es: 'Burundi', pt: 'Burundi' }, phonePrefix: '+257' },
+    { value: 'Somalia', label: { fr: 'Somalie', en: 'Somalia', es: 'Somalia', pt: 'Somália' }, phonePrefix: '+252' },
+    { value: 'Djibouti', label: { fr: 'Djibouti', en: 'Djibouti', es: 'Yibuti', pt: 'Djibuti' }, phonePrefix: '+253' },
+    { value: 'Eritrea', label: { fr: 'Érythrée', en: 'Eritrea', es: 'Eritrea', pt: 'Eritreia' }, phonePrefix: '+291' },
+    { value: 'South Sudan', label: { fr: 'Soudan du Sud', en: 'South Sudan', es: 'Sudán del Sur', pt: 'Sudão do Sul' }, phonePrefix: '+211' },
+    { value: 'Sudan', label: { fr: 'Soudan', en: 'Sudan', es: 'Sudán', pt: 'Sudão' }, phonePrefix: '+249' },
+    
+    // Africa - Southern
+    { value: 'South Africa', label: { fr: 'Afrique du Sud', en: 'South Africa', es: 'Sudáfrica', pt: 'África do Sul' }, phonePrefix: '+27' },
+    { value: 'Angola', label: { fr: 'Angola', en: 'Angola', es: 'Angola', pt: 'Angola' }, phonePrefix: '+244' },
+    { value: 'Mozambique', label: { fr: 'Mozambique', en: 'Mozambique', es: 'Mozambique', pt: 'Moçambique' }, phonePrefix: '+258' },
+    { value: 'Zimbabwe', label: { fr: 'Zimbabwe', en: 'Zimbabwe', es: 'Zimbabue', pt: 'Zimbábue' }, phonePrefix: '+263' },
+    { value: 'Zambia', label: { fr: 'Zambie', en: 'Zambia', es: 'Zambia', pt: 'Zâmbia' }, phonePrefix: '+260' },
+    { value: 'Malawi', label: { fr: 'Malawi', en: 'Malawi', es: 'Malaui', pt: 'Malawi' }, phonePrefix: '+265' },
+    { value: 'Namibia', label: { fr: 'Namibie', en: 'Namibia', es: 'Namibia', pt: 'Namíbia' }, phonePrefix: '+264' },
+    { value: 'Botswana', label: { fr: 'Botswana', en: 'Botswana', es: 'Botsuana', pt: 'Botsuana' }, phonePrefix: '+267' },
+    { value: 'Lesotho', label: { fr: 'Lesotho', en: 'Lesotho', es: 'Lesoto', pt: 'Lesoto' }, phonePrefix: '+266' },
+    { value: 'Eswatini', label: { fr: 'Eswatini', en: 'Eswatini', es: 'Esuatini', pt: 'Essuatíni' }, phonePrefix: '+268' },
+    { value: 'Madagascar', label: { fr: 'Madagascar', en: 'Madagascar', es: 'Madagascar', pt: 'Madagascar' }, phonePrefix: '+261' },
+    { value: 'Mauritius', label: { fr: 'Maurice', en: 'Mauritius', es: 'Mauricio', pt: 'Maurícia' }, phonePrefix: '+230' },
+    { value: 'Seychelles', label: { fr: 'Seychelles', en: 'Seychelles', es: 'Seychelles', pt: 'Seychelles' }, phonePrefix: '+248' },
+    { value: 'Comoros', label: { fr: 'Comores', en: 'Comoros', es: 'Comoras', pt: 'Comores' }, phonePrefix: '+269' },
+    
+    // Middle East
+    { value: 'United Arab Emirates', label: { fr: 'Émirats Arabes Unis', en: 'United Arab Emirates', es: 'Emiratos Árabes Unidos', pt: 'Emirados Árabes Unidos' }, phonePrefix: '+971' },
+    { value: 'Saudi Arabia', label: { fr: 'Arabie Saoudite', en: 'Saudi Arabia', es: 'Arabia Saudita', pt: 'Arábia Saudita' }, phonePrefix: '+966' },
+    { value: 'Qatar', label: { fr: 'Qatar', en: 'Qatar', es: 'Catar', pt: 'Catar' }, phonePrefix: '+974' },
+    { value: 'Kuwait', label: { fr: 'Koweït', en: 'Kuwait', es: 'Kuwait', pt: 'Kuwait' }, phonePrefix: '+965' },
+    { value: 'Bahrain', label: { fr: 'Bahreïn', en: 'Bahrain', es: 'Baréin', pt: 'Bahrein' }, phonePrefix: '+973' },
+    { value: 'Oman', label: { fr: 'Oman', en: 'Oman', es: 'Omán', pt: 'Omã' }, phonePrefix: '+968' },
+    { value: 'Yemen', label: { fr: 'Yémen', en: 'Yemen', es: 'Yemen', pt: 'Iêmen' }, phonePrefix: '+967' },
+    { value: 'Jordan', label: { fr: 'Jordanie', en: 'Jordan', es: 'Jordania', pt: 'Jordânia' }, phonePrefix: '+962' },
+    { value: 'Lebanon', label: { fr: 'Liban', en: 'Lebanon', es: 'Líbano', pt: 'Líbano' }, phonePrefix: '+961' },
+    { value: 'Syria', label: { fr: 'Syrie', en: 'Syria', es: 'Siria', pt: 'Síria' }, phonePrefix: '+963' },
+    { value: 'Iraq', label: { fr: 'Irak', en: 'Iraq', es: 'Irak', pt: 'Iraque' }, phonePrefix: '+964' },
+    { value: 'Iran', label: { fr: 'Iran', en: 'Iran', es: 'Irán', pt: 'Irã' }, phonePrefix: '+98' },
+    { value: 'Israel', label: { fr: 'Israël', en: 'Israel', es: 'Israel', pt: 'Israel' }, phonePrefix: '+972' },
+    { value: 'Palestine', label: { fr: 'Palestine', en: 'Palestine', es: 'Palestina', pt: 'Palestina' }, phonePrefix: '+970' },
+    { value: 'Turkey', label: { fr: 'Turquie', en: 'Turkey', es: 'Turquía', pt: 'Turquia' }, phonePrefix: '+90' },
+    
+    // Americas - North
+    { value: 'United States', label: { fr: 'États-Unis', en: 'United States', es: 'Estados Unidos', pt: 'Estados Unidos' }, phonePrefix: '+1' },
+    { value: 'Canada', label: { fr: 'Canada', en: 'Canada', es: 'Canadá', pt: 'Canadá' }, phonePrefix: '+1' },
+    { value: 'Mexico', label: { fr: 'Mexique', en: 'Mexico', es: 'México', pt: 'México' }, phonePrefix: '+52' },
+    
+    // Americas - Central
+    { value: 'Costa Rica', label: { fr: 'Costa Rica', en: 'Costa Rica', es: 'Costa Rica', pt: 'Costa Rica' }, phonePrefix: '+506' },
+    { value: 'Panama', label: { fr: 'Panama', en: 'Panama', es: 'Panamá', pt: 'Panamá' }, phonePrefix: '+507' },
+    { value: 'Guatemala', label: { fr: 'Guatemala', en: 'Guatemala', es: 'Guatemala', pt: 'Guatemala' }, phonePrefix: '+502' },
+    { value: 'El Salvador', label: { fr: 'Salvador', en: 'El Salvador', es: 'El Salvador', pt: 'El Salvador' }, phonePrefix: '+503' },
+    { value: 'Honduras', label: { fr: 'Honduras', en: 'Honduras', es: 'Honduras', pt: 'Honduras' }, phonePrefix: '+504' },
+    { value: 'Nicaragua', label: { fr: 'Nicaragua', en: 'Nicaragua', es: 'Nicaragua', pt: 'Nicarágua' }, phonePrefix: '+505' },
+    
+    // Americas - South
+    { value: 'Brazil', label: { fr: 'Brésil', en: 'Brazil', es: 'Brasil', pt: 'Brasil' }, phonePrefix: '+55' },
+    { value: 'Argentina', label: { fr: 'Argentine', en: 'Argentina', es: 'Argentina', pt: 'Argentina' }, phonePrefix: '+54' },
+    { value: 'Colombia', label: { fr: 'Colombie', en: 'Colombia', es: 'Colombia', pt: 'Colômbia' }, phonePrefix: '+57' },
+    { value: 'Chile', label: { fr: 'Chili', en: 'Chile', es: 'Chile', pt: 'Chile' }, phonePrefix: '+56' },
+    { value: 'Peru', label: { fr: 'Pérou', en: 'Peru', es: 'Perú', pt: 'Peru' }, phonePrefix: '+51' },
+    { value: 'Venezuela', label: { fr: 'Venezuela', en: 'Venezuela', es: 'Venezuela', pt: 'Venezuela' }, phonePrefix: '+58' },
+    { value: 'Ecuador', label: { fr: 'Équateur', en: 'Ecuador', es: 'Ecuador', pt: 'Equador' }, phonePrefix: '+593' },
+    { value: 'Bolivia', label: { fr: 'Bolivie', en: 'Bolivia', es: 'Bolivia', pt: 'Bolívia' }, phonePrefix: '+591' },
+    { value: 'Paraguay', label: { fr: 'Paraguay', en: 'Paraguay', es: 'Paraguay', pt: 'Paraguai' }, phonePrefix: '+595' },
+    { value: 'Uruguay', label: { fr: 'Uruguay', en: 'Uruguay', es: 'Uruguay', pt: 'Uruguai' }, phonePrefix: '+598' },
+    
+    // Asia - Central
+    { value: 'Kazakhstan', label: { fr: 'Kazakhstan', en: 'Kazakhstan', es: 'Kazajistán', pt: 'Cazaquistão' }, phonePrefix: '+7' },
+    { value: 'Uzbekistan', label: { fr: 'Ouzbékistan', en: 'Uzbekistan', es: 'Uzbekistán', pt: 'Uzbequistão' }, phonePrefix: '+998' },
+    { value: 'Turkmenistan', label: { fr: 'Turkménistan', en: 'Turkmenistan', es: 'Turkmenistán', pt: 'Turcomenistão' }, phonePrefix: '+993' },
+    { value: 'Kyrgyzstan', label: { fr: 'Kirghizistan', en: 'Kyrgyzstan', es: 'Kirguistán', pt: 'Quirguistão' }, phonePrefix: '+996' },
+    { value: 'Tajikistan', label: { fr: 'Tadjikistan', en: 'Tajikistan', es: 'Tayikistán', pt: 'Tajiquistão' }, phonePrefix: '+992' },
+    { value: 'Afghanistan', label: { fr: 'Afghanistan', en: 'Afghanistan', es: 'Afganistán', pt: 'Afeganistão' }, phonePrefix: '+93' },
+    
+    // Asia - East
+    { value: 'China', label: { fr: 'Chine', en: 'China', es: 'China', pt: 'China' }, phonePrefix: '+86' },
+    { value: 'Japan', label: { fr: 'Japon', en: 'Japan', es: 'Japón', pt: 'Japão' }, phonePrefix: '+81' },
+    { value: 'South Korea', label: { fr: 'Corée du Sud', en: 'South Korea', es: 'Corea del Sur', pt: 'Coreia do Sul' }, phonePrefix: '+82' },
+    { value: 'North Korea', label: { fr: 'Corée du Nord', en: 'North Korea', es: 'Corea del Norte', pt: 'Coreia do Norte' }, phonePrefix: '+850' },
+    { value: 'Mongolia', label: { fr: 'Mongolie', en: 'Mongolia', es: 'Mongolia', pt: 'Mongólia' }, phonePrefix: '+976' },
+    { value: 'Hong Kong', label: { fr: 'Hong Kong', en: 'Hong Kong', es: 'Hong Kong', pt: 'Hong Kong' }, phonePrefix: '+852' },
+    { value: 'Macau', label: { fr: 'Macao', en: 'Macau', es: 'Macao', pt: 'Macau' }, phonePrefix: '+853' },
+    { value: 'Taiwan', label: { fr: 'Taïwan', en: 'Taiwan', es: 'Taiwán', pt: 'Taiwan' }, phonePrefix: '+886' },
+    
+    // Asia - Southeast
+    { value: 'Singapore', label: { fr: 'Singapour', en: 'Singapore', es: 'Singapur', pt: 'Cingapura' }, phonePrefix: '+65' },
+    { value: 'Malaysia', label: { fr: 'Malaisie', en: 'Malaysia', es: 'Malasia', pt: 'Malásia' }, phonePrefix: '+60' },
+    { value: 'Thailand', label: { fr: 'Thaïlande', en: 'Thailand', es: 'Tailandia', pt: 'Tailândia' }, phonePrefix: '+66' },
+    { value: 'Vietnam', label: { fr: 'Vietnam', en: 'Vietnam', es: 'Vietnam', pt: 'Vietnã' }, phonePrefix: '+84' },
+    { value: 'Philippines', label: { fr: 'Philippines', en: 'Philippines', es: 'Filipinas', pt: 'Filipinas' }, phonePrefix: '+63' },
+    { value: 'Indonesia', label: { fr: 'Indonésie', en: 'Indonesia', es: 'Indonesia', pt: 'Indonésia' }, phonePrefix: '+62' },
+    { value: 'Brunei', label: { fr: 'Brunei', en: 'Brunei', es: 'Brunéi', pt: 'Brunei' }, phonePrefix: '+673' },
+    { value: 'Myanmar', label: { fr: 'Myanmar', en: 'Myanmar', es: 'Birmania', pt: 'Mianmar' }, phonePrefix: '+95' },
+    { value: 'Cambodia', label: { fr: 'Cambodge', en: 'Cambodia', es: 'Camboya', pt: 'Camboja' }, phonePrefix: '+855' },
+    { value: 'Laos', label: { fr: 'Laos', en: 'Laos', es: 'Laos', pt: 'Laos' }, phonePrefix: '+856' },
+    { value: 'Timor-Leste', label: { fr: 'Timor Oriental', en: 'Timor-Leste', es: 'Timor Oriental', pt: 'Timor-Leste' }, phonePrefix: '+670' },
+    
+    // Asia - South
+    { value: 'India', label: { fr: 'Inde', en: 'India', es: 'India', pt: 'Índia' }, phonePrefix: '+91' },
+    { value: 'Pakistan', label: { fr: 'Pakistan', en: 'Pakistan', es: 'Pakistán', pt: 'Paquistão' }, phonePrefix: '+92' },
+    { value: 'Bangladesh', label: { fr: 'Bangladesh', en: 'Bangladesh', es: 'Bangladés', pt: 'Bangladesh' }, phonePrefix: '+880' },
+    { value: 'Sri Lanka', label: { fr: 'Sri Lanka', en: 'Sri Lanka', es: 'Sri Lanka', pt: 'Sri Lanka' }, phonePrefix: '+94' },
+    { value: 'Nepal', label: { fr: 'Népal', en: 'Nepal', es: 'Nepal', pt: 'Nepal' }, phonePrefix: '+977' },
+    { value: 'Bhutan', label: { fr: 'Bhoutan', en: 'Bhutan', es: 'Bután', pt: 'Butão' }, phonePrefix: '+975' },
+    { value: 'Maldives', label: { fr: 'Maldives', en: 'Maldives', es: 'Maldivas', pt: 'Maldivas' }, phonePrefix: '+960' },
+    
+    // Americas - Caribbean
+    { value: 'Jamaica', label: { fr: 'Jamaïque', en: 'Jamaica', es: 'Jamaica', pt: 'Jamaica' }, phonePrefix: '+1876' },
+    { value: 'Trinidad and Tobago', label: { fr: 'Trinité-et-Tobago', en: 'Trinidad and Tobago', es: 'Trinidad y Tobago', pt: 'Trinidad e Tobago' }, phonePrefix: '+1868' },
+    { value: 'Barbados', label: { fr: 'Barbade', en: 'Barbados', es: 'Barbados', pt: 'Barbados' }, phonePrefix: '+1246' },
+    { value: 'Bahamas', label: { fr: 'Bahamas', en: 'Bahamas', es: 'Bahamas', pt: 'Bahamas' }, phonePrefix: '+1242' },
+    { value: 'Dominican Republic', label: { fr: 'République Dominicaine', en: 'Dominican Republic', es: 'República Dominicana', pt: 'República Dominicana' }, phonePrefix: '+1809' },
+    { value: 'Haiti', label: { fr: 'Haïti', en: 'Haiti', es: 'Haití', pt: 'Haiti' }, phonePrefix: '+509' },
+    { value: 'Cuba', label: { fr: 'Cuba', en: 'Cuba', es: 'Cuba', pt: 'Cuba' }, phonePrefix: '+53' },
+    { value: 'Puerto Rico', label: { fr: 'Porto Rico', en: 'Puerto Rico', es: 'Puerto Rico', pt: 'Porto Rico' }, phonePrefix: '+1787' },
+    
+    // Oceania
+    { value: 'Australia', label: { fr: 'Australie', en: 'Australia', es: 'Australia', pt: 'Austrália' }, phonePrefix: '+61' },
+    { value: 'New Zealand', label: { fr: 'Nouvelle-Zélande', en: 'New Zealand', es: 'Nueva Zelanda', pt: 'Nova Zelândia' }, phonePrefix: '+64' },
+    { value: 'Fiji', label: { fr: 'Fidji', en: 'Fiji', es: 'Fiyi', pt: 'Fiji' }, phonePrefix: '+679' },
+    { value: 'Papua New Guinea', label: { fr: 'Papouasie-Nouvelle-Guinée', en: 'Papua New Guinea', es: 'Papúa Nueva Guinea', pt: 'Papua-Nova Guiné' }, phonePrefix: '+675' },
+    
+    // Other
+    { value: 'Other', label: { fr: 'Autre', en: 'Other', es: 'Otro', pt: 'Outro' }, phonePrefix: '+1' },
+  ];
+
+  const translations = {
+    fr: {
+      email: 'Email professionnel',
+      emailPlaceholder: 'votre@email.com',
+      firstName: 'Prénom',
+      lastName: 'Nom',
+      company: 'Entreprise',
+      phone: 'Téléphone',
+      country: 'Pays',
+      countryPlaceholder: 'Rechercher un pays...',
+      jobTitle: 'Poste',
+      next: 'Suivant',
+      back: 'Retour',
+      submit: 'Réserver ma démo',
+      submitting: 'Envoi en cours...',
+      selectTime: 'Sélectionnez votre créneau',
+      selectTimeDesc: 'Choisissez un horaire qui vous convient',
+    },
+    en: {
+      email: 'Business Email',
+      emailPlaceholder: 'your@email.com',
+      firstName: 'First Name',
+      lastName: 'Last Name',
+      company: 'Company',
+      phone: 'Phone',
+      country: 'Country',
+      countryPlaceholder: 'Search for a country...',
+      jobTitle: 'Job Title',
+      next: 'Next',
+      back: 'Back',
+      submit: 'Book my demo',
+      submitting: 'Submitting...',
+      selectTime: 'Select your time slot',
+      selectTimeDesc: 'Choose a time that works for you',
+    },
+    es: {
+      email: 'Email profesional',
+      emailPlaceholder: 'tu@email.com',
+      firstName: 'Nombre',
+      lastName: 'Apellido',
+      company: 'Empresa',
+      phone: 'Teléfono',
+      country: 'País',
+      countryPlaceholder: 'Buscar un país...',
+      jobTitle: 'Cargo',
+      next: 'Siguiente',
+      back: 'Volver',
+      submit: 'Reservar mi demo',
+      submitting: 'Enviando...',
+      selectTime: 'Selecciona tu horario',
+      selectTimeDesc: 'Elige un horario que te convenga',
+    },
+    pt: {
+      email: 'Email profissional',
+      emailPlaceholder: 'seu@email.com',
+      firstName: 'Nome',
+      lastName: 'Sobrenome',
+      company: 'Empresa',
+      phone: 'Telefone',
+      country: 'País',
+      countryPlaceholder: 'Pesquisar um país...',
+      jobTitle: 'Cargo',
+      next: 'Próximo',
+      back: 'Voltar',
+      submit: 'Reservar minha demo',
+      submitting: 'Enviando...',
+      selectTime: 'Selecione seu horário',
+      selectTimeDesc: 'Escolha um horário que funcione para você',
+    },
+  };
+
+  const t = translations[locale as keyof typeof translations] || translations.en;
+
+  // If Calendly is showing, display it
+  if (showCalendly) {
+    // Build pre-filled URL for iframe
+    const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+    const url = new URL(calendlyUrl);
+    url.searchParams.set('name', fullName);
+    url.searchParams.set('email', formData.email);
+    
+    // Add phone for SMS notifications - Calendly expects it in a1 field
+    if (formData.phone) {
+      const completePhone = `${phonePrefix}${formData.phone}`.trim();
+      url.searchParams.set('a1', completePhone); // Primary phone field
+      url.searchParams.set('phone_number', completePhone); // Alternative parameter for SMS
+    }
+    
+    // Add UTM parameters for tracking
+    if (attribution.utm_source) url.searchParams.set('utm_source', attribution.utm_source);
+    if (attribution.utm_medium) url.searchParams.set('utm_medium', attribution.utm_medium);
+    if (attribution.utm_campaign) url.searchParams.set('utm_campaign', attribution.utm_campaign);
+    
+    // Hide Calendly's GDPR banner since we're using GTM for cookie consent
+    url.searchParams.set('hide_gdpr_banner', '1');
+    url.searchParams.set('embed_domain', window.location.hostname);
+    url.searchParams.set('embed_type', 'Inline');
+    
+    // Don't set redirect URL - we'll handle it via message event
+    // This prevents Calendly's security warning page
+    
+    const iframeUrl = url.toString();
+    console.log('[DemoForm] Calendly iframe URL:', iframeUrl);
 
     return (
-        <form className="space-y-6" onSubmit={handleSubmit}>
-            {/* Hidden attribution fields for Pardot Form Handler */}
-            <input type="hidden" name="GCLID" value={attribution.gclid || ''} />
-            <input type="hidden" name="UTM_Source" value={attribution.utm_source || ''} />
-            <input type="hidden" name="UTM_Medium" value={attribution.utm_medium || ''} />
-            <input type="hidden" name="UTM_Campaign" value={attribution.utm_campaign || ''} />
-            <input type="hidden" name="UTM_Content" value={attribution.utm_content || ''} />
-            <input type="hidden" name="UTM_Term" value={attribution.utm_term || ''} />
-            <input type="hidden" name="UTM_Matchtype" value={attribution.utm_matchtype || ''} />
-            <input type="hidden" name="UTM_Network" value={attribution.utm_network || ''} />
-            <input type="hidden" name="UTM_Device" value={attribution.utm_device || ''} />
-            <input type="hidden" name="UTM_Creative" value={attribution.utm_creative || ''} />
-            <input type="hidden" name="Content_Group" value={attribution.content_group || ''} />
-            <input type="hidden" name="Li_Fat_Id" value={attribution.li_fat_id || ''} />
-            <input type="hidden" name="Landing_Language" value={attribution.landing_language || ''} />
-            
-            {/* Progress bar */}
-            <div className="mb-6">
-                <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs font-semibold text-gray-700">{t.steps.current} {step}/{totalSteps}</span>
-                    <span className="text-xs font-medium text-[#8b5cf6]">{Math.round((step / totalSteps) * 100)}{t.steps.percentage}</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                    <div 
-                        className="bg-gradient-to-r from-[#7c3aed] to-[#a855f7] h-2 rounded-full transition-all duration-500 ease-out"
-                        style={{ width: `${(step / totalSteps) * 100}%` }}
-                    ></div>
-                </div>
-            </div>
-
-            {/* Step 1: Personal Info */}
-            {step === 1 && (
-                <div className="space-y-4 animate-fade-in">
-                    <div className="text-center mb-4">
-                        <h4 className="text-base font-bold text-gray-900">{t.step1.title}</h4>
-                        <p className="text-xs text-gray-500 mt-1">{t.step1.subtitle}</p>
-                    </div>
-
-                    <div>
-                        <label htmlFor="email" className={`block text-xs font-medium mb-1.5 ml-1 ${errors.email ? "text-red-500" : "text-gray-700"}`}>
-                            <div className="flex items-center gap-1.5">
-                                <Icon path={mdiEmailOutline} size={0.6} />
-                                {t.fields.email.label}
-                            </div>
-                        </label>
-                        <input
-                            type="email"
-                            id="email"
-                            value={form.email}
-                            onChange={handleChange}
-                            autoFocus
-                            className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm 
-                                focus:ring-2 focus:border-transparent outline-none transition-all
-                                ${errors.email ? "border-red-500 focus:ring-red-400" : "border-gray-200 focus:ring-[#8b5cf6]"}
-                            `}
-                            placeholder={t.fields.email.placeholder}
-                        />
-                        {errors.email && (
-                            <p className="text-red-500 text-xs mt-1 ml-1">⚠️ {errors.email}</p>
-                        )}
-                    </div>
-
-                    <div>
-                        <label htmlFor="firstName" className={`block text-xs font-medium mb-1.5 ml-1 ${errors.firstName ? "text-red-500" : "text-gray-700"}`}>
-                            <div className="flex items-center gap-1.5">
-                                <Icon path={mdiAccountOutline} size={0.6} />
-                                {t.fields.firstName.label}
-                            </div>
-                        </label>
-                        <input
-                            type="text"
-                            id="firstName"
-                            value={form.firstName}
-                            onChange={handleChange}
-                            className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm 
-                                focus:ring-2 focus:border-transparent outline-none transition-all
-                                ${errors.firstName ? "border-red-500 focus:ring-red-400" : "border-gray-200 focus:ring-[#8b5cf6]"}
-                            `}
-                            placeholder={t.fields.firstName.placeholder}
-                        />
-                        {errors.firstName && (
-                            <p className="text-red-500 text-xs mt-1 ml-1">⚠️ {errors.firstName}</p>
-                        )}
-                    </div>
-
-                    <div>
-                        <label htmlFor="lastName" className={`block text-xs font-medium mb-1.5 ml-1 ${errors.lastName ? "text-red-500" : "text-gray-700"}`}>
-                            <div className="flex items-center gap-1.5">
-                                <Icon path={mdiAccountOutline} size={0.6} />
-                                {t.fields.lastName.label}
-                            </div>
-                        </label>
-                        <input
-                            type="text"
-                            id="lastName"
-                            value={form.lastName}
-                            onChange={handleChange}
-                            className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm 
-                                focus:ring-2 focus:border-transparent outline-none transition-all
-                                ${errors.lastName ? "border-red-500 focus:ring-red-400" : "border-gray-200 focus:ring-[#8b5cf6]"}
-                            `}
-                            placeholder={t.fields.lastName.placeholder}
-                        />
-                        {errors.lastName && (
-                            <p className="text-red-500 text-xs mt-1 ml-1">⚠️ {errors.lastName}</p>
-                        )}
-                    </div>
-                </div>
-            )}
-
-            {/* Step 2: Job Title, Company & Country */}
-            {step === 2 && (
-                <div className="space-y-4 animate-fade-in">
-                    <div className="text-center mb-4">
-                        <h4 className="text-base font-bold text-gray-900">{t.step2.title}</h4>
-                        <p className="text-xs text-gray-500 mt-1">{t.step2.subtitle}</p>
-                    </div>
-
-                    <div>
-                        <label htmlFor="jobTitle" className={`block text-xs font-medium mb-1.5 ml-1 ${errors.jobTitle ? "text-red-500" : "text-gray-700"}`}>
-                            <div className="flex items-center gap-1.5">
-                                <Icon path={mdiAccountOutline} size={0.6} />
-                                {t.fields.jobTitle.label}
-                            </div>
-                        </label>
-                        <input
-                            type="text"
-                            id="jobTitle"
-                            value={form.jobTitle}
-                            onChange={handleChange}
-                            autoFocus
-                            className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm 
-                                focus:ring-2 focus:border-transparent outline-none transition-all
-                                ${errors.jobTitle ? "border-red-500 focus:ring-red-400" : "border-gray-200 focus:ring-[#8b5cf6]"}
-                            `}
-                            placeholder={t.fields.jobTitle.placeholder}
-                        />
-                        {errors.jobTitle && (
-                            <p className="text-red-500 text-xs mt-1 ml-1">⚠️ {errors.jobTitle}</p>
-                        )}
-                    </div>
-
-                    <div>
-                        <label htmlFor="company" className={`block text-xs font-medium mb-1.5 ml-1 ${errors.company ? "text-red-500" : "text-gray-700"}`}>
-                            <div className="flex items-center gap-1.5">
-                                <Icon path={mdiOfficeBuilding} size={0.6} />
-                                {t.fields.company.label}
-                            </div>
-                        </label>
-                        <input
-                            type="text"
-                            id="company"
-                            value={form.company}
-                            onChange={handleChange}
-                            className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm 
-                                focus:ring-2 focus:border-transparent outline-none transition-all
-                                ${errors.company ? "border-red-500 focus:ring-red-400" : "border-gray-200 focus:ring-[#8b5cf6]"}
-                            `}
-                            placeholder={t.fields.company.placeholder}
-                        />
-                        {errors.company && (
-                            <p className="text-red-500 text-xs mt-1 ml-1">⚠️ {errors.company}</p>
-                        )}
-                    </div>
-
-                    <div>
-                        <label htmlFor="country" className={`block text-xs font-medium mb-2 ml-1 ${errors.country ? "text-red-500" : "text-gray-700"}`}>
-                            <div className="flex items-center gap-1.5">
-                                <Icon path={mdiEarth} size={0.6} />
-                                {t.fields.country.label}
-                            </div>
-                        </label>
-                        <div className="relative" ref={countryInputRef}>
-                            <input
-                                type="text"
-                                id="country"
-                                value={countrySearch}
-                                onChange={(e) => handleCountrySearch(e.target.value)}
-                                onFocus={() => setShowCountryDropdown(true)}
-                                autoComplete="off"
-                                className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm 
-                                    focus:ring-2 focus:border-transparent outline-none transition-all
-                                    ${errors.country ? "border-red-500 focus:ring-red-400" : "border-gray-200 focus:ring-[#8b5cf6]"}
-                                `}
-                                placeholder={t.fields.country.placeholder}
-                            />
-                            {showCountryDropdown && filteredCountries.length > 0 && (
-                                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
-                                    {filteredCountries.map((country) => (
-                                        <div
-                                            key={country}
-                                            onClick={() => handleCountrySelect(country)}
-                                            className="px-4 py-2.5 text-sm hover:bg-cyan-50 cursor-pointer transition-colors border-b border-gray-100 last:border-b-0"
-                                        >
-                                            {country}
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                        {errors.country && (
-                            <p className="text-red-500 text-xs mt-1 ml-1">⚠️ {errors.country}</p>
-                        )}
-                    </div>
-                </div>
-            )}
-
-            {/* Step 3: Phone */}
-            {step === 3 && (
-                <div className="space-y-4 animate-fade-in">
-                    <div className="text-center mb-4">
-                        <h4 className="text-base font-bold text-gray-900">{t.step3.title}</h4>
-                        <p className="text-xs text-gray-500 mt-1">{t.step3.subtitle}</p>
-                    </div>
-
-                    <div>
-                        <label htmlFor="phone" className={`block text-xs font-medium mb-1.5 ml-1 ${errors.phone ? "text-red-500" : "text-gray-700"}`}>
-                            <div className="flex items-center gap-1.5">
-                                <Icon path={mdiPhone} size={0.6} />
-                                {t.fields.phone.label}
-                            </div>
-                        </label>
-                        <input
-                            type="tel"
-                            id="phone"
-                            value={form.phone}
-                            onChange={handleChange}
-                            autoFocus
-                            className={`w-full px-4 py-3 bg-gray-50 border rounded-xl text-sm 
-                                focus:ring-2 focus:border-transparent outline-none transition-all
-                                ${errors.phone ? "border-red-500 focus:ring-red-400" : "border-gray-200 focus:ring-[#8b5cf6]"}
-                            `}
-                            placeholder={t.fields.phone.placeholder}
-                        />
-                        {errors.phone && (
-                            <p className="text-red-500 text-xs mt-1 ml-1">⚠️ {errors.phone}</p>
-                        )}
-                    </div>
-                </div>
-            )}
-
-            {/* Step 3.5: Calendar - Step 4 is calendar */}
-            {step === 4 && !form.appointmentDate && (
-                <div className="animate-fade-in -mx-6 mb-6">
-                    <FrenchCalendar 
-                        form={{
-                            firstname: form.firstName,
-                            lastname: form.lastName,
-                            email: form.email,
-                            phone: form.phone,
-                            company: form.company
-                        }}
-                        onDateTimeSelect={handleDateTimeSelect}
-                        selectedDate={form.appointmentDate}
-                        selectedTime={form.appointmentTime}
-                        embedded={true}
-                        country={form.country}
-                        region={form.region || undefined}
-                    />
-                </div>
-            )}
-
-            {/* Step 5: Final confirmation before submit */}
-            {step === 4 && form.appointmentDate && (
-                <div className="space-y-6 animate-fade-in">
-                    <div className="text-center mb-6">
-                        <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Icon path={mdiCheck} size={1.5} className="text-blue-600" />
-                        </div>
-                        <h4 className="text-xl font-bold text-gray-900 mb-2">{t.calendar.confirmTitle}</h4>
-                        <p className="text-sm text-gray-600">{t.calendar.confirmSubtitle}</p>
-                    </div>
-
-                    <div className="bg-gray-50 rounded-xl p-6 space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <p className="text-xs text-gray-500 mb-1">{t.fields.firstName.label} & {t.fields.lastName.label}</p>
-                                <p className="text-sm font-medium text-gray-900">{form.firstName} {form.lastName}</p>
-                            </div>
-                            <div>
-                                <p className="text-xs text-gray-500 mb-1">Email</p>
-                                <p className="text-sm font-medium text-gray-900">{form.email}</p>
-                            </div>
-                            <div>
-                                <p className="text-xs text-gray-500 mb-1">{t.fields.company.label}</p>
-                                <p className="text-sm font-medium text-gray-900">{form.company}</p>
-                            </div>
-                            <div>
-                                <p className="text-xs text-gray-500 mb-1">{t.fields.phone.label}</p>
-                                <p className="text-sm font-medium text-gray-900">{form.phone}</p>
-                            </div>
-                        </div>
-                        
-                        <div className="pt-4 border-t border-gray-200">
-                            <div className="flex items-center justify-between mb-2">
-                                <p className="text-xs text-gray-500">{t.calendar.appointmentScheduled}</p>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setForm(prev => ({
-                                            ...prev,
-                                            appointmentDate: '',
-                                            appointmentTime: ''
-                                        }));
-                                    }}
-                                    className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
-                                >
-                                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
-                                    {t.calendar.modify}
-                                </button>
-                            </div>
-                            <div className="flex items-center gap-3 bg-blue-50 p-4 rounded-lg">
-                                <Icon path={mdiClock} size={1} className="text-blue-600" />
-                                <div>
-                                    <p className="text-sm font-semibold text-gray-900">
-                                        {new Date(form.appointmentDate).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-                                    </p>
-                                    <p className="text-sm text-gray-600">{form.appointmentTime} • 15 {t.calendar.minutes}</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div className="pt-4 border-t border-gray-200">
-                            <p className="text-xs font-semibold text-gray-700 mb-3 uppercase tracking-wide">{t.calendar.addToCalendar}</p>
-                            <div className="space-y-2">
-                                <a
-                                    href={getGoogleCalendarLink()}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center gap-3 px-4 py-2.5 bg-white rounded-lg hover:shadow-sm transition-all border border-gray-200 hover:border-gray-300"
-                                >
-                                    <Icon path={mdiGoogle} size={0.8} className="text-blue-600" />
-                                    <span className="text-xs font-medium text-gray-900">{t.calendar.googleCalendar}</span>
-                                </a>
-
-                                <a
-                                    href={getOutlookLink()}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center gap-3 px-4 py-2.5 bg-white rounded-lg hover:shadow-sm transition-all border border-gray-200 hover:border-gray-300"
-                                >
-                                    <Icon path={mdiMicrosoftOutlook} size={0.8} className="text-blue-600" />
-                                    <span className="text-xs font-medium text-gray-900">{t.calendar.outlookCalendar}</span>
-                                </a>
-
-                                <button
-                                    type="button"
-                                    onClick={downloadICS}
-                                    className="w-full flex items-center gap-3 px-4 py-2.5 bg-white rounded-lg hover:shadow-sm transition-all border border-gray-200 hover:border-gray-300"
-                                >
-                                    <Icon path={mdiApple} size={0.8} className="text-gray-700" />
-                                    <span className="text-xs font-medium text-gray-900">{t.calendar.appleCalendar}</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Navigation Buttons */}
-            <div className={`flex gap-3 ${step === 4 ? 'pt-6' : 'pt-2'}`}>
-                {step > 1 && !sendDatas && (
-                    <button
-                        type="button"
-                        onClick={handleBack}
-                        className="flex-1 py-3 border-2 border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-all duration-300 flex items-center justify-center gap-2 text-sm"
-                    >
-                        <Icon path={mdiArrowLeft} size={0.7} />
-                        {t.buttons.previous}
-                    </button>
-                )}
-
-                {step < totalSteps || (step === totalSteps && !form.appointmentDate) ? (
-                    <button
-                        type="button"
-                        onClick={handleNext}
-                        className="flex-1 py-3 bg-gradient-to-r from-[#7c3aed] to-[#a855f7] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 group text-sm"
-                    >
-                        {t.buttons.next}
-                        <Icon path={mdiArrowRight} size={0.7} className="group-hover:translate-x-1 transition-transform" />
-                    </button>
-                ) : (
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className={`flex-1 py-3 bg-gradient-to-r from-[#7c3aed] to-[#a855f7] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 group text-sm
-                            ${loading ? "cursor-not-allowed opacity-70" : "cursor-pointer"} 
-                            ${sendDatas ? "!bg-gradient-to-r !from-green-500 !to-green-600" : ""}
-                        `}
-                    >
-                        {loading && (
-                            <svg aria-hidden="true" className="w-4 h-4 animate-spin fill-white" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
-                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="rgba(255,255,255,0.3)" />
-                            </svg>
-                        )}
-                        {sendDatas && <Icon path={mdiCheck} size={0.7} />}
-                        {sendDatas ? t.buttons.sent : loading ? t.buttons.sending : (customButtonText || t.buttons.submit)}
-                        {!loading && !sendDatas && <Icon path={mdiArrowRight} size={0.7} className="group-hover:translate-x-1 transition-transform" />}
-                    </button>
-                )}
-            </div>
-
-            {sendDatas && (
-                <div className="text-center p-3 bg-green-50 border border-green-200 rounded-xl animate-fade-in">
-                    <p className="text-green-700 font-semibold text-xs">{t.success}</p>
-                </div>
-            )}
-        </form>
+      <div className="w-full mx-auto">
+        <style jsx>{`
+          iframe {
+            pointer-events: auto;
+          }
+          /* Hide Calendly cookie banner */
+          :global(.calendly-badge-widget),
+          :global(.calendly-overlay),
+          :global([class*="cookie"]),
+          :global([class*="gdpr"]) {
+            display: none !important;
+          }
+        `}</style>
+        <div className="mb-6 text-center">
+          <h3 className="text-2xl font-bold text-gray-900 mb-2">
+            {t.selectTime}
+          </h3>
+          <p className="text-gray-600">
+            {formData.firstName}, {t.selectTimeDesc.toLowerCase()}
+          </p>
+        </div>
+        <div className="relative w-full" style={{ height: '800px', minHeight: '800px' }}>
+          <iframe
+            src={iframeUrl}
+            width="100%"
+            height="100%"
+            frameBorder="0"
+            title="Calendly Scheduling"
+            style={{ minWidth: '320px', border: 'none' }}
+          />
+        </div>
+      </div>
     );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="w-full max-w-md mx-auto space-y-6">
+      {/* Step 1: Email */}
+      {step === 1 && (
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              {t.email} *
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              placeholder={t.emailPlaceholder}
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                errors.email ? 'border-red-500' : 'border-gray-300'
+              }`}
+            />
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={handleNext}
+            className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+          >
+            {t.next}
+          </button>
+        </div>
+      )}
+
+      {/* Step 2: Name */}
+      {step === 2 && (
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+              {t.firstName} *
+            </label>
+            <input
+              type="text"
+              id="firstName"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                errors.firstName ? 'border-red-500' : 'border-gray-300'
+              }`}
+            />
+            {errors.firstName && (
+              <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>
+            )}
+          </div>
+          <div>
+            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+              {t.lastName} *
+            </label>
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                errors.lastName ? 'border-red-500' : 'border-gray-300'
+              }`}
+            />
+            {errors.lastName && (
+              <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
+            )}
+          </div>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={handleBack}
+              className="flex-1 bg-gray-200 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+            >
+              {t.back}
+            </button>
+            <button
+              type="button"
+              onClick={handleNext}
+              className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            >
+              {t.next}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 3: Company Details */}
+      {step === 3 && (
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">
+              {t.company} *
+            </label>
+            <input
+              type="text"
+              id="company"
+              name="company"
+              value={formData.company}
+              onChange={handleInputChange}
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                errors.company ? 'border-red-500' : 'border-gray-300'
+              }`}
+            />
+            {errors.company && (
+              <p className="mt-1 text-sm text-red-600">{errors.company}</p>
+            )}
+          </div>
+          <div>
+            <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">
+              {t.country}
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                id="country"
+                name="country"
+                value={countrySearch}
+                onChange={handleCountrySearch}
+                onFocus={handleCountryFocus}
+                onBlur={handleCountryBlur}
+                placeholder={t.countryPlaceholder}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                autoComplete="off"
+              />
+              {showCountryDropdown && filteredCountries.length > 0 && (
+                <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                  {filteredCountries.map((country) => (
+                    <button
+                      key={country.value}
+                      type="button"
+                      onClick={() => handleCountrySelect(country)}
+                      className="w-full px-4 py-2 text-left hover:bg-blue-50 focus:bg-blue-50 focus:outline-none transition-colors"
+                    >
+                      {country.label[locale as keyof typeof country.label] || country.label.en}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {errors.country && (
+                <p className="mt-1 text-sm text-red-600">{errors.country}</p>
+              )}
+            </div>
+          </div>
+          <div>
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+              {t.phone} *
+            </label>
+            <div className="flex gap-2">
+              <div className="flex items-center justify-center bg-gray-100 border border-gray-300 rounded-lg px-3 text-gray-700 font-medium min-w-[70px]">
+                {phonePrefix}
+              </div>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                placeholder="6 12 34 56 78"
+                className={`flex-1 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                  errors.phone ? 'border-red-500' : 'border-gray-300'
+                }`}
+              />
+            </div>
+            {errors.phone && (
+              <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
+            )}
+          </div>
+          <div>
+            <label htmlFor="jobTitle" className="block text-sm font-medium text-gray-700 mb-2">
+              {t.jobTitle}
+            </label>
+            <input
+              type="text"
+              id="jobTitle"
+              name="jobTitle"
+              value={formData.jobTitle}
+              onChange={handleInputChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={handleBack}
+              className="flex-1 bg-gray-200 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+            >
+              {t.back}
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? t.submitting : (customButtonText || t.submit)}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Progress indicator */}
+      <div className="flex justify-center gap-2 mt-6">
+        {[1, 2, 3].map((s) => (
+          <div
+            key={s}
+            className={`w-2 h-2 rounded-full transition-colors ${
+              s === step ? 'bg-blue-600' : s < step ? 'bg-blue-400' : 'bg-gray-300'
+            }`}
+          />
+        ))}
+      </div>
+    </form>
+  );
 }

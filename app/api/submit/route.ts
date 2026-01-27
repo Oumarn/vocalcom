@@ -97,13 +97,14 @@ export async function POST(request: NextRequest) {
     console.log('Pardot response body length:', responseText.length);
     console.log('Pardot response preview:', responseText.substring(0, 500));
 
-    // Check if response contains error messages
-    const hasError = responseText.includes('This field is required') || 
-                     responseText.includes('error') || 
-                     responseText.includes('Error');
+    // Pardot returns 200 and redirects to success_location on success
+    // Only check for specific validation error messages
+    const hasValidationError = responseText.includes('This field is required') || 
+                               responseText.includes('invalid email') ||
+                               responseText.includes('form validation failed');
 
-    if (hasError) {
-      console.error('Pardot returned an error:', responseText.substring(0, 1000));
+    if (hasValidationError) {
+      console.error('Pardot validation error:', responseText.substring(0, 1000));
       return NextResponse.json({ 
         ok: false, 
         error: 'Pardot validation failed',
@@ -111,6 +112,8 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
+    // Status 200 means success - Pardot redirected to success_location
+    console.log('✅ Pardot submission successful');
     return NextResponse.json({ 
       ok: true, 
       status: response.status,

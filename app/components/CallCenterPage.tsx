@@ -188,10 +188,6 @@ export default function CallCenterPage({ content }: { content: CallCenterContent
             
             {/* Demo Form Card */}
             <div id="demo" className="bg-white rounded-2xl shadow-2xl p-8">
-              <div className="mb-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">{content.hero.formTitle}</h3>
-                <p className="text-gray-600">{content.hero.formSubtitle}</p>
-              </div>
               <DemoForm customButtonText={content.hero.formButtonText} />
             </div>
           </div>

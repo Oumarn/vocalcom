@@ -60,10 +60,6 @@ export default function HeroHome({ content }: { content: typeof landingFR.hero }
                     </div>
 
                     <div className="bg-white rounded-3xl p-8 shadow-2xl animate-slide-in w-full max-w-lg mx-auto lg:mr-0 border border-gray-100" id="demo">
-                        <div className="mb-8">
-                            <h3 className="text-xl lg:text-2xl font-bold tracking-tight text-center text-gray-900">{content.formTitle}</h3>
-                        </div>
-
                         <DemoForm />
                     </div>
                 </div>
