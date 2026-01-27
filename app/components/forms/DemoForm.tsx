@@ -797,9 +797,13 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
           <button
             type="button"
             onClick={handleNext}
-            className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            className="group w-full inline-flex items-center justify-center px-7 py-3.5 text-sm font-bold text-white rounded-full hover:shadow-xl hover:shadow-violet-500/30 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105"
+            style={{background: 'linear-gradient(90deg, #8b5cf6, #a855f7)'}}
           >
-            {t.next}
+            <span className="relative">
+              {t.next}
+              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
+            </span>
           </button>
         </div>
       )}
@@ -847,16 +851,20 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
             <button
               type="button"
               onClick={handleBack}
-              className="flex-1 bg-gray-200 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+              className="flex-1 bg-white border-2 border-gray-300 text-gray-700 py-3 px-6 rounded-full hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 font-medium"
             >
               {t.back}
             </button>
             <button
               type="button"
               onClick={handleNext}
-              className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              className="group flex-1 inline-flex items-center justify-center px-7 py-3.5 text-sm font-bold text-white rounded-full hover:shadow-xl hover:shadow-violet-500/30 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105"
+              style={{background: 'linear-gradient(90deg, #8b5cf6, #a855f7)'}}
             >
-              {t.next}
+              <span className="relative">
+                {t.next}
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
+              </span>
             </button>
           </div>
         </div>
@@ -960,16 +968,20 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
             <button
               type="button"
               onClick={handleBack}
-              className="flex-1 bg-gray-200 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-300 transition-colors font-medium"
+              className="flex-1 bg-white border-2 border-gray-300 text-gray-700 py-3 px-6 rounded-full hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 font-medium"
             >
               {t.back}
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group flex-1 inline-flex items-center justify-center px-7 py-3.5 text-sm font-bold text-white rounded-full hover:shadow-xl hover:shadow-violet-500/30 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:scale-100 disabled:hover:shadow-none"
+              style={{background: 'linear-gradient(90deg, #8b5cf6, #a855f7)'}}
             >
-              {isSubmitting ? t.submitting : (customButtonText || t.submit)}
+              <span className="relative">
+                {isSubmitting ? t.submitting : (customButtonText || t.submit)}
+                {!isSubmitting && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>}
+              </span>
             </button>
           </div>
         </div>
@@ -980,8 +992,8 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
         {[1, 2, 3].map((s) => (
           <div
             key={s}
-            className={`w-2 h-2 rounded-full transition-colors ${
-              s === step ? 'bg-blue-600' : s < step ? 'bg-blue-400' : 'bg-gray-300'
+            className={`w-2 h-2 rounded-full transition-all duration-300 ${
+              s === step ? 'bg-gradient-to-r from-[#8b5cf6] to-[#a855f7] scale-110' : s < step ? 'bg-[#a855f7]' : 'bg-gray-300'
             }`}
           />
         ))}
