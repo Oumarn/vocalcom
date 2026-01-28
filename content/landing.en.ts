@@ -287,6 +287,14 @@ export const landingEN = {
   },
   footer: {
     copyright: "© 2025 Vocalcom. All rights reserved.",
+    navigation: {
+      title: "Solutions",
+      links: [
+        { text: "Call Center Software", href: "/en/call-center-software" },
+        { text: "Customer Service Software", href: "/en/customer-service-software" },
+        { text: "Outbound Software", href: "/en/outbound-software" }
+      ]
+    },
     links: {
       legal: "Legal Notice",
       privacy: "Privacy Policy",

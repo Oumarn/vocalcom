@@ -287,9 +287,17 @@ export const landingPT = {
   },
   footer: {
     copyright: "© 2025 Vocalcom. Todos os direitos reservados.",
+    navigation: {
+      title: "Soluções",
+      links: [
+        { text: "Software Call Center", href: "/pt/software-call-center" },
+        { text: "Software Atendimento Cliente", href: "/pt/software-atendimento-cliente" },
+        { text: "Software Telemarketing", href: "/pt/software-telemarketing" }
+      ]
+    },
     links: {
-      legal: "Aviso legal",
-      privacy: "Política de privacidade",
+      legal: "Aviso Legal",
+      privacy: "Política de Privacidade",
       cookies: "Cookies"
     }
   },

@@ -288,6 +288,14 @@ export const landingFR = {
   },
   footer: {
     copyright: "© 2025 Vocalcom. Tous droits réservés.",
+    navigation: {
+      title: "Solutions",
+      links: [
+        { text: "Logiciel Call Center", href: "/fr/logiciel-call-center" },
+        { text: "Logiciel Service Client", href: "/fr/logiciel-service-client" },
+        { text: "Logiciel Téléprospection", href: "/fr/logiciel-teleprospection" }
+      ]
+    },
     links: {
       legal: "Mentions Légales",
       privacy: "Politique de Confidentialité",
