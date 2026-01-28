@@ -1,0 +1,209 @@
+export const outboundEN = {
+  meta: {
+    title: "Outbound Call Center & Telemarketing Software | Vocalcom",
+    description: "Automate outbound calls, increase contact rates, and drive more sales with an enterprise-grade predictive dialer.",
+    keywords: "outbound software, predictive dialer, telemarketing software, telesales, outbound calling, appointment setting software",
+  },
+  nav: {
+    cta: "Request a Demo",
+  },
+  hero: {
+    title: "Outbound call center software built to boost sales performance",
+    subtitle: "Automate outbound calls, increase contact rates, and drive more sales with an enterprise-grade predictive dialer.",
+    benefits: [
+      "Telesales",
+      "Telemarketing",
+      "Appointment setting",
+      "Web lead callbacks"
+    ],
+    formTitle: "Request a Personalized Demo",
+    formSubtitle: "Discover how Vocalcom can transform your outbound operations",
+    formButtonText: "Request an Outbound Demo",
+  },
+  trustBar: {
+    title: "Trusted by 1,200+ brands worldwide",
+    companies: "AXA · BNP Paribas · Renault · SFR · Teleperformance · Webhelp · Vinci"
+  },
+  results: {
+    title: "Why choose Vocalcom for outbound calling?",
+    subtitle: "Turn outbound calling into a revenue engine",
+    description: "Vocalcom helps sales teams reach more prospects, faster, while maintaining compliance, quality, and full operational control.",
+    metrics: [
+      { metric: "📞", label: "Higher contact rates" },
+      { metric: "⏱️", label: "Reduced agent idle time" },
+      { metric: "🚀", label: "Increased sales productivity" },
+      { metric: "📊", label: "Better campaign performance" }
+    ],
+    disclaimer: "Typical business impact"
+  },
+  solution: {
+    title: "Complete Outbound Calling Solution",
+    subtitle: "Vocalcom provides enterprise-grade outbound software that maximizes your sales performance.",
+    features: [
+      {
+        badge: { emoji: "☎️", label: "Smart Dialing" },
+        title: "Smart predictive dialing",
+        description: "More live conversations, fewer wasted calls",
+        intro: "Vocalcom's predictive dialer dynamically adjusts call pacing to:",
+        items: [
+          "Detect voicemail automatically",
+          "Manage smart callbacks",
+          "Reduce abandoned calls",
+          "Maximize agent talk time"
+        ],
+        objective: "optimize agent productivity and increase conversation rates.",
+        visual: {
+          type: "modes",
+          title: "4 dialing modes available",
+          modes: [
+            { name: "Preview", description: "View before calling" },
+            { name: "Progressive", description: "Automatic dialing" },
+            { name: "Predictive", description: "AI-powered pacing" },
+            { name: "Click-to-Dial", description: "Manual control" }
+          ]
+        }
+      },
+      {
+        badge: { emoji: "🚀", label: "Campaigns" },
+        title: "Launch outbound campaigns in minutes",
+        description: "Simple campaign setup, no technical skills required",
+        intro: "Use the built-in campaign wizard to:",
+        items: [
+          "Import call lists from CSV or CRM",
+          "Add web leads in real time",
+          "Trigger instant callbacks to boost conversion",
+          "Launch campaigns without IT support"
+        ],
+        objective: "start selling in minutes, not days.",
+        visual: {
+          type: "screenshot",
+          image: "/assets/campaign-wizard.webp",
+          title: "Campaign Setup Wizard"
+        }
+      },
+      {
+        badge: { emoji: "📊", label: "Analytics" },
+        title: "Real-time monitoring & performance",
+        description: "Full visibility into your outbound operations",
+        intro: "Track performance with real-time dashboards and 300+ customizable KPIs:",
+        items: [
+          "Contact rate and list coverage",
+          "Agent productivity in real-time",
+          "Campaign results and trends",
+          "Performance forecasting"
+        ],
+        objective: "drive data-driven decisions and continuous optimization.",
+        visual: {
+          type: "screenshot",
+          image: "/assets/Reporting-Titre.webp",
+          title: "Real-Time Dashboards"
+        }
+      },
+      {
+        badge: { emoji: "🎯", label: "Quality" },
+        title: "Quality management included",
+        description: "Improve team performance continuously",
+        intro: "Complete supervision and coaching tools:",
+        items: [
+          "Call listening & recording",
+          "Whispering & live supervision",
+          "Satisfaction surveys",
+          "Custom evaluation scorecards"
+        ],
+        objective: "ensure quality and drive continuous improvement.",
+        visual: {
+          type: "stats",
+          title: "Call Quality Metrics",
+          stats: [
+            { label: "Quality score", value: "92/100", color: "green" },
+            { label: "Calls monitored", value: "245", color: "blue" },
+            { label: "Agents coached", value: "18", color: "purple" }
+          ]
+        }
+      }
+    ]
+  },
+  compliance: {
+    title: "Compliance & security",
+    subtitle: "Enterprise-grade outbound compliance",
+    features: [
+      {
+        icon: "✅",
+        color: "teal",
+        title: "Local and international regulations supported",
+        description: "GDPR, TCPA, Ofcom, Bloctel... Stay compliant with all regulations automatically."
+      },
+      {
+        icon: "🔒",
+        color: "violet",
+        title: "Secure call recording",
+        description: "All recordings are encrypted and stored securely with complete audit trails."
+      },
+      {
+        icon: "🛡️",
+        color: "orange",
+        title: "ISO / IEC 27001:2022 certified",
+        description: "Security is our priority. We're certified to the highest security standards."
+      }
+    ]
+  },
+  integrations: {
+    badge: "CRM & Salesforce",
+    title: "Outbound calling connected to your CRM",
+    subtitle: "Native CRM integrations",
+    features: [
+      "Native CRM integrations (Salesforce, Microsoft Dynamics, etc.)",
+      "Automatic data updates after each call",
+      "Native Salesforce Edition available on AppExchange",
+      "Real-time bi-directional sync"
+    ],
+    image: "/assets/Salesforce_vocalcom.webp",
+    imageAlt: "Vocalcom CRM Integration",
+    count: "+200",
+    countLabel: "integrations available"
+  },
+  customerLogos: {
+    badge: "Market Leaders",
+    title: "They trust us"
+  },
+  useCases: {
+    title: "Who Is This Outbound Software For?",
+    subtitle: "Perfect for sales and marketing teams with high-volume outbound calling needs",
+    cases: [
+      "Sales & telemarketing teams",
+      "Outbound call centers",
+      "Lead generation agencies",
+      "B2B appointment setting",
+      "Collections & recovery",
+      "Surveys & market research"
+    ]
+  },
+  testimonials: {
+    badge: "Proven Results",
+    title: "Leading Organizations Trust Us",
+    subtitle: "Real results from companies that transformed their outbound operations with Vocalcom",
+    items: [
+      {
+        company: "Sage Spain",
+        industry: "Tech",
+        logo: "/logo_Sage.png",
+        quote: "Thanks to Vocalcom's high level of commitment, Sage was able to deploy a major project for its contact center, with an immediate return on investment and a 60% increase in productivity.",
+        author: "Fernando Gavalche",
+        role: "CIO, Sage Spain",
+        stats: [
+          { label: "ROI", value: "Immediate" },
+          { label: "Productivity", value: "+60%" }
+        ],
+        color: "green"
+      }
+    ]
+  },
+  finalCta: {
+    title: "Scale your outbound sales with confidence",
+    subtitle: "Increase sales, optimize productivity, and maximize your return on investment with Vocalcom.",
+    buttons: {
+      primary: "Request a free personalized demo",
+      secondary: "Talk to a Vocalcom expert"
+    }
+  }
+};

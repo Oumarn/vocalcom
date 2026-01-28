@@ -60,7 +60,7 @@ type CallCenterContent = {
       value: string;
     };
   };
-  integrations: {
+  integrations?: {
     badge: string;
     title: string;
     subtitle: string;
@@ -402,7 +402,7 @@ export default function CallCenterPage({ content }: { content: CallCenterContent
         </div>
       </section>
 
-      {/* Salesforce Integration Section */}
+      {/* CRM Integrations Section - Merged Salesforce + Integrations */}
       <section className="py-20 px-6 bg-gradient-to-br from-violet-700 to-purple-600 text-white">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -435,80 +435,39 @@ export default function CallCenterPage({ content }: { content: CallCenterContent
                 </p>
               </div>
             </div>
-            <div className="relative">
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
-                <img 
-                  src={content.salesforce.image}
-                  alt={content.salesforce.imageAlt}
-                  className="rounded-lg shadow-2xl w-full"
-                />
-              </div>
-              <div className="absolute -bottom-4 -right-4 bg-white rounded-xl shadow-xl p-4 max-w-[200px]">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 bg-violet-100 rounded-lg flex items-center justify-center">
-                    <svg className="w-6 h-6 text-violet-600" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
+            
+            {/* CRM Logos Grid replacing the image */}
+            <div>
+              {('logos' in content.salesforce && Array.isArray(content.salesforce.logos) && content.salesforce.logos.length > 0) ? (
+                <div>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                    {(content.salesforce.logos as any[]).map((integration, index) => (
+                      <div
+                        key={index}
+                        className="group relative flex items-center justify-center h-28 bg-white rounded-xl border border-white/20 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden p-6"
+                      >
+                        <img 
+                          src={integration.logo} 
+                          alt={integration.name}
+                          className="relative z-10 max-w-full max-h-full object-contain transition-all duration-300"
+                        />
+                      </div>
+                    ))}
                   </div>
-                  <div>
-                    <div className="text-xs text-gray-500">{content.salesforce.appExchange.label}</div>
-                    <div className="font-bold text-gray-900 text-sm">{content.salesforce.appExchange.value}</div>
-                  </div>
+
+                  {/* +100 integrations count */}
+                  {('count' in content.salesforce) && (
+                    <div className="text-center">
+                      <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full">
+                        <span className="text-2xl font-bold text-white">{String((content.salesforce as any).count)}</span>
+                        {('countLabel' in content.salesforce) && (
+                          <span className="text-sm text-purple-100">{String((content.salesforce as any).countLabel)}</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Integrations Section */}
-      <section className="py-16 lg:py-20 bg-gradient-to-br from-violet-50 via-purple-50 to-blue-50">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-20">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-50 border border-violet-200 mb-6">
-              <div className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse"></div>
-              <p className="text-xs text-violet-700 font-medium uppercase tracking-wider">{content.integrations.badge}</p>
-            </div>
-            <h2 className="text-3xl lg:text-4xl font-semibold text-gray-900 mb-6 tracking-tight whitespace-pre-line">
-              {content.integrations.title}
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              {content.integrations.subtitle}
-            </p>
-          </div>
-
-          {/* Integration logos grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-16 max-w-md md:max-w-none mx-auto">
-            {[
-              { name: "Salesforce", logo: "/assets/Salesforce.com_logo.svg.png" },
-              { name: "Microsoft Dynamics", logo: "/assets/Microsoft_Dynamics_logo.png" },
-              { name: "Zendesk", logo: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Zendesk_logo.svg" },
-              { name: "HubSpot", logo: "https://upload.wikimedia.org/wikipedia/commons/3/3f/HubSpot_Logo.svg" },
-              { name: "Zoho CRM", logo: "/assets/Zoho_CRM_Logo.png" },
-              { name: "Oracle", logo: "https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg" }
-            ].map((integration, index) => (
-              <div
-                key={index}
-                className="group relative flex items-center justify-center h-24 bg-white rounded-xl border border-gray-200 hover:border-violet-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden p-4"
-              >
-                <div className="absolute inset-0 bg-gradient-to-br from-violet-50/0 via-purple-50/0 to-blue-50/0 group-hover:from-violet-50/50 group-hover:via-purple-50/30 group-hover:to-blue-50/50 transition-all duration-300"></div>
-                <img 
-                  src={integration.logo} 
-                  alt={integration.name}
-                  className="relative z-10 max-w-full max-h-full object-contain transition-all duration-300"
-                  style={{ 
-                    filter: 'brightness(0) saturate(100%) invert(48%) sepia(79%) saturate(2476%) hue-rotate(231deg) brightness(95%) contrast(101%)'
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* +200 integrations */}
-          <div className="text-center">
-            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-violet-50 to-purple-50 border border-violet-200 rounded-full">
-              <span className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">{content.integrations.count}</span>
-              <span className="text-sm text-gray-600">{content.integrations.countLabel}</span>
+              ) : null}
             </div>
           </div>
         </div>

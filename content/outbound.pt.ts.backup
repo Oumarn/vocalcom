@@ -1,0 +1,255 @@
+export const outboundPT = {
+  meta: {
+    title: "Software de Telemarketing | Solução para Vendas Outbound | Vocalcom",
+    description: "Software profissional de telemarketing com discador preditivo para maximizar seus resultados. Aumente sua taxa de conversão com automação inteligente.",
+    keywords: "software telemarketing, discador preditivo, vendas outbound, campanha telemarketing, contact center outbound"
+  },
+  nav: {
+    cta: "Solicite uma demo"
+  },
+  hero: {
+    title: "Software de telemarketing para acelerar suas vendas outbound",
+    subtitle: "A plataforma líder para equipes comerciais que utilizam o telefone como canal estratégico de vendas. Discador inteligente. IA generativa. Performance em tempo real.",
+    benefits: [
+      "Concertação de citas 35% mais rápida",
+      "Integração com mais de 100 CRMs",
+      "Conformidade GDPR e LGPD garantida",
+      "Retorno sobre o investimento em menos de 6 meses"
+    ],
+    formTitle: "Converse com um especialista",
+    formSubtitle: "Descubra como melhorar seus resultados com a Vocalcom.",
+    formButtonText: "Agende uma demonstração"
+  },
+  trustBar: {
+    title: "Confiam em nós",
+    companies: "Teleperformance · Renault · Orange · Sabesp · Sitel · Positivo · Loga"
+  },
+  results: {
+    title: "Multiplique seus resultados de telemarketing",
+    subtitle: "Performance medida em campanhas reais de nossos clientes",
+    description: "A Vocalcom entrega resultados comprovados em diferentes setores e países. Nossa tecnologia não apenas aumenta as vendas, mas também melhora a experiência do agente.",
+    metrics: [
+      {
+        value: "+35%",
+        label: "Taxa de contato",
+        sublabel: "Com discador inteligente"
+      },
+      {
+        value: "-40%",
+        label: "Tempo ocioso",
+        sublabel: "Produtividade otimizada"
+      },
+      {
+        value: "+60%",
+        label: "Produtividade",
+        sublabel: "Graças à automação e IA"
+      },
+      {
+        value: "+25%",
+        label: "Performance de agentes",
+        sublabel: "Com supervisão assistida por IA"
+      }
+    ],
+    disclaimer: "Resultados obtidos através de análise estatística de nossos clientes na América do Sul e Brasil, com campanhas de telemarketing outbound B2B e B2C de mais de 10.000 chamadas por mês."
+  },
+  solution: {
+    title: "Software profissional para otimizar todo o ciclo de telemarketing",
+    subtitle: "Cada funcionalidade do nosso software foi pensada para tornar seu trabalho mais eficaz e menos repetitivo.",
+    features: [
+      {
+        badge: { emoji: "", label: "Discador Inteligente" },
+        title: "Discador preditivo inteligente",
+        description: "Aumente seus resultados de telemarketing. Menos chamadas não atendidas, mais conversas reais.",
+        intro: "Nosso discador preditivo se adapta em tempo real ao desempenho de sua equipe, para que seus agentes passem mais tempo conversando com clientes reais e menos tempo esperando ou lidando com chamadas não atendidas.",
+        items: [
+          {
+            title: "4 modos de discagem",
+            description: "Visualização prévia → Apresentamos os dados do contato antes da chamada para que o agente possa preparar-se.\nProgressivo → Discagem automática assim que um agente fica disponível, sem tempo de espera.\nPreditivo → Algoritmo que antecipa a disponibilidade dos agentes para iniciar chamadas antes do término da chamada anterior, maximizando a produtividade.\nPower → Disca vários números de uma vez para conectar rapidamente ao primeiro contato que responder."
+          },
+          {
+            title: "Algoritmo IA para máxima conexão",
+            description: "Nossa IA ajusta automaticamente o ritmo de discagem com base em: disponibilidade de agentes em tempo real, histórico de contato de cada registro, melhores horários para cada segmento."
+          },
+          {
+            title: "Detecção de secretária eletrônica",
+            description: "Desconecta automaticamente quando detecta caixas postais. Deixe uma mensagem pré-gravada ou agende uma nova tentativa."
+          }
+        ],
+        objective: "Resultado: até +35% de taxa de contato com decisores e -40% de tempo ocioso para seus agentes.",
+        visual: {
+          type: "dialer-preview",
+          stats: ["Taxa de Contato: +35%", "Tempo Ocioso: -40%"]
+        }
+      },
+      {
+        badge: { emoji: "", label: "Gestão de Campanhas" },
+        title: "Crie campanhas outbound em poucos cliques",
+        description: "Sua campanha pronta em menos de 5 minutos. Importe seus contatos, configure o script e vá ao ar.",
+        intro: "Você não precisa ser um especialista técnico para lançar uma campanha de telemarketing profissional. Nossa interface foi pensada para equipes de vendas e marketing que querem resultados rápidos.",
+        items: [
+          {
+            title: "Assistente de campanha inteligente",
+            description: "Siga o passo a passo guiado: importe sua lista (CSV, Excel, ou diretamente do CRM), escolha seu modo de discagem (preditivo, progressivo, visualização prévia), configure horários de chamadas e fuso horário, atribua agentes à campanha."
+          },
+          {
+            title: "Listas inteligentes com filtragem",
+            description: "Segmente automaticamente por: status de contato (novo, em andamento, não responde, interessado, não interessado), histórico de interações, dados personalizados do CRM, horário ótimo para ligar, zona geográfica."
+          },
+          {
+            title: "Scripts integrados e personalizáveis",
+            description: "Crie scripts dinâmicos que se adaptam às respostas do cliente. Integre campos do CRM diretamente no script. Ramificações condicionais segundo o perfil."
+          }
+        ],
+        objective: "Resultado: suas campanhas ficam prontas 70% mais rápido, sem necessidade de suporte técnico.",
+        visual: {
+          type: "campaign-dashboard",
+          stats: ["Tempo de Configuração: -70%"]
+        }
+      },
+      {
+        badge: { emoji: "", label: "Supervisão em Tempo Real" },
+        title: "Supervisão e desempenho em tempo real",
+        description: "Controle preciso de tudo o que acontece em suas campanhas de telemarketing. Dados atualizados a cada segundo.",
+        intro: "Nossa interface de supervisão foi projetada para que você possa tomar decisões estratégicas rápidas, sejam corretivas ou para replicar os melhores resultados.",
+        items: [
+          {
+            title: "Dashboard de controle ao vivo",
+            description: "Métricas essenciais exibidas em tempo real: chamadas em andamento, taxa de contato, tempo médio de chamada, conversões, desempenho por agente, previsão de resultados."
+          },
+          {
+            title: "Intervenção em tempo real",
+            description: "Ouça discretamente qualquer chamada. Entre em uma conversa para ajudar um agente. Sussurre instruções sem que o cliente ouça. Assuma uma chamada se necessário."
+          },
+          {
+            title: "Alertas inteligentes",
+            description: "Receba notificações quando: um agente enfrenta uma situação difícil, métricas de campanha caem abaixo do esperado, um lead de alta qualidade é identificado."
+          }
+        ],
+        objective: "Resultado: reaja 10 vezes mais rápido a problemas e oportunidades.",
+        visual: {
+          type: "supervisor-dashboard",
+          stats: ["Tempo de Reação: -90%"]
+        }
+      },
+      {
+        badge: { emoji: "", label: "Qualidade e Treinamento" },
+        title: "Gestão de qualidade integrada",
+        description: "Melhore o desempenho de cada agente com gravação automática e análise de IA.",
+        intro: "A melhoria contínua de sua equipe não é opcional. Nosso módulo de qualidade permite que você identifique rapidamente pontos fortes e áreas a desenvolver para cada agente.",
+        items: [
+          {
+            title: "Gravação automática de 100% das chamadas",
+            description: "Todas as chamadas gravadas e arquivadas com segurança. Pesquisa por: agente, campanha, data, palavras-chave, resultado. Conformidade com LGPD e proteção de dados."
+          },
+          {
+            title: "Análise de IA de conversas",
+            description: "Nossa IA transcreve e analisa automaticamente cada conversa para identificar: nível de sentimento do cliente, tópicos de objeções, respeito ao script, momentos-chave de conversão, oportunidades de melhoria."
+          },
+          {
+            title: "Avaliações e coaching",
+            description: "Crie grades de avaliação personalizadas. Notas automáticas ou manuais. Compartilhe feedback diretamente com agentes. Acompanhamento de progresso."
+          }
+        ],
+        objective: "Resultado: acelere o treinamento de novos agentes em 50% e aumente a taxa de conversão geral em +25%.",
+        visual: {
+          type: "quality-dashboard",
+          stats: ["Treinamento: -50%", "Conversão: +25%"]
+        }
+      }
+    ]
+  },
+  compliance: {
+    title: "Conformidade normativa e segurança de dados",
+    subtitle: "Telemarketing responsável com garantia de conformidade total com LGPD, Do Not Call e outras regulamentações locais.",
+    features: [
+      {
+        title: "Conformidade LGPD garantida",
+        description: "Gestão automática de consentimento, portabilidade de dados, direito ao esquecimento. Auditoria completa de todas as operações."
+      },
+      {
+        title: "Lista Robinson integrada",
+        description: "Filtragem automática de números registrados em listas 'Do Not Call' locais e internacionais antes de cada chamada."
+      },
+      {
+        title: "Criptografia de ponta a ponta",
+        description: "Todos os dados de clientes e gravações protegidos por criptografia AES-256. Servidores em data centers certificados no Brasil."
+      },
+      {
+        title: "Horários de chamadas controlados",
+        description: "Respeito automático dos horários legais de telemarketing por região. Configuração de janelas de chamadas personalizadas."
+      }
+    ]
+  },
+  integrations: {
+    badge: "Ecossistema",
+    title: "Integração nativa com CRM e software empresarial",
+    subtitle: "Conecte sua plataforma de telemarketing com todas as suas ferramentas comerciais e de marketing. Sincronização bidirecional em tempo real.",
+    features: [
+      {
+        title: "Integração com CRM",
+        description: "Salesforce, HubSpot, Microsoft Dynamics, Pipedrive, Zoho e mais de 100 outros CRMs."
+      },
+      {
+        title: "Ferramentas de Marketing",
+        description: "RD Station, ActiveCampaign, Mailchimp. Sincronização de campanhas e leads."
+      },
+      {
+        title: "ERPs e Sistemas de Cobrança",
+        description: "SAP, Oracle, TOTVS. Gestão de contratos e faturamento integrada."
+      },
+      {
+        title: "Ferramentas de Produtividade",
+        description: "Google Workspace, Microsoft 365, Slack. Notificações e agendamento automático."
+      }
+    ],
+    image: {
+      src: "/integrations-ecosystem.png",
+      alt: "Ecossistema de integrações Vocalcom"
+    },
+    count: "100+"
+  },
+  customerLogos: {
+    badge: "Líderes do Mercado",
+    title: "Confiam em nós"
+  },
+  useCases: {
+    title: "Para Quem É Este Software de Telemarketing?",
+    subtitle: "Ideal para equipes comerciais e de marketing com operações de alto volume",
+    cases: [
+      "Equipes de vendas e telemarketing",
+      "Centrais de chamadas outbound",
+      "Agências de geração de leads",
+      "Agendamento de consultas B2B",
+      "Recuperação de crédito",
+      "Pesquisas e estudos de mercado"
+    ]
+  },
+  testimonials: {
+    badge: "Resultados Comprovados",
+    title: "Empresas líderes utilizam Vocalcom",
+    subtitle: "Empresas líderes utilizam Vocalcom para otimizar suas campanhas outbound e desenvolver relacionamentos comerciais mais eficazes em ambientes exigentes.",
+    items: [
+      {
+        company: "Sage Spain",
+        industry: "Tech",
+        logo: "/logo_Sage.png",
+        quote: "Graças ao alto nível de comprometimento da Vocalcom, a Sage conseguiu implementar um projeto importante para seu contact center, com retorno sobre investimento imediato e aumento de 60% na produtividade.",
+        author: "Fernando Gavalche",
+        role: "CIO, Sage Espanha",
+        stats: [
+          { label: "ROI", value: "Imediato" },
+          { label: "Produtividade", value: "+60%" }
+        ],
+        color: "green"
+      }
+    ]
+  },
+  finalCta: {
+    title: "Leve seu telemarketing a um novo nível de performance",
+    subtitle: "Automatize, otimize e escale suas operações comerciais com Vocalcom.",
+    buttons: {
+      primary: "Solicite uma demonstração gratuita e personalizada",
+      secondary: "Fale com um especialista da Vocalcom"
+    }
+  }
+};

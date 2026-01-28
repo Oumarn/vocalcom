@@ -1,0 +1,209 @@
+export const outboundFR = {
+  meta: {
+    title: "Logiciel de Téléprospection & Appels Sortants | Vocalcom",
+    description: "Automatisez vos appels sortants, augmentez votre taux de contact et boostez la productivité de vos équipes commerciales grâce à un dialer prédictif de niveau entreprise.",
+    keywords: "logiciel téléprospection, appels sortants, dialer prédictif, télémarketing, télévente, logiciel outbound, prise de rendez-vous",
+  },
+  nav: {
+    cta: "Demander une Démo",
+  },
+  hero: {
+    title: "Logiciel de téléprospection pour accélérer vos ventes sortantes",
+    subtitle: "Automatisez vos appels sortants, augmentez votre taux de contact et boostez la productivité de vos équipes commerciales grâce à un dialer prédictif de niveau entreprise.",
+    benefits: [
+      "Télévente",
+      "Télémarketing",
+      "Prise de rendez-vous",
+      "Rappel de leads web"
+    ],
+    formTitle: "Demander une Démo Personnalisée",
+    formSubtitle: "Découvrez comment Vocalcom peut transformer votre téléprospection",
+    formButtonText: "Demander une Démo Téléprospection",
+  },
+  trustBar: {
+    title: "Déjà adopté par plus de 1 200 marques",
+    companies: "Vinci · AXA · BNP Paribas · Renault · SFR · Webhelp · Armatis · Babilou"
+  },
+  results: {
+    title: "Pourquoi Vocalcom pour la téléprospection ?",
+    subtitle: "Accélérez vos campagnes sortantes sans sacrifier la qualité",
+    description: "Vocalcom vous permet de contacter plus de prospects, plus vite, tout en respectant les réglementations locales et en offrant une expérience maîtrisée à vos équipes et à vos contacts.",
+    metrics: [
+      { metric: "📈", label: "Hausse du taux de contact" },
+      { metric: "⏱️", label: "Réduction du temps d'attente agents" },
+      { metric: "💼", label: "Productivité commerciale accrue" },
+      { metric: "🎯", label: "Meilleure conversion par appel" }
+    ],
+    disclaimer: "Résultats observés chez nos clients"
+  },
+  solution: {
+    title: "Une Solution Complète de Téléprospection Professionnelle",
+    subtitle: "Vocalcom propose un logiciel d'appels sortants qui maximise vos performances commerciales.",
+    features: [
+      {
+        badge: { emoji: "☎️", label: "Dialer Prédictif" },
+        title: "Dialer prédictif intelligent",
+        description: "Plus de conversations utiles, moins de temps perdu",
+        intro: "Le moteur d'appel prédictif Vocalcom ajuste automatiquement le rythme des appels pour :",
+        items: [
+          "Détecter les répondeurs automatiquement",
+          "Gérer les rappels intelligents",
+          "Limiter les appels abandonnés",
+          "Maximiser le temps de parole utile"
+        ],
+        objective: "optimiser le temps de parole des agents et augmenter la productivité.",
+        visual: {
+          type: "modes",
+          title: "4 modes de numérotation",
+          modes: [
+            { name: "Preview", description: "Visualiser avant d'appeler" },
+            { name: "Progressive", description: "Numérotation automatique" },
+            { name: "Prédictive", description: "Anticipation des réponses" },
+            { name: "Click-to-Dial", description: "Clic pour composer" }
+          ]
+        }
+      },
+      {
+        badge: { emoji: "🚀", label: "Campagnes" },
+        title: "Lancez vos campagnes en quelques clics",
+        description: "Une création de campagne simple et rapide",
+        intro: "Grâce à l'assistant de création intégré :",
+        items: [
+          "Importez vos fichiers (CSV ou CRM)",
+          "Ajoutez vos leads web en temps réel",
+          "Lancez vos campagnes sans compétences techniques",
+          "Rappels immédiats pour maximiser les chances de contact"
+        ],
+        objective: "démarrer vos opérations commerciales en quelques minutes.",
+        visual: {
+          type: "screenshot",
+          image: "/assets/campaign-wizard.webp",
+          title: "Assistant de Création de Campagne"
+        }
+      },
+      {
+        badge: { emoji: "📊", label: "Performance" },
+        title: "Pilotage & performance en temps réel",
+        description: "Gardez le contrôle de vos résultats commerciaux",
+        intro: "Accédez à des tableaux de bord temps réel avec plus de 300 KPI personnalisables :",
+        items: [
+          "Taux de contact et couverture des fichiers",
+          "Performance agents en temps réel",
+          "Résultats par campagne",
+          "Analyse des tendances et prévisions"
+        ],
+        objective: "piloter vos campagnes avec précision et optimiser en continu.",
+        visual: {
+          type: "screenshot",
+          image: "/assets/Reporting-Titre.webp",
+          title: "Tableaux de Bord Temps Réel"
+        }
+      },
+      {
+        badge: { emoji: "🎯", label: "Qualité" },
+        title: "Qualité & coaching intégrés",
+        description: "Améliorez la performance de vos équipes",
+        intro: "Outils de supervision et de coaching complets :",
+        items: [
+          "Écoute et enregistrement des appels",
+          "Whispering, supervision, conférence",
+          "Enquêtes de satisfaction",
+          "Grilles d'évaluation personnalisées"
+        ],
+        objective: "garantir la qualité et améliorer continuellement les performances.",
+        visual: {
+          type: "stats",
+          title: "Qualité des Appels",
+          stats: [
+            { label: "Score qualité", value: "92/100", color: "green" },
+            { label: "Appels écoutés", value: "245", color: "blue" },
+            { label: "Agents coachés", value: "18", color: "purple" }
+          ]
+        }
+      }
+    ]
+  },
+  compliance: {
+    title: "Conformité & sécurité",
+    subtitle: "Téléprospection conforme et sécurisée",
+    features: [
+      {
+        icon: "✅",
+        color: "teal",
+        title: "Respect des réglementations locales",
+        description: "Bloctel, RGPD, TCPA, Ofcom... Vocalcom vous aide à rester conforme avec toutes les réglementations."
+      },
+      {
+        icon: "🔒",
+        color: "violet",
+        title: "Enregistrement des appels sécurisé",
+        description: "Tous vos enregistrements sont chiffrés et stockés de manière sécurisée avec traçabilité complète."
+      },
+      {
+        icon: "🛡️",
+        color: "orange",
+        title: "Certifié ISO / IEC 27001 : 2022",
+        description: "La sécurité est notre priorité. Nous sommes certifiés aux plus hauts standards de sécurité."
+      }
+    ]
+  },
+  integrations: {
+    badge: "CRM & Salesforce",
+    title: "Vos appels sortants connectés à vos outils métiers",
+    subtitle: "Intégration CRM native",
+    features: [
+      "Intégration CRM native (Salesforce, Microsoft Dynamics, etc.)",
+      "Mise à jour automatique des fiches clients",
+      "Solution Salesforce native disponible sur AppExchange",
+      "Synchronisation bidirectionnelle en temps réel"
+    ],
+    image: "/assets/Salesforce_vocalcom.webp",
+    imageAlt: "Intégration CRM Vocalcom",
+    count: "+200",
+    countLabel: "intégrations disponibles"
+  },
+  customerLogos: {
+    badge: "Leaders du Marché",
+    title: "Ils nous font confiance"
+  },
+  useCases: {
+    title: "À Qui S'Adresse Ce Logiciel de Téléprospection ?",
+    subtitle: "Idéal pour les équipes commerciales et marketing à fort volume d'appels sortants",
+    cases: [
+      "Équipes de vente & télémarketing",
+      "Centres d'appels sortants",
+      "Agences de génération de leads",
+      "Prise de rendez-vous B2B",
+      "Recouvrement de créances",
+      "Enquêtes & études de marché"
+    ]
+  },
+  testimonials: {
+    badge: "Résultats Prouvés",
+    title: "Des Entreprises Leaders Nous Font Confiance",
+    subtitle: "Résultats concrets d'organisations qui ont transformé leur téléprospection avec Vocalcom",
+    items: [
+      {
+        company: "Sage Spain",
+        industry: "Tech",
+        logo: "/logo_Sage.png",
+        quote: "Grâce au haut niveau d'engagement de Vocalcom, Sage a pu déployer un projet important pour son centre de contact, avec un retour sur investissement immédiat et une augmentation de productivité de 60%.",
+        author: "Fernando Gavalche",
+        role: "CIO, Sage Espagne",
+        stats: [
+          { label: "ROI", value: "Immédiat" },
+          { label: "Productivité", value: "+60%" }
+        ],
+        color: "green"
+      }
+    ]
+  },
+  finalCta: {
+    title: "Transformez votre téléprospection en moteur de croissance",
+    subtitle: "Augmentez vos ventes, optimisez votre productivité et maximisez votre retour sur investissement avec Vocalcom.",
+    buttons: {
+      primary: "Demandez une démonstration gratuite",
+      secondary: "Parlez à un expert Vocalcom"
+    }
+  }
+};

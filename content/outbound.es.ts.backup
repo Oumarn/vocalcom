@@ -1,0 +1,209 @@
+export const outboundES = {
+  meta: {
+    title: "Software de Telemarketing y Llamadas Salientes | Vocalcom",
+    description: "Automatice sus llamadas salientes, incremente la tasa de contacto y mejore la productividad de sus equipos comerciales con un marcador predictivo de nivel empresarial.",
+    keywords: "software telemarketing, marcador predictivo, software llamadas salientes, televentas, software outbound",
+  },
+  nav: {
+    cta: "Solicitar Demo",
+  },
+  hero: {
+    title: "Software de telemarketing para acelerar sus ventas outbound",
+    subtitle: "Automatice sus llamadas salientes, incremente la tasa de contacto y mejore la productividad de sus equipos comerciales con un marcador predictivo de nivel empresarial.",
+    benefits: [
+      "Televentas",
+      "Telemarketing",
+      "Concertación de citas",
+      "Callbacks de leads web"
+    ],
+    formTitle: "Solicitar una Demo Personalizada",
+    formSubtitle: "Descubra cómo Vocalcom puede transformar su telemarketing",
+    formButtonText: "Solicitar Demo Telemarketing",
+  },
+  trustBar: {
+    title: "Más de 1.200 marcas confían en Vocalcom",
+    companies: "AXA · Renault · Allianz · Teleperformance · Orange · Sitel · Comdata · Saint-Gobain"
+  },
+  results: {
+    title: "¿Por qué elegir Vocalcom para telemarketing?",
+    subtitle: "Convierta las llamadas salientes en un motor de crecimiento",
+    description: "Vocalcom permite a sus equipos comerciales contactar a más prospectos en menos tiempo, manteniendo el control operativo, la calidad de las interacciones y el cumplimiento normativo.",
+    metrics: [
+      { metric: "+35%", label: "Mayor tasa de contacto" },
+      { metric: "-40%", label: "Menos tiempos muertos para los agentes" },
+      { metric: "+60%", label: "Aumento de la productividad comercial" },
+      { metric: "+25%", label: "Mejores resultados por campaña" }
+    ],
+    disclaimer: "Beneficios clave observados"
+  },
+  solution: {
+    title: "Una Solución Completa de Telemarketing Profesional",
+    subtitle: "Vocalcom proporciona software outbound empresarial que maximiza su rendimiento de ventas.",
+    features: [
+      {
+        badge: { emoji: "", label: "Marcador Predictivo" },
+        title: "Marcador predictivo inteligente",
+        description: "Más conversaciones reales, menos intentos fallidos",
+        intro: "El marcador predictivo de Vocalcom ajusta automáticamente el ritmo de llamadas para:",
+        items: [
+          "Detectar buzón de voz",
+          "Gestionar callbacks inteligentes",
+          "Reducir llamadas abandonadas",
+          "Maximizar el tiempo útil de conversación"
+        ],
+        objective: "optimizar el tiempo de conversación y aumentar la productividad.",
+        visual: {
+          type: "modes",
+          title: "4 modos de marcación disponibles",
+          modes: [
+            { name: "Vista previa", description: "Visualizar antes de llamar" },
+            { name: "Progresivo", description: "Marcación automática" },
+            { name: "Predictivo", description: "Ritmo con IA" },
+            { name: "Click-to-dial", description: "Control manual" }
+          ]
+        }
+      },
+      {
+        badge: { emoji: "", label: "Campañas" },
+        title: "Cree campañas outbound en pocos clics",
+        description: "Configuración rápida, sin conocimientos técnicos",
+        intro: "Gracias al asistente de creación de campañas:",
+        items: [
+          "Importe listas desde CSV o CRM",
+          "Añada leads web en tiempo real",
+          "Active callbacks inmediatos para mejorar la conversión",
+          "Sus leads son contactados en el momento adecuado"
+        ],
+        objective: "maximizar la tasa de éxito de sus campañas.",
+        visual: {
+          type: "screenshot",
+          image: "/assets/campaign-wizard.webp",
+          title: "Asistente de Configuración de Campaña"
+        }
+      },
+      {
+        badge: { emoji: "", label: "Performance" },
+        title: "Supervisión y rendimiento en tiempo real",
+        description: "Controle sus resultados comerciales con precisión",
+        intro: "Acceda a dashboards en tiempo real con más de 300 KPI personalizables:",
+        items: [
+          "Tasa de contacto",
+          "Cobertura de bases de datos",
+          "Productividad de agentes",
+          "Resultados por campaña"
+        ],
+        objective: "controlar y optimizar sus operaciones comerciales.",
+        visual: {
+          type: "screenshot",
+          image: "/assets/Reporting-Titre.webp",
+          title: "Dashboards en Tiempo Real"
+        }
+      },
+      {
+        badge: { emoji: "", label: "Calidad" },
+        title: "Gestión de calidad integrada",
+        description: "Mejore el rendimiento de sus equipos",
+        intro: "Herramientas completas de supervisión y coaching:",
+        items: [
+          "Escucha y grabación de llamadas",
+          "Susurro y supervisión en vivo",
+          "Encuestas de satisfacción",
+          "Evaluaciones personalizadas"
+        ],
+        objective: "garantizar la calidad e impulsar la mejora continua.",
+        visual: {
+          type: "stats",
+          title: "Métricas de Calidad",
+          stats: [
+            { label: "Score de calidad", value: "92/100", color: "green" },
+            { label: "Llamadas monitoreadas", value: "245", color: "blue" },
+            { label: "Agentes supervisados", value: "18", color: "purple" }
+          ]
+        }
+      }
+    ]
+  },
+  compliance: {
+    title: "Cumplimiento normativo y seguridad",
+    subtitle: "Telemarketing seguro y conforme a la normativa",
+    features: [
+      {
+        icon: "✅",
+        color: "teal",
+        title: "Cumplimiento de regulaciones locales e internacionales",
+        description: "RGPD, TCPA, Ofcom, Bloctel, Anatel... Vocalcom le ayuda a mantenerse conforme."
+      },
+      {
+        icon: "🔒",
+        color: "violet",
+        title: "Grabación segura de llamadas",
+        description: "Todas las grabaciones están cifradas y almacenadas de forma segura con trazabilidad completa."
+      },
+      {
+        icon: "🛡️",
+        color: "orange",
+        title: "Certificación ISO / IEC 27001:2022",
+        description: "La seguridad es nuestra prioridad. Certificados con los más altos estándares."
+      }
+    ]
+  },
+  integrations: {
+    badge: "CRM y Salesforce",
+    title: "Llamadas salientes conectadas a su ecosistema",
+    subtitle: "Integración nativa con CRM y software empresarial",
+    features: [
+      "Integración nativa con CRM (Salesforce, Microsoft Dynamics, etc.)",
+      "Actualización automática de datos tras cada interacción",
+      "Solución Salesforce nativa disponible en AppExchange",
+      "Sincronización bidireccional en tiempo real"
+    ],
+    image: "/assets/Salesforce_vocalcom.webp",
+    imageAlt: "Integración CRM Vocalcom",
+    count: "+200",
+    countLabel: "integraciones disponibles"
+  },
+  customerLogos: {
+    badge: "Líderes del Mercado",
+    title: "Confían en nosotros"
+  },
+  useCases: {
+    title: "¿Para Quién Es Este Software de Telemarketing?",
+    subtitle: "Ideal para equipos comerciales y marketing con operaciones de alto volumen",
+    cases: [
+      "Equipos de ventas y telemarketing",
+      "Centros de llamadas salientes",
+      "Agencias de generación de leads",
+      "Concertación de citas B2B",
+      "Recuperación de deuda",
+      "Encuestas e investigación de mercado"
+    ]
+  },
+  testimonials: {
+    badge: "Resultados Comprobados",
+    title: "Empresas líderes utilizan Vocalcom",
+    subtitle: "Empresas líderes utilizan Vocalcom para optimizar sus campañas outbound y desarrollar relaciones comerciales más eficaces en entornos exigentes.",
+    items: [
+      {
+        company: "Sage Spain",
+        industry: "Tech",
+        logo: "/logo_Sage.png",
+        quote: "Gracias al alto nivel de compromiso de Vocalcom, Sage pudo implementar un proyecto importante para su centro de contacto, con un retorno de inversión inmediato y un aumento del 60% en productividad.",
+        author: "Fernando Gavalche",
+        role: "CIO, Sage España",
+        stats: [
+          { label: "ROI", value: "Inmediato" },
+          { label: "Productividad", value: "+60%" }
+        ],
+        color: "green"
+      }
+    ]
+  },
+  finalCta: {
+    title: "Impulse su telemarketing con una solución de alto rendimiento",
+    subtitle: "Automatice, optimice y escale sus operaciones comerciales con Vocalcom.",
+    buttons: {
+      primary: "Solicite una demo gratuita y personalizada",
+      secondary: "Hable con un experto de Vocalcom"
+    }
+  }
+};
