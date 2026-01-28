@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useLanguage } from "../../hooks/useLanguage";
-import { getCalendlyConfig, type CalendlyRegion } from "@/config/calendly-config";
+import { getCalendlyConfig, getCalendlyConfigByCountry, type CalendlyRegion } from "@/config/calendly-config";
 import { resolveRegionFromUTM } from "@/lib/region-resolver";
 
 // Declare Calendly global
@@ -133,12 +133,25 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
   useEffect(() => {
     if (!showCalendly) return;
 
+    // Track if submission is in progress or completed to prevent duplicates
+    let isSubmitting = false;
+    let submissionCompleted = false;
+
     // Function to submit to Pardot
     const submitToPardot = async (bookingData?: any) => {
+      // Prevent duplicate submissions
+      if (isSubmitting || submissionCompleted) {
+        console.log('[DemoForm] Skipping duplicate Pardot submission');
+        return;
+      }
+
+      isSubmitting = true;
+
       try {
         const storedData = localStorage.getItem('vocalcom_form_submission');
         if (!storedData) {
           console.error('[DemoForm] No form data found in localStorage');
+          isSubmitting = false;
           return;
         }
 
@@ -204,10 +217,13 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
 
         console.log('[DemoForm] Pardot submission completed');
         
-        // Clear the stored data after successful submission
+        // Mark as completed and clear the stored data immediately to prevent double submission
+        submissionCompleted = true;
         localStorage.removeItem('vocalcom_form_submission');
       } catch (error) {
         console.error('[DemoForm] Error submitting to Pardot:', error);
+      } finally {
+        isSubmitting = false;
       }
     };
 
@@ -219,25 +235,22 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
       if (e.data.event === 'calendly.event_scheduled') {
         console.log('[DemoForm] Event scheduled:', e.data);
         
-        // Submit to Pardot with booking details (async but don't wait)
-        submitToPardot(e.data.payload).catch(err => 
-          console.error('[DemoForm] Failed to submit to Pardot:', err)
-        );
+        // Submit to Pardot with booking details
+        await submitToPardot(e.data.payload);
 
-        // Store language preference and redirect immediately
+        // Store language preference and redirect
         localStorage.setItem('vocalcom_landing_language', locale || 'fr');
         
-        // Brief delay to ensure Pardot submission starts before redirect
-        setTimeout(() => {
-          window.location.href = '/thank-you';
-        }, 100);
+        // Redirect to thank you page
+        window.location.href = '/thank-you';
       }
     };
 
     // Handle user leaving without booking
     const handleBeforeUnload = () => {
+      // Only submit if not already submitted and data still exists
       const storedData = localStorage.getItem('vocalcom_form_submission');
-      if (storedData) {
+      if (storedData && !submissionCompleted) {
         console.log('[DemoForm] User leaving without booking, submitting to Pardot');
         // Submit synchronously before page unloads
         const formSubmission = JSON.parse(storedData);
@@ -334,6 +347,15 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
       // Clear phone field when country changes to avoid mixing prefixes
       setFormData(prev => ({ ...prev, phone: '' }));
     }
+    
+    // Update Calendly URL based on selected country
+    const countryName = country.label[locale as keyof typeof country.label] || country.label.en;
+    console.log('[DemoForm] Country selected:', countryName);
+    
+    // Find the appropriate Calendly config for this country
+    const calendlyConfig = getCalendlyConfigByCountry(countryName);
+    console.log('[DemoForm] Calendly config for country:', calendlyConfig);
+    setCalendlyUrl(calendlyConfig.eventUrl);
     
     if (errors.country) {
       setErrors(prev => ({ ...prev, country: '' }));
