@@ -167,23 +167,33 @@ export const callCenterPT = {
     ]
   },
   salesforce: {
-    badge: "Salesforce Nativo",
-    title: "Centro de Contato Nativo do Salesforce",
-    subtitle: "Gerencie seu centro de contato diretamente no Salesforce, sem middleware.",
+    badge: "CRM Nativo",
+    title: "Integrações CRM nativas",
+    subtitle: "Sincronização bidirecional em tempo real com Salesforce, HubSpot, Microsoft Dynamics e mais de 200 ferramentas.",
     benefits: [
-      "Integração nativa do Salesforce",
-      "Interface de agente unificada",
+      "Integração nativa Salesforce",
       "Registro automático de chamadas",
-      "Sincronização de dados de clientes em tempo real",
-      "Experiência omnicanal fluida"
+      "Sincronização em tempo real",
+      "Edição Salesforce no AppExchange",
+      "Conectores pré-construídos para HubSpot, Dynamics, Zoho"
     ],
-    quote: "Ofereça experiências de cliente omnicanais personalizadas enquanto melhora a produtividade do agente.",
+    quote: "Todas as suas interações telefônicas sincronizadas automaticamente com seu CRM. Sem entrada manual.",
     image: "/assets/Salesforce_vocalcom.webp",
-    imageAlt: "Integração CTI da Vocalcom no Salesforce",
+    imageAlt: "Integração CRM Vocalcom",
     appExchange: {
-      label: "Disponível em",
+      label: "Disponível no",
       value: "AppExchange"
-    }
+    },
+    logos: [
+      { name: "Salesforce", logo: "/assets/Salesforce.com_logo.svg.png" },
+      { name: "Microsoft Dynamics", logo: "/assets/Microsoft_Dynamics_logo.png" },
+      { name: "Zendesk", logo: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Zendesk_logo.svg" },
+      { name: "HubSpot", logo: "https://upload.wikimedia.org/wikipedia/commons/3/3f/HubSpot_Logo.svg" },
+      { name: "Zoho CRM", logo: "/assets/Zoho_CRM_Logo.png" },
+      { name: "Oracle", logo: "https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg" }
+    ],
+    count: "+200",
+    countLabel: "integrações disponíveis"
   },
   integrations: {
     badge: "Integrações",

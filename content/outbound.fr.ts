@@ -52,6 +52,7 @@ export const outboundFR = {
           "Affichage de numéros locaux (Caller ID) pour augmenter les taux de décrochage"
         ],
         objective: "Résultat : plus de contacts, plus vite, avec moins d'appels inutiles.",
+        image: "/assets/AI Predictive Dialer.jpeg",
         visual: {
           type: "modes",
           title: "4 modes de numérotation disponibles",
@@ -74,10 +75,11 @@ export const outboundFR = {
           "🌐 Chat web - Chatbot IA et transfert intelligent vers agents",
           "📱 Messageries - WhatsApp, Facebook Messenger, Telegram unifiés"
         ],
-        objective: "une vue client unifiée pour des interactions plus fluides et personnalisées.",
+        objective: "une vision client unifiée pour des interactions plus fluides et personnalisées.",
+        image: "/assets/omnicanal.png",
         visual: {
           type: "screenshot",
-          image: "/assets/omnichannel-2.webp",
+          image: "/assets/omnicanal.png",
           title: "Espace de travail omnicanal"
         }
       },

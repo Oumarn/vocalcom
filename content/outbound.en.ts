@@ -52,6 +52,7 @@ export const outboundEN = {
           "Local Caller ID to increase answer rates"
         ],
         objective: "Result: more live conversations, faster, with fewer wasted calls.",
+        image: "/assets/AI Predictive Dialer.jpeg",
         visual: {
           type: "modes",
           title: "4 dialing modes available",
@@ -75,9 +76,10 @@ export const outboundEN = {
           "📱 Messaging - WhatsApp, Facebook Messenger, Telegram unified"
         ],
         objective: "a unified customer view for smoother and more personalized interactions.",
+        image: "/assets/omnicanal.png",
         visual: {
           type: "screenshot",
-          image: "/assets/omnichannel-2.webp",
+          image: "/assets/omnicanal.png",
           title: "Omnichannel workspace"
         }
       },

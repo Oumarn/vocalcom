@@ -33,6 +33,7 @@ type CallCenterContent = {
       description: string;
       items: string[];
       objective: string;
+      image?: string;
       visual: any;
     }>;
   };
@@ -272,6 +273,14 @@ export default function CallCenterPage({ content }: { content: CallCenterContent
                     {feature.visual.type === "screenshot" ? (
                       <div className="rounded-xl overflow-hidden max-w-md mx-auto">
                         <img src={feature.visual.image} alt={feature.visual.title} className="w-full shadow-2xl rounded-xl" />
+                      </div>
+                    ) : feature.visual.type === "modes" ? (
+                      <div className="space-y-6">
+                        {'image' in feature && feature.image && (
+                          <div className="rounded-xl overflow-hidden max-w-md mx-auto">
+                            <img src={feature.image} alt={feature.title} className="w-full shadow-2xl rounded-xl" />
+                          </div>
+                        )}
                       </div>
                     ) : feature.visual.type === "workflow" ? (
                       <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl p-8">

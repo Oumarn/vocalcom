@@ -52,6 +52,7 @@ export const outboundPT = {
           "Caller ID local para aumentar taxas de atendimento"
         ],
         objective: "Resultado: mais contatos, mais rápido, com menos chamadas perdidas.",
+        image: "/assets/AI Predictive Dialer.jpeg",
         visual: {
           type: "modes",
           title: "4 modos de discagem disponíveis",
@@ -75,9 +76,10 @@ export const outboundPT = {
           "📱 Mensagens - WhatsApp, Facebook Messenger, Telegram unificados"
         ],
         objective: "uma visão unificada do cliente para interações mais fluidas e personalizadas.",
+        image: "/assets/omnicanal.png",
         visual: {
           type: "screenshot",
-          image: "/assets/omnichannel-2.webp",
+          image: "/assets/omnicanal.png",
           title: "Espaço de trabalho omnicanal"
         }
       },

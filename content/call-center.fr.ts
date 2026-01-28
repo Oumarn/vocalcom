@@ -167,23 +167,33 @@ export const callCenterFR = {
     ]
   },
   salesforce: {
-    badge: "Salesforce Natif",
-    title: "Centre de Contact Natif Salesforce",
-    subtitle: "Gérez votre centre de contact directement dans Salesforce, sans middleware.",
+    badge: "CRM Natif",
+    title: "Intégrations CRM natives",
+    subtitle: "Synchronisation bidirectionnelle en temps réel avec Salesforce, HubSpot, Microsoft Dynamics et plus de 200 outils.",
     benefits: [
       "Intégration native Salesforce",
-      "Interface agent unifiée",
       "Journalisation automatique des appels",
-      "Synchronisation temps réel des données client",
-      "Expérience omnicanale fluide"
+      "Synchronisation temps réel des données",
+      "Edition Salesforce sur AppExchange",
+      "Connecteurs pré-construits pour HubSpot, Dynamics, Zoho"
     ],
-    quote: "Offrez une expérience client personnalisée et omnicanale tout en améliorant la productivité de vos agents.",
+    quote: "Toutes vos interactions téléphoniques automatiquement synchronisées avec votre CRM. Aucune saisie manuelle.",
     image: "/assets/Salesforce_vocalcom.webp",
-    imageAlt: "Intégration CTI Vocalcom dans Salesforce",
+    imageAlt: "Intégration CRM Vocalcom",
     appExchange: {
       label: "Disponible sur",
       value: "AppExchange"
-    }
+    },
+    logos: [
+      { name: "Salesforce", logo: "/assets/Salesforce.com_logo.svg.png" },
+      { name: "Microsoft Dynamics", logo: "/assets/Microsoft_Dynamics_logo.png" },
+      { name: "Zendesk", logo: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Zendesk_logo.svg" },
+      { name: "HubSpot", logo: "https://upload.wikimedia.org/wikipedia/commons/3/3f/HubSpot_Logo.svg" },
+      { name: "Zoho CRM", logo: "/assets/Zoho_CRM_Logo.png" },
+      { name: "Oracle", logo: "https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg" }
+    ],
+    count: "+200",
+    countLabel: "intégrations disponibles"
   },
   integrations: {
     badge: "Intégrations",

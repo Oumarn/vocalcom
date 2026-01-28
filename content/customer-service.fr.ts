@@ -114,22 +114,33 @@ export const customerServiceFR = {
         ]
     },
     salesforce: {
-        badge: "Intégration Salesforce",
-        title: "Gérez Votre Service Client depuis Salesforce",
-        subtitle: "Vocalcom s'intègre nativement à Salesforce pour une expérience unifiée.",
+        badge: "CRM Natif",
+        title: "Intégrations CRM natives",
+        subtitle: "Synchronisation bidirectionnelle en temps réel avec Salesforce, HubSpot, Microsoft Dynamics et plus de 200 outils.",
         benefits: [
-            "Clic-to-dial depuis Salesforce",
-            "Historique des interactions synchronisé",
-            "Fiches clients automatiquement mises à jour",
-            "Rapports unifiés CRM + Contact Center"
+            "Intégration native Salesforce",
+            "Journalisation automatique des appels",
+            "Synchronisation temps réel des données",
+            "Edition Salesforce sur AppExchange",
+            "Connecteurs pré-construits pour HubSpot, Dynamics, Zoho"
         ],
-        quote: "Une intégration native qui transforme Salesforce en centre de contact complet.",
+        quote: "Toutes vos interactions téléphoniques automatiquement synchronisées avec votre CRM. Aucune saisie manuelle.",
         image: "/assets/Salesforce_vocalcom.webp",
-        imageAlt: "Intégration Vocalcom Salesforce",
+        imageAlt: "Intégration CRM Vocalcom",
         appExchange: {
             label: "Disponible sur",
-            value: "Salesforce AppExchange"
-        }
+            value: "AppExchange"
+        },
+        logos: [
+            { name: "Salesforce", logo: "/assets/Salesforce.com_logo.svg.png" },
+            { name: "Microsoft Dynamics", logo: "/assets/Microsoft_Dynamics_logo.png" },
+            { name: "Zendesk", logo: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Zendesk_logo.svg" },
+            { name: "HubSpot", logo: "https://upload.wikimedia.org/wikipedia/commons/3/3f/HubSpot_Logo.svg" },
+            { name: "Zoho CRM", logo: "/assets/Zoho_CRM_Logo.png" },
+            { name: "Oracle", logo: "https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg" }
+        ],
+        count: "+200",
+        countLabel: "intégrations disponibles"
     },
     security: {
         title: "Sécurité et Conformité Entreprise",

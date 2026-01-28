@@ -114,22 +114,33 @@ export const customerServiceEN = {
         ]
     },
     salesforce: {
-        badge: "Salesforce Integration",
-        title: "Manage Your Customer Service from Salesforce",
-        subtitle: "Vocalcom integrates natively with Salesforce for a unified experience.",
+        badge: "Native CRM",
+        title: "Native CRM Integrations",
+        subtitle: "Real-time bidirectional synchronization with Salesforce, HubSpot, Microsoft Dynamics, and 200+ tools.",
         benefits: [
-            "Click-to-dial from Salesforce",
-            "Synchronized interaction history",
-            "Automatically updated customer records",
-            "Unified CRM + Contact Center reports"
+            "Native Salesforce integration",
+            "Automatic call logging",
+            "Real-time data synchronization",
+            "Salesforce Edition on AppExchange",
+            "Pre-built connectors for HubSpot, Dynamics, Zoho"
         ],
-        quote: "A native integration that transforms Salesforce into a complete contact center.",
+        quote: "All your phone interactions automatically synced with your CRM. No manual data entry.",
         image: "/assets/Salesforce_vocalcom.webp",
-        imageAlt: "Vocalcom Salesforce Integration",
+        imageAlt: "Vocalcom CRM Integration",
         appExchange: {
             label: "Available on",
-            value: "Salesforce AppExchange"
-        }
+            value: "AppExchange"
+        },
+        logos: [
+            { name: "Salesforce", logo: "/assets/Salesforce.com_logo.svg.png" },
+            { name: "Microsoft Dynamics", logo: "/assets/Microsoft_Dynamics_logo.png" },
+            { name: "Zendesk", logo: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Zendesk_logo.svg" },
+            { name: "HubSpot", logo: "https://upload.wikimedia.org/wikipedia/commons/3/3f/HubSpot_Logo.svg" },
+            { name: "Zoho CRM", logo: "/assets/Zoho_CRM_Logo.png" },
+            { name: "Oracle", logo: "https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg" }
+        ],
+        count: "+200",
+        countLabel: "integrations available"
     },
     security: {
         title: "Enterprise Security and Compliance",

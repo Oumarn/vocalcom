@@ -52,6 +52,7 @@ export const outboundES = {
           "Caller ID local para aumentar tasas de respuesta"
         ],
         objective: "Resultado: más contactos, más rápido, con menos llamadas perdidas.",
+        image: "/assets/AI Predictive Dialer.jpeg",
         visual: {
           type: "modes",
           title: "4 modos de marcación disponibles",
@@ -74,10 +75,11 @@ export const outboundES = {
           "🌐 Chat web - Chatbot IA y transferencia inteligente a agentes",
           "📱 Mensajería - WhatsApp, Facebook Messenger, Telegram unificados"
         ],
-        objective: "una vista unificada del cliente para interacciones más fluidas y personalizadas.",
+        objective: "una visión unificada del cliente para interacciones más fluidas y personalizadas.",
+        image: "/assets/omnicanal.png",
         visual: {
           type: "screenshot",
-          image: "/assets/omnichannel-2.webp",
+          image: "/assets/omnicanal.png",
           title: "Espacio de trabajo omnicanal"
         }
       },

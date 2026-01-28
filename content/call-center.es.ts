@@ -167,23 +167,33 @@ export const callCenterES = {
     ]
   },
   salesforce: {
-    badge: "Salesforce Nativo",
-    title: "Centro de Contacto Nativo de Salesforce",
-    subtitle: "Gestione su centro de contacto directamente en Salesforce, sin middleware.",
+    badge: "CRM Nativo",
+    title: "Integraciones CRM nativas",
+    subtitle: "Sincronización bidireccional en tiempo real con Salesforce, HubSpot, Microsoft Dynamics y más de 200 herramientas.",
     benefits: [
-      "Integración nativa de Salesforce",
-      "Interfaz de agente unificada",
+      "Integración nativa Salesforce",
       "Registro automático de llamadas",
-      "Sincronización de datos de clientes en tiempo real",
-      "Experiencia omnicanal fluida"
+      "Sincronización en tiempo real",
+      "Edición Salesforce en AppExchange",
+      "Conectores preconstruidos para HubSpot, Dynamics, Zoho"
     ],
-    quote: "Ofrezca experiencias de cliente omnicanales personalizadas mientras mejora la productividad del agente.",
+    quote: "Todas sus interacciones telefónicas sincronizadas automáticamente con su CRM. Sin entrada manual.",
     image: "/assets/Salesforce_vocalcom.webp",
-    imageAlt: "Integración CTI de Vocalcom en Salesforce",
+    imageAlt: "Integración CRM Vocalcom",
     appExchange: {
       label: "Disponible en",
       value: "AppExchange"
-    }
+    },
+    logos: [
+      { name: "Salesforce", logo: "/assets/Salesforce.com_logo.svg.png" },
+      { name: "Microsoft Dynamics", logo: "/assets/Microsoft_Dynamics_logo.png" },
+      { name: "Zendesk", logo: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Zendesk_logo.svg" },
+      { name: "HubSpot", logo: "https://upload.wikimedia.org/wikipedia/commons/3/3f/HubSpot_Logo.svg" },
+      { name: "Zoho CRM", logo: "/assets/Zoho_CRM_Logo.png" },
+      { name: "Oracle", logo: "https://upload.wikimedia.org/wikipedia/commons/5/50/Oracle_logo.svg" }
+    ],
+    count: "+200",
+    countLabel: "integraciones disponibles"
   },
   integrations: {
     badge: "Integraciones",
