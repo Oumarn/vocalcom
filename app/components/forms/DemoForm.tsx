@@ -5,6 +5,13 @@ import { useLanguage } from "../../hooks/useLanguage";
 import { getCalendlyConfig, getCalendlyConfigByCountry, mapRegionKeyToCalendly, type CalendlyRegion } from "@/config/calendly-config";
 import { resolveRegionFromUTM } from "@/lib/region-resolver";
 
+// Declare dataLayer for GTM
+declare global {
+  interface Window {
+    dataLayer: any[];
+  }
+}
+
 interface DemoFormProps {
   customButtonText?: string;
 }
@@ -108,6 +115,11 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
       const calendlyRegion = mapRegionKeyToCalendly(defaultRegion);
       const config = getCalendlyConfig(calendlyRegion);
       setCalendlyUrl(config.eventUrl);
+      
+      // Store region/language for GTM tracking
+      localStorage.setItem('vocalcom_region', defaultRegion);
+      localStorage.setItem('vocalcom_landing_language', locale || 'fr');
+      localStorage.setItem('vocalcom_calendly_team', calendlyRegion);
       return;
     }
     
@@ -132,6 +144,11 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
     
     // Set the URL
     setCalendlyUrl(config.eventUrl);
+    
+    // Store region/language for GTM tracking
+    localStorage.setItem('vocalcom_region', regionKey);
+    localStorage.setItem('vocalcom_landing_language', locale || 'fr');
+    localStorage.setItem('vocalcom_calendly_team', calendlyRegion);
   }, [attribution, locale]);
 
   // Listen for Calendly booking events and handle Pardot submission
@@ -247,6 +264,63 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
           return;
         }
         
+        // Fire GTM demo_booked event FIRST (before any async operations)
+        if (typeof window !== 'undefined') {
+          // Check GTM dedupe flag
+          if (localStorage.getItem('vocalcom_demo_booked')) {
+            console.log('[DemoForm] GTM demo_booked already fired, skipping');
+          } else {
+            localStorage.setItem('vocalcom_demo_booked', 'true');
+            
+            // Helper to get localStorage with vocalcom_ prefix
+            const ls = (k: string) => localStorage.getItem(`vocalcom_${k}`) || '';
+            
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+              event: 'demo_booked',
+              
+              conversion_type: 'primary',
+              booking_status: 'completed',
+              
+              // Click IDs
+              gclid: ls('gclid'),
+              fbclid: ls('fbclid'),
+              
+              // Core UTM parameters
+              utm_source: ls('utm_source'),
+              utm_medium: ls('utm_medium'),
+              utm_source_platform: ls('utm_source_platform'),
+              utm_campaign: ls('utm_campaign'),
+              
+              // Extended UTM tracking
+              utm_content: ls('utm_content'),
+              utm_term: ls('utm_term'),
+              utm_creative: ls('utm_creative'),
+              utm_device: ls('utm_device'),
+              utm_network: ls('utm_network'),
+              utm_matchtype: ls('utm_matchtype'),
+              
+              // Google Ads specific
+              campaign_name: ls('campaign_name'),
+              adgroup_name: ls('adgroup_name'),
+              
+              // Regional routing
+              region: localStorage.getItem('vocalcom_region') || '',
+              landing_language: localStorage.getItem('vocalcom_landing_language') || '',
+              calendly_team: localStorage.getItem('vocalcom_calendly_team') || '',
+              
+              // Calendly booking details
+              calendly_event_uri: e.data.payload?.event?.uri || '',
+              meeting_start_time: e.data.payload?.event?.start_time || '',
+              
+              // Deduplication ID
+              event_id: `demo_${Date.now()}`
+            });
+            
+            console.log('[DemoForm] GTM demo_booked event fired');
+          }
+        }
+        
         // Mark as submitted immediately
         localStorage.setItem('vocalcom_submission_completed', 'true');
         
@@ -270,6 +344,37 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
       if (bookingCompleted) {
         console.log('[DemoForm] Booking completed, skipping beforeunload submission');
         return;
+      }
+      
+      // Fire GTM demo_abandoned event
+      if (typeof window !== 'undefined' && !localStorage.getItem('vocalcom_demo_booked')) {
+        const ls = (k: string) => localStorage.getItem(`vocalcom_${k}`) || '';
+        
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: 'demo_abandoned',
+          
+          booking_status: 'abandoned',
+          
+          // Click IDs
+          gclid: ls('gclid'),
+          fbclid: ls('fbclid'),
+          
+          // Core UTM parameters
+          utm_source: ls('utm_source'),
+          utm_medium: ls('utm_medium'),
+          utm_campaign: ls('utm_campaign'),
+          campaign_name: ls('campaign_name'),
+          
+          // Regional routing
+          region: localStorage.getItem('vocalcom_region') || '',
+          landing_language: localStorage.getItem('vocalcom_landing_language') || '',
+          
+          // Deduplication ID
+          event_id: `abandoned_${Date.now()}`
+        });
+        
+        console.log('[DemoForm] GTM demo_abandoned event fired');
       }
       
       // Only submit if not already submitted and data still exists
@@ -419,7 +524,8 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
           'gmx.com', 'yandex.com', 'mail.ru', 'inbox.com', 'fastmail.com',
           'tutanota.com', 'hushmail.com', 'lycos.com', 'rediffmail.com',
           'free.fr', 'orange.fr', 'laposte.net', 'sfr.fr', 'wanadoo.fr',
-          'hotmail.fr', 'live.fr', 'msn.com', 'qq.com', '163.com', '126.com'
+          'hotmail.fr', 'live.fr', 'msn.com', 'qq.com', '163.com', '126.com',
+          'email.com', 'email.fr', 'email.es', 'email.pt'
         ];
         const emailLower = formData.email.toLowerCase();
         const emailDomain = emailLower.split('@')[1];
@@ -427,6 +533,11 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
         
         // Block generic domains
         if (genericDomains.includes(emailDomain)) {
+          newErrors.email = 'Please use your professional email address';
+        }
+        
+        // Block domains containing 'email' (e.g., anything@email.*)
+        if (emailDomain && emailDomain.includes('email')) {
           newErrors.email = 'Please use your professional email address';
         }
         
@@ -487,6 +598,36 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
     setStep(step - 1);
   };
 
+  // Helper to persist all attribution data consistently
+  const persistAttribution = () => {
+    if (typeof window === 'undefined') return;
+    
+    const qs = new URLSearchParams(window.location.search);
+    const get = (k: string) => qs.get(k) || localStorage.getItem(`vocalcom_${k}`) || '';
+    
+    const keys = [
+      'gclid',
+      'fbclid',
+      'utm_source',
+      'utm_medium',
+      'utm_source_platform',
+      'utm_campaign',
+      'utm_content',
+      'utm_term',
+      'utm_creative',
+      'utm_device',
+      'utm_network',
+      'utm_matchtype',
+      'campaign_name',
+      'adgroup_name',
+    ];
+    
+    keys.forEach((k) => {
+      const v = get(k);
+      if (v) localStorage.setItem(`vocalcom_${k}`, v);
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -497,8 +638,12 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
     setIsSubmitting(true);
 
     try {
-      // Clear any previous submission flag to allow new submission
+      // Clear flags to allow new booking
       localStorage.removeItem('vocalcom_submission_completed');
+      localStorage.removeItem('vocalcom_demo_booked');
+      
+      // Persist all attribution data with consistent vocalcom_ prefix
+      persistAttribution();
       
       // Store form data in localStorage for later Pardot submission
       const submissionData = {
