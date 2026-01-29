@@ -1,4 +1,6 @@
 // Calendly configuration - Map countries/regions to sales team Calendly links
+import type { RegionKey } from "@/lib/region-resolver";
+
 export const CALENDLY_CONFIG = {
   // France & North Europe Round Robin
   // Team: Pierrick Hollocou, Oumar NDIAYE
@@ -82,4 +84,19 @@ export function getCalendlyConfigByCountry(country: string): CalendlyConfigType 
     }
   }
   return CALENDLY_CONFIG.default;
+}
+
+// Map RegionKey from region-resolver to CalendlyRegion
+export function mapRegionKeyToCalendly(regionKey: RegionKey): CalendlyRegion {
+  const mapping: Record<RegionKey, CalendlyRegion> = {
+    'france_core': 'france_core',
+    'africa_francophone': 'africa',
+    'africa_english': 'africa',
+    'en_europe': 'france_core', // North Europe uses France calendar
+    'mea_english': 'mea',
+    'spain': 'spain', // Spain has its own team
+    'es_latam': 'latam', // LATAM has its own team
+    'brazil_pt': 'latam'
+  };
+  return mapping[regionKey] || 'default';
 }

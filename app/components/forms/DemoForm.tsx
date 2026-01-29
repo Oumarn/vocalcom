@@ -2,17 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useLanguage } from "../../hooks/useLanguage";
-import { getCalendlyConfig, getCalendlyConfigByCountry, type CalendlyRegion } from "@/config/calendly-config";
+import { getCalendlyConfig, getCalendlyConfigByCountry, mapRegionKeyToCalendly, type CalendlyRegion } from "@/config/calendly-config";
 import { resolveRegionFromUTM } from "@/lib/region-resolver";
-
-// Declare Calendly global
-declare global {
-    interface Window {
-        Calendly?: {
-            initInlineWidget: (options: { url: string; parentElement: HTMLElement; utm?: any }) => void;
-        };
-    }
-}
 
 interface DemoFormProps {
   customButtonText?: string;
@@ -21,9 +12,9 @@ interface DemoFormProps {
 export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
   const { locale } = useLanguage();
   const [step, setStep] = useState(1);
-  const [showCalendly, setShowCalendly] = useState(false);
-  const [calendlyUrl, setCalendlyUrl] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showCalendly, setShowCalendly] = useState(false);
+  const [calendlyUrl, setCalendlyUrl] = useState("");
   
   // Form data state
   const [formData, setFormData] = useState({
@@ -52,19 +43,22 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
     utm_source?: string;
     utm_medium?: string;
     utm_campaign?: string;
+    utm_source_platform?: string;
     utm_term?: string;
     utm_content?: string;
     utm_creative?: string;
     utm_matchtype?: string;
     utm_network?: string;
     utm_device?: string;
+    campaign_name?: string;
+    adgroup_name?: string;
     gclid?: string;
     fbclid?: string;
     calendly_event?: string;
     meeting_date?: string;
   }>({});
 
-  // Capture UTM parameters and resolve region on mount
+  // Capture UTM parameters on mount
   useEffect(() => {
     if (typeof window === 'undefined') return;
     
@@ -84,50 +78,61 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
       utm_source: getStored('utm_source'),
       utm_medium: getStored('utm_medium'),
       utm_campaign: getStored('utm_campaign'),
+      utm_source_platform: getStored('utm_source_platform'),
       utm_term: getStored('utm_term'),
       utm_content: getStored('utm_content'),
       utm_creative: getStored('utm_creative'),
       utm_matchtype: getStored('utm_matchtype'),
       utm_network: getStored('utm_network'),
       utm_device: getStored('utm_device'),
+      campaign_name: getStored('campaign_name'),
+      adgroup_name: getStored('adgroup_name'),
       gclid: getStored('gclid'),
       fbclid: getStored('fbclid'),
     };
     
     setAttribution(fullUtm);
+  }, []);
 
+  // Update Calendly URL based on UTM parameters and locale
+  useEffect(() => {
+    // Use campaign_name first (Google Ads), fallback to utm_campaign
+    const campaignValue = attribution.campaign_name || attribution.utm_campaign;
+    
+    // Only run routing if we have campaign data or this is not the first render
+    if (!campaignValue && Object.keys(attribution).length === 0) {
+      // First render, no data yet - use default based on locale
+      const defaultRegion = locale === 'fr' ? 'france_core' : 
+                           locale === 'es' ? 'spain' :
+                           locale === 'pt' ? 'brazil_pt' : 'en_europe';
+      const calendlyRegion = mapRegionKeyToCalendly(defaultRegion);
+      const config = getCalendlyConfig(calendlyRegion);
+      setCalendlyUrl(config.eventUrl);
+      return;
+    }
+    
     // Resolve region from UTM parameters
-    const detectedRegion = resolveRegionFromUTM({
-      utm_campaign: fullUtm.utm_campaign,
-      utm_source: fullUtm.utm_source,
-      utm_medium: fullUtm.utm_medium,
-      utm_content: fullUtm.utm_content,
-      utm_term: fullUtm.utm_term,
-      lang: (locale || 'fr') as 'fr' | 'en' | 'es' | 'pt',
+    const regionKey = resolveRegionFromUTM({
+      utm_campaign: campaignValue,
+      utm_source: attribution.utm_source,
+      utm_medium: attribution.utm_medium,
+      lang: locale,
     });
     
-    if (detectedRegion) {
-      console.log('[DemoForm] Detected region from UTM:', detectedRegion);
-      const config = getCalendlyConfig(detectedRegion);
-      setCalendlyUrl(config.eventUrl);
-    } else {
-      // Fallback to locale-based mapping
-      console.log('[DemoForm] No UTM region detected, using locale fallback:', locale);
-      
-      const localeToRegion: { [key: string]: CalendlyRegion } = {
-        'fr': 'france_core',
-        'es': 'spain',
-        'pt': 'portugal',
-        'en': 'france_core',
-      };
-      
-      const mappedRegion = localeToRegion[locale || 'fr'] || 'france_core';
-      console.log('[DemoForm] Mapped locale to region:', mappedRegion);
-      
-      const config = getCalendlyConfig(mappedRegion);
-      setCalendlyUrl(config.eventUrl);
-    }
-  }, [locale]);
+    console.log('[DemoForm] Campaign value:', campaignValue);
+    console.log('[DemoForm] Resolved region from UTM:', regionKey);
+    
+    // Map RegionKey to CalendlyRegion
+    const calendlyRegion = mapRegionKeyToCalendly(regionKey);
+    console.log('[DemoForm] Mapped to Calendly region:', calendlyRegion);
+    
+    // Get Calendly config for the region
+    const config = getCalendlyConfig(calendlyRegion);
+    console.log('[DemoForm] Calendly config:', config);
+    
+    // Set the URL
+    setCalendlyUrl(config.eventUrl);
+  }, [attribution, locale]);
 
   // Listen for Calendly booking events and handle Pardot submission
   useEffect(() => {
@@ -235,19 +240,38 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
       if (e.data.event === 'calendly.event_scheduled') {
         console.log('[DemoForm] Event scheduled:', e.data);
         
+        // Check if already submitted to prevent double submission
+        const alreadySubmitted = localStorage.getItem('vocalcom_submission_completed');
+        if (alreadySubmitted) {
+          console.log('[DemoForm] Already submitted, skipping duplicate');
+          return;
+        }
+        
+        // Mark as submitted immediately
+        localStorage.setItem('vocalcom_submission_completed', 'true');
+        
         // Submit to Pardot with booking details
         await submitToPardot(e.data.payload);
 
-        // Store language preference and redirect
+        // Store language preference
         localStorage.setItem('vocalcom_landing_language', locale || 'fr');
         
-        // Redirect to thank you page
-        window.location.href = '/thank-you';
+        // Wait 2 seconds before redirecting to thank you page
+        setTimeout(() => {
+          window.location.href = '/thank-you';
+        }, 2000);
       }
     };
 
     // Handle user leaving without booking
     const handleBeforeUnload = () => {
+      // Check if booking was completed
+      const bookingCompleted = localStorage.getItem('vocalcom_submission_completed');
+      if (bookingCompleted) {
+        console.log('[DemoForm] Booking completed, skipping beforeunload submission');
+        return;
+      }
+      
       // Only submit if not already submitted and data still exists
       const storedData = localStorage.getItem('vocalcom_form_submission');
       if (storedData && !submissionCompleted) {
@@ -272,12 +296,15 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
         if (formSubmission.attribution?.utm_source) pardotFields.utm_source = formSubmission.attribution.utm_source;
         if (formSubmission.attribution?.utm_medium) pardotFields.utm_medium = formSubmission.attribution.utm_medium;
         if (formSubmission.attribution?.utm_campaign) pardotFields.utm_campaign = formSubmission.attribution.utm_campaign;
+        if (formSubmission.attribution?.utm_source_platform) pardotFields.utm_source_platform = formSubmission.attribution.utm_source_platform;
         if (formSubmission.attribution?.utm_term) pardotFields.utm_term = formSubmission.attribution.utm_term;
         if (formSubmission.attribution?.utm_content) pardotFields.utm_content = formSubmission.attribution.utm_content;
         if (formSubmission.attribution?.utm_creative) pardotFields.utm_creative = formSubmission.attribution.utm_creative;
         if (formSubmission.attribution?.utm_matchtype) pardotFields.utm_matchtype = formSubmission.attribution.utm_matchtype;
         if (formSubmission.attribution?.utm_network) pardotFields.utm_network = formSubmission.attribution.utm_network;
         if (formSubmission.attribution?.utm_device) pardotFields.utm_device = formSubmission.attribution.utm_device;
+        if (formSubmission.attribution?.campaign_name) pardotFields.campaign_name = formSubmission.attribution.campaign_name;
+        if (formSubmission.attribution?.adgroup_name) pardotFields.adgroup_name = formSubmission.attribution.adgroup_name;
         if (formSubmission.attribution?.gclid) pardotFields.gclid = formSubmission.attribution.gclid;
 
         const pardotData = new URLSearchParams(pardotFields);
@@ -384,6 +411,45 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
         newErrors.email = 'Email is required';
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
         newErrors.email = 'Please enter a valid email';
+      } else {
+        // Block generic/free email providers
+        const genericDomains = [
+          'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'live.com',
+          'aol.com', 'icloud.com', 'mail.com', 'protonmail.com', 'zoho.com',
+          'gmx.com', 'yandex.com', 'mail.ru', 'inbox.com', 'fastmail.com',
+          'tutanota.com', 'hushmail.com', 'lycos.com', 'rediffmail.com',
+          'free.fr', 'orange.fr', 'laposte.net', 'sfr.fr', 'wanadoo.fr',
+          'hotmail.fr', 'live.fr', 'msn.com', 'qq.com', '163.com', '126.com'
+        ];
+        const emailLower = formData.email.toLowerCase();
+        const emailDomain = emailLower.split('@')[1];
+        const emailLocal = emailLower.split('@')[0];
+        
+        // Block generic domains
+        if (genericDomains.includes(emailDomain)) {
+          newErrors.email = 'Please use your professional email address';
+        }
+        
+        // Block test/fake/generic email patterns
+        const blockedPatterns = [
+          /^test/i, /test$/i, /testing/i,
+          /^demo/i, /demo$/i,
+          /^fake/i, /fake$/i,
+          /^sample/i, /sample$/i,
+          /^example/i, /example$/i,
+          /^admin/i, /^info/i, /^contact/i, /^support/i,
+          /^noreply/i, /^no-reply/i,
+          /^temp/i, /temporary/i,
+          /^spam/i, /^junk/i,
+          /^dummy/i, /^placeholder/i,
+          /^asdf/i, /^qwerty/i, /^123/i,
+          /^abc/i, /^xyz/i,
+          /company/i, /compny/i, /entreprise/i, /empresa/i
+        ];
+        
+        if (blockedPatterns.some(pattern => pattern.test(emailLocal))) {
+          newErrors.email = 'Please use a valid professional email address';
+        }
       }
     }
 
@@ -394,6 +460,7 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
 
     if (currentStep === 3) {
       if (!formData.company) newErrors.company = 'Company is required';
+      if (!formData.country) newErrors.country = 'Country is required';
       if (!formData.phone) {
         newErrors.phone = 'Phone is required';
       } else {
@@ -403,6 +470,7 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
           newErrors.phone = 'Please enter a valid phone number';
         }
       }
+      if (!formData.jobTitle) newErrors.jobTitle = 'Job title is required';
     }
 
     setErrors(newErrors);
@@ -429,6 +497,9 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
     setIsSubmitting(true);
 
     try {
+      // Clear any previous submission flag to allow new submission
+      localStorage.removeItem('vocalcom_submission_completed');
+      
       // Store form data in localStorage for later Pardot submission
       const submissionData = {
         email: formData.email,
@@ -942,7 +1013,7 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
           </div>
           <div>
             <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">
-              {t.country}
+              {t.country} *
             </label>
             <div className="relative">
               <input
@@ -954,7 +1025,9 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
                 onFocus={handleCountryFocus}
                 onBlur={handleCountryBlur}
                 placeholder={t.countryPlaceholder}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                  errors.country ? 'border-red-500' : 'border-gray-300'
+                }`}
                 autoComplete="off"
               />
               {showCountryDropdown && filteredCountries.length > 0 && (
@@ -1002,7 +1075,7 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
           </div>
           <div>
             <label htmlFor="jobTitle" className="block text-sm font-medium text-gray-700 mb-2">
-              {t.jobTitle}
+              {t.jobTitle} *
             </label>
             <input
               type="text"
@@ -1010,8 +1083,13 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
               name="jobTitle"
               value={formData.jobTitle}
               onChange={handleInputChange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                errors.jobTitle ? 'border-red-500' : 'border-gray-300'
+              }`}
             />
+            {errors.jobTitle && (
+              <p className="mt-1 text-sm text-red-600">{errors.jobTitle}</p>
+            )}
           </div>
           <div className="flex gap-3">
             <button

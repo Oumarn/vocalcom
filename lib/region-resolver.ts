@@ -10,6 +10,7 @@ export type RegionKey =
   | "en_europe"
   | "africa_english"
   | "mea_english"
+  | "spain"
   | "es_latam"
   | "brazil_pt";
 
@@ -196,23 +197,59 @@ export function resolveRegionFromUTM(utm: UTM): RegionKey {
   const campaign = (utm.utm_campaign ?? "").toLowerCase();
 
   // Match exact region strings from Google Ads naming convention
-  if (campaign.includes("fr core")) return "france_core";
-  if (campaign.includes("fr africa")) return "africa_francophone";
+  // Pattern: GA | REGION | LANGUAGE | ...
+  
+  // France & Core French markets
+  if (campaign.includes("france") || campaign.includes("fr core") || campaign.includes("vocalcom")) {
+    return "france_core";
+  }
+  
+  // MEA (Middle East & Africa) - must check before "africa" to avoid false match
+  if (campaign.includes("mea") || campaign.includes("en mea")) {
+    return "mea_english";
+  }
+  
+  // Africa (French-speaking)
+  if (campaign.includes("africa") && (campaign.includes("fr") || !campaign.includes("en"))) {
+    return "africa_francophone";
+  }
+  
+  // Africa (English-speaking)
+  if (campaign.includes("africa") && campaign.includes("en")) {
+    return "africa_english";
+  }
+  
+  // North Europe (English)
+  if (campaign.includes("north europe") || campaign.includes("en europe")) {
+    return "en_europe";
+  }
+  
+  // Spain & LATAM (Spanish & Portuguese)
+  if (campaign.includes("spain")) {
+    return "spain"; // Spain has its own team calendar
+  }
+  
+  if (campaign.includes("latam") || campaign.includes("mexico") || 
+      campaign.includes("colombia") || campaign.includes("argentina")) {
+    return "es_latam"; // LATAM countries use latam calendar
+  }
+  
+  // Brazil (Portuguese) - must check for brazil specifically to avoid matching "pt" in "LATAM | PT"
+  if (campaign.includes("brazil") || (campaign.includes(" pt") && !campaign.includes("latam"))) {
+    return "brazil_pt";
+  }
+  
+  // Generic Spanish campaigns without explicit region
+  if (campaign.includes("es") && !campaign.includes("fr") && !campaign.includes("en")) {
+    return "es_latam"; // Default Spanish to LATAM
+  }
 
-  if (campaign.includes("en europe")) return "en_europe";
-  if (campaign.includes("en africa")) return "africa_english";
-  if (campaign.includes("en mea")) return "mea_english";
-
-  if (campaign.includes("es spain") || campaign.includes("es latam")) return "es_latam";
-  if (campaign.includes("pt brazil")) return "brazil_pt";
-
-  // Fallback: use language as a hint but not definitive
-  // This will be overridden by country-based detection later
+  // Fallback: use language as a hint
   switch (utm.lang) {
     case "fr":
       return "france_core";
     case "en":
-      return "en_europe"; // Changed from mea_english to en_europe as better default
+      return "en_europe";
     case "es":
       return "es_latam";
     case "pt":
@@ -342,7 +379,8 @@ export function getRegionDisplayName(region: RegionKey): string {
     en_europe: "Europe",
     africa_english: "English-speaking Africa",
     mea_english: "Middle East & Arabia",
-    es_latam: "España & Latinoamérica",
+    spain: "España",
+    es_latam: "Latinoamérica",
     brazil_pt: "Brasil",
   };
   return names[region];

@@ -32,17 +32,24 @@ export const REGIONS = {
     ],
   },
 
-  // 🇪🇸 Spain & LATAM (Spain + Latin America)
+  // 🇪🇸 Spain
+  spain: {
+    timezone: 'Europe/Madrid',
+    duration: 30,
+    bufferTime: 0,
+    calendarEmails: [
+      'j.meilan@vocalcom.com',     // Jorge Meilán - Senior Sales Executive
+      'l.lavorato@vocalcom.com',   // Luis Lavorato - Senior Sales Executive
+      'a.braceras@vocalcom.com',   // Andrés Braceras - SVP Southern Europe & LATAM
+    ],
+  },
+
+  // 🌎 LATAM (Latin America)
   es_latam: {
     timezone: 'America/Mexico_City',
     duration: 30,
     bufferTime: 0,
     calendarEmails: [
-      // Spain team
-      'j.meilan@vocalcom.com',     // Jorge Meilán - Senior Sales Executive
-      'l.lavorato@vocalcom.com',   // Luis Lavorato - Senior Sales Executive
-      'a.braceras@vocalcom.com',   // Andrés Braceras - SVP Southern Europe & LATAM
-      // LATAM team
       'a.quintero@vocalcom.com',   // Angelo Quintero - Sales Director Colombia & Mexico
       'm.ballatore@vocalcom.com',  // Mauro Ballatore - Sales Director Southern Cone
       'r.stacul@vocalcom.com',     // Romina Stacul - Inside Sales Argentina
