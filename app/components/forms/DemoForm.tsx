@@ -541,6 +541,11 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
           newErrors.email = 'Please use your professional email address';
         }
         
+        // Block domains containing 'gmail' or 'hotmail' anywhere (catches gmail16.com, somethinggmail.com, etc.)
+        if (emailDomain && (emailDomain.includes('gmail') || emailDomain.includes('hotmail'))) {
+          newErrors.email = 'Please use your professional email address';
+        }
+        
         // Block test/fake/generic email patterns
         const blockedPatterns = [
           /^test/i, /test$/i, /testing/i,
