@@ -525,7 +525,9 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
           'tutanota.com', 'hushmail.com', 'lycos.com', 'rediffmail.com',
           'free.fr', 'orange.fr', 'laposte.net', 'sfr.fr', 'wanadoo.fr',
           'hotmail.fr', 'live.fr', 'msn.com', 'qq.com', '163.com', '126.com',
-          'email.com', 'email.fr', 'email.es', 'email.pt', 'gmaio.com'
+          'email.com', 'email.fr', 'email.es', 'email.pt',
+          // Gmail typo/spam variations
+          'gmaio.com', 'gmile.com', 'gmail.com16', 'gamil.com', 'gamail.com', 'gmaio.coklm'
         ];
         const emailLower = formData.email.toLowerCase();
         const emailDomain = emailLower.split('@')[1];
