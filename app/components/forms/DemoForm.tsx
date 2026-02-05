@@ -212,6 +212,10 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
         if (formSubmission.country) pardotFields.country = formSubmission.country;
         if (formSubmission.jobTitle) pardotFields.job_title = formSubmission.jobTitle;
         
+        // Add landing language
+        const landingLanguage = localStorage.getItem('vocalcom_landing_language');
+        if (landingLanguage) pardotFields.landing_language = landingLanguage;
+        
         // Add all UTM and attribution parameters
         if (formSubmission.attribution?.utm_source) pardotFields.utm_source = formSubmission.attribution.utm_source;
         if (formSubmission.attribution?.utm_medium) pardotFields.utm_medium = formSubmission.attribution.utm_medium;
@@ -223,6 +227,10 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
         if (formSubmission.attribution?.utm_network) pardotFields.utm_network = formSubmission.attribution.utm_network;
         if (formSubmission.attribution?.utm_device) pardotFields.utm_device = formSubmission.attribution.utm_device;
         if (formSubmission.attribution?.gclid) pardotFields.gclid = formSubmission.attribution.gclid;
+        
+        // Add Google Ads campaign and adgroup names
+        if (formSubmission.attribution?.campaign_name) pardotFields.campaign_name = formSubmission.attribution.campaign_name;
+        if (formSubmission.attribution?.adgroup_name) pardotFields.adgroup_name = formSubmission.attribution.adgroup_name;
 
         const pardotData = new URLSearchParams(pardotFields);
 
