@@ -161,8 +161,8 @@ export const callCenterEN = {
       {
         icon: "🌍",
         color: "orange",
-        title: "Data residency in Europe",
-        description: "We comply with GDPR and CCPA programs and offer EU data hosting so data never leaves the region."
+        title: "Secure data residency",
+        description: "We comply with GDPR and CCPA programs and offer regional data hosting so your data never leaves your chosen region."
       }
     ]
   },

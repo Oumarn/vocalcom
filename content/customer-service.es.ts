@@ -169,8 +169,8 @@ export const customerServiceES = {
             {
                 icon: "🌍",
                 color: "orange",
-                title: "Residencia de datos en Europa",
-                description: "Cumplimos con los programas RGPD y CCPA y ofrecemos alojamiento de datos en la UE para que nunca salgan de la región."
+                title: "Residencia de datos segura",
+                description: "Cumplimos con los programas RGPD y CCPA y ofrecemos alojamiento de datos en la región de su elección para que nunca la abandonen."
             }
         ]
     },

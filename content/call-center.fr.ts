@@ -161,8 +161,8 @@ export const callCenterFR = {
       {
         icon: "🌍",
         color: "orange",
-        title: "Résidence des données en Europe",
-        description: "Nous respectons les programmes RGPD et CCPA et proposons l'hébergement des données en UE pour qu'elles ne quittent jamais la région."
+        title: "Résidence des données sécurisée",
+        description: "Nous respectons les programmes RGPD et CCPA et proposons l'hébergement des données dans la région de votre choix pour qu'elles ne la quittent jamais."
       }
     ]
   },

@@ -153,7 +153,7 @@ export const outboundEN = {
         icon: "🔒",
         color: "violet",
         title: "Encrypted data",
-        description: "End-to-end AES-256 encryption for all data and recordings. Storage in certified datacenters in Europe and US."
+        description: "End-to-end AES-256 encryption for all data and recordings. Storage in certified datacenters worldwide."
       },
       {
         icon: "🛡️",
