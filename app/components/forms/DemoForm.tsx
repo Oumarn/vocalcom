@@ -534,6 +534,15 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
           'free.fr', 'orange.fr', 'laposte.net', 'sfr.fr', 'wanadoo.fr',
           'hotmail.fr', 'live.fr', 'msn.com', 'qq.com', '163.com', '126.com',
           'email.com', 'email.fr', 'email.es', 'email.pt',
+          // Yahoo regional variations
+          'yahoo.fr', 'yahoo.co.uk', 'yahoo.es', 'yahoo.pt', 'yahoo.com.br',
+          'yahoo.de', 'yahoo.it', 'yahoo.ca', 'yahoo.co.in', 'yahoo.com.au',
+          'yahoo.co.jp', 'yahoo.com.mx', 'yahoo.com.ar', 'yahoo.co.id',
+          'ymail.com', 'rocketmail.com',
+          // Disposable/temporary email providers
+          'yopmail.com', 'yopmail.fr', 'guerrillamail.com', 'mailinator.com',
+          'tempmail.com', 'throwaway.email', 'sharklasers.com', 'guerrillamailblock.com',
+          'grr.la', 'dispostable.com', 'maildrop.cc', 'trashmail.com',
           // Gmail typo/spam variations
           'gmaio.com', 'gmile.com', 'gmail.com16', 'gamil.com', 'gamail.com', 'gmaio.coklm'
         ];
@@ -551,8 +560,13 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
           newErrors.email = 'Please use your professional email address';
         }
         
-        // Block domains containing 'gmail' or 'hotmail' anywhere (catches gmail16.com, somethinggmail.com, etc.)
-        if (emailDomain && (emailDomain.includes('gmail') || emailDomain.includes('hotmail'))) {
+        // Block domains containing 'gmail', 'hotmail', or 'yahoo' anywhere (catches gmail16.com, somethinggmail.com, yahoo.anything, etc.)
+        if (emailDomain && (emailDomain.includes('gmail') || emailDomain.includes('hotmail') || emailDomain.includes('yahoo'))) {
+          newErrors.email = 'Please use your professional email address';
+        }
+        
+        // Block domains containing numbers (e.g., mail123.com, 163.com, qq123.com) — legitimate business domains don't have numbers
+        if (emailDomain && /\d/.test(emailDomain.split('.')[0])) {
           newErrors.email = 'Please use your professional email address';
         }
         
