@@ -560,8 +560,8 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
           newErrors.email = 'Please use your professional email address';
         }
         
-        // Block domains containing 'gmail', 'hotmail', or 'yahoo' anywhere (catches gmail16.com, somethinggmail.com, yahoo.anything, etc.)
-        if (emailDomain && (emailDomain.includes('gmail') || emailDomain.includes('hotmail') || emailDomain.includes('yahoo'))) {
+        // Block domains containing 'gmail', 'gmai', 'hotmail', or 'yahoo' anywhere, or starting with 'gm' (catches all gmail typos/variations)
+        if (emailDomain && (emailDomain.includes('gmail') || emailDomain.includes('gmai') || emailDomain.includes('hotmail') || emailDomain.includes('yahoo') || emailDomain.split('.')[0].startsWith('gm'))) {
           newErrors.email = 'Please use your professional email address';
         }
         
