@@ -38,14 +38,28 @@ export const CALENDLY_CONFIG = {
     region: 'spain' as const
   },
   
-  // LATAM Round Robin
-  // Team: Angelo Quintero (Colombia/Mexico), Mauro Ballatore (Southern Cone), 
-  //       Romina Stacul (Argentina), Juan Carlos Henríquez (Chile)
-  latam: {
-    eventUrl: 'https://calendly.com/vocalcom-latam/new-meeting',
+  // LATAM - Angelo Quintero (Colombia, Mexico, Central America, Caribbean)
+  latam_angelo: {
+    eventUrl: 'https://calendly.com/vocalcom-latam/demo-vocalcom-clone',
     timezone: 'America/Mexico_City',
-    countries: ['Mexique', 'Mexico', 'Colombie', 'Colombia', 'Argentine', 'Argentina', 'Chili', 'Chile', 'Brésil', 'Brasil', 'Brazil', 'Pérou', 'Peru', 'Venezuela', 'Équateur', 'Ecuador', 'Bolivie', 'Bolivia', 'Paraguay', 'Uruguay', 'Costa Rica', 'Panama', 'Guatemala', 'Honduras', 'El Salvador', 'Nicaragua', 'République Dominicaine', 'Dominican Republic', 'Cuba', 'Jamaïque', 'Jamaica', 'Haïti', 'Haiti'],
-    region: 'latam' as const
+    countries: ['Mexique', 'Mexico', 'México', 'Colombie', 'Colombia', 'Colômbia', 'Panama', 'Panamá', 'Guatemala', 'Honduras', 'El Salvador', 'Salvador', 'Nicaragua', 'Nicarágua', 'République Dominicaine', 'Dominican Republic', 'República Dominicana', 'Cuba', 'Jamaïque', 'Jamaica', 'Haïti', 'Haiti', 'Puerto Rico', 'Porto Rico', 'Trinidad and Tobago', 'Trinité-et-Tobago', 'Trinidad y Tobago', 'Trinidad e Tobago', 'Barbados', 'Barbade', 'Bahamas'],
+    region: 'latam_angelo' as const
+  },
+
+  // LATAM - Juan Carlos Henríquez (Peru, Bolivia, Chile, Costa Rica, Venezuela)
+  latam_juan: {
+    eventUrl: 'https://calendly.com/vocalcom-latam/demo-vocalcom-clone-1',
+    timezone: 'America/Santiago',
+    countries: ['Pérou', 'Peru', 'Perú', 'Bolivie', 'Bolivia', 'Bolívia', 'Chili', 'Chile', 'Costa Rica', 'Venezuela', 'Équateur', 'Ecuador', 'Equador'],
+    region: 'latam_juan' as const
+  },
+
+  // LATAM - Mauro Ballatore (Argentina, Uruguay, Paraguay, Brazil)
+  latam_mauro: {
+    eventUrl: 'https://calendly.com/vocalcom-latam/new-meeting',
+    timezone: 'America/Argentina/Buenos_Aires',
+    countries: ['Argentine', 'Argentina', 'Uruguai', 'Uruguay', 'Paraguai', 'Paraguay', 'Brésil', 'Brasil', 'Brazil'],
+    region: 'latam_mauro' as const
   },
   
   // Portugal now uses Spain calendar (Southern Europe team)
@@ -76,10 +90,11 @@ export function getCalendlyConfig(region: string): CalendlyConfigType {
   return CALENDLY_CONFIG.default;
 }
 
-// Get Calendly config based on selected country
+// Get Calendly config based on selected country (case-insensitive matching)
 export function getCalendlyConfigByCountry(country: string): CalendlyConfigType {
+  const countryLower = country.toLowerCase();
   for (const [region, config] of Object.entries(CALENDLY_CONFIG)) {
-    if (config.countries.some((c: string) => c === country)) {
+    if (config.countries.some((c: string) => c.toLowerCase() === countryLower)) {
       return config as CalendlyConfigType;
     }
   }
@@ -95,8 +110,8 @@ export function mapRegionKeyToCalendly(regionKey: RegionKey): CalendlyRegion {
     'en_europe': 'france_core', // North Europe uses France calendar
     'mea_english': 'mea',
     'spain': 'spain', // Spain has its own team
-    'es_latam': 'latam', // LATAM has its own team
-    'brazil_pt': 'latam'
+    'es_latam': 'latam_angelo', // LATAM default goes to Angelo (Colombia/Mexico/Central America)
+    'brazil_pt': 'latam_mauro' // Brazil goes to Mauro
   };
   return mapping[regionKey] || 'default';
 }

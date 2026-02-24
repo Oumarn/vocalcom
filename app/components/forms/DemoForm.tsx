@@ -488,12 +488,11 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
       setFormData(prev => ({ ...prev, phone: '' }));
     }
     
-    // Update Calendly URL based on selected country
-    const countryName = country.label[locale as keyof typeof country.label] || country.label.en;
-    console.log('[DemoForm] Country selected:', countryName);
+    // Update Calendly URL based on selected country (use English value for consistent matching)
+    console.log('[DemoForm] Country selected:', country.value);
     
     // Find the appropriate Calendly config for this country
-    const calendlyConfig = getCalendlyConfigByCountry(countryName);
+    const calendlyConfig = getCalendlyConfigByCountry(country.value);
     console.log('[DemoForm] Calendly config for country:', calendlyConfig);
     setCalendlyUrl(calendlyConfig.eventUrl);
     
@@ -543,8 +542,12 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
           'yopmail.com', 'yopmail.fr', 'guerrillamail.com', 'mailinator.com',
           'tempmail.com', 'throwaway.email', 'sharklasers.com', 'guerrillamailblock.com',
           'grr.la', 'dispostable.com', 'maildrop.cc', 'trashmail.com',
+          'io.com', 'yourdomain.com',
           // Gmail typo/spam variations
-          'gmaio.com', 'gmile.com', 'gmail.com16', 'gamil.com', 'gamail.com', 'gmaio.coklm'
+          'gmaio.com', 'gmile.com', 'gmail.com16', 'gamil.com', 'gamail.com', 'gmaio.coklm',
+          'gaiml.com', 'gmial.com', 'gimail.com', 'glmail.com', 'gmaill.com', 'gnail.com',
+          'gmal.com', 'gmaul.com', 'gmali.com', 'gaml.com', 'gmill.com', 'gemail.com',
+          'gimel.com', 'gmeil.com', 'gmsil.com', 'gmaik.com', 'gmaol.com'
         ];
         const emailLower = formData.email.toLowerCase();
         const emailDomain = emailLower.split('@')[1];
@@ -563,6 +566,18 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
         // Block domains containing 'gmail', 'gmai', 'hotmail', or 'yahoo' anywhere, or starting with 'gm' (catches all gmail typos/variations)
         if (emailDomain && (emailDomain.includes('gmail') || emailDomain.includes('gmai') || emailDomain.includes('hotmail') || emailDomain.includes('yahoo') || emailDomain.split('.')[0].startsWith('gm'))) {
           newErrors.email = 'Please use your professional email address';
+        }
+        
+        // Block gmail anagrams — domain name part that is a rearrangement of 'gmail' letters (catches gaiml, gmial, gimail, etc.)
+        if (emailDomain) {
+          const domainName = emailDomain.split('.')[0].toLowerCase();
+          // Check if domain name (4-6 chars) is a gmail anagram/variation
+          if (domainName.length >= 4 && domainName.length <= 6) {
+            const sorted = domainName.split('').sort().join('');
+            if (sorted === 'agilm' || sorted === 'agiilm' || sorted === 'agillm' || sorted === 'agilmm') {
+              newErrors.email = 'Please use your professional email address';
+            }
+          }
         }
         
         // Block domains containing numbers (e.g., mail123.com, 163.com, qq123.com) — legitimate business domains don't have numbers
