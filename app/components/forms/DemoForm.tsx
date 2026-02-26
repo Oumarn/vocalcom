@@ -533,6 +533,22 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
           'free.fr', 'orange.fr', 'laposte.net', 'sfr.fr', 'wanadoo.fr',
           'hotmail.fr', 'live.fr', 'msn.com', 'qq.com', '163.com', '126.com',
           'email.com', 'email.fr', 'email.es', 'email.pt',
+          // Outlook/Hotmail/Live regional variations
+          'outlook.fr', 'outlook.es', 'outlook.pt', 'outlook.co.uk', 'outlook.de',
+          'outlook.it', 'outlook.com.br', 'outlook.com.au', 'outlook.com.ar',
+          'outlook.com.mx', 'outlook.co.jp', 'outlook.ca', 'outlook.co.in',
+          'outlook.com.tr', 'outlook.sa', 'outlook.ae', 'outlook.be', 'outlook.at',
+          'outlook.cl', 'outlook.co.il', 'outlook.co.nz', 'outlook.co.th',
+          'outlook.com.pe', 'outlook.com.co', 'outlook.com.vn', 'outlook.dk',
+          'outlook.ie', 'outlook.jp', 'outlook.kr', 'outlook.my', 'outlook.ph',
+          'outlook.sg', 'outlook.in',
+          'hotmail.co.uk', 'hotmail.es', 'hotmail.de', 'hotmail.it', 'hotmail.com.br',
+          'hotmail.com.ar', 'hotmail.com.mx', 'hotmail.co.jp', 'hotmail.ca',
+          'hotmail.com.au', 'hotmail.co.in', 'hotmail.be', 'hotmail.nl', 'hotmail.pt',
+          'hotmail.com.tr', 'hotmail.co.nz', 'hotmail.ch', 'hotmail.at',
+          'live.co.uk', 'live.de', 'live.it', 'live.es', 'live.com.br',
+          'live.com.ar', 'live.com.mx', 'live.co.jp', 'live.ca', 'live.com.au',
+          'live.co.in', 'live.be', 'live.nl', 'live.pt', 'live.at', 'live.ie',
           // Yahoo regional variations
           'yahoo.fr', 'yahoo.co.uk', 'yahoo.es', 'yahoo.pt', 'yahoo.com.br',
           'yahoo.de', 'yahoo.it', 'yahoo.ca', 'yahoo.co.in', 'yahoo.com.au',
@@ -547,7 +563,9 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
           'gmaio.com', 'gmile.com', 'gmail.com16', 'gamil.com', 'gamail.com', 'gmaio.coklm',
           'gaiml.com', 'gmial.com', 'gimail.com', 'glmail.com', 'gmaill.com', 'gnail.com',
           'gmal.com', 'gmaul.com', 'gmali.com', 'gaml.com', 'gmill.com', 'gemail.com',
-          'gimel.com', 'gmeil.com', 'gmsil.com', 'gmaik.com', 'gmaol.com'
+          'gimel.com', 'gmeil.com', 'gmsil.com', 'gmaik.com', 'gmaol.com',
+          // Other fake/spam domains
+          'google.chrome'
         ];
         const emailLower = formData.email.toLowerCase();
         const emailDomain = emailLower.split('@')[1];
@@ -563,8 +581,8 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
           newErrors.email = 'Please use your professional email address';
         }
         
-        // Block domains containing 'gmail', 'gmai', 'hotmail', or 'yahoo' anywhere, or starting with 'gm' (catches all gmail typos/variations)
-        if (emailDomain && (emailDomain.includes('gmail') || emailDomain.includes('gmai') || emailDomain.includes('hotmail') || emailDomain.includes('yahoo') || emailDomain.split('.')[0].startsWith('gm'))) {
+        // Block domains containing 'gmail', 'gmai', 'hotmail', 'outlook', 'yahoo' or 'live.' anywhere, or starting with 'gm' (catches all typos/variations)
+        if (emailDomain && (emailDomain.includes('gmail') || emailDomain.includes('gmai') || emailDomain.includes('hotmail') || emailDomain.includes('outlook') || emailDomain.includes('yahoo') || emailDomain.startsWith('live.') || emailDomain.split('.')[0].startsWith('gm'))) {
           newErrors.email = 'Please use your professional email address';
         }
         
