@@ -1,6 +1,6 @@
 export const landingFR = {
   meta: {
-    title: "Vocalcom - Centre de contact tout-en-un propulsé par l'IA",
+    title: "Vocalcom - Solution cloud de centre d'appels IA-First",
     description: "Plateforme AI-first de centre de contact. ROI de 301% sur 3 ans.",
   },
   header: {
@@ -8,11 +8,11 @@ export const landingFR = {
   },
   hero: {
     badge: "AI-first Contact Center Platform",
-    title: "Centre de contact tout-en-un propulsé par l'IA",
-    subtitle: "Optimisée pour assister les agents, anticiper le churn, automatiser l'upsell et le cross-sell, booster la vente sur leads, gérer les débordements et ouvrir les services 24/7 sur tous les canaux.",
+    title: "Solution cloud de centre d'appels IA-First",
+    subtitle: "Les clients détestent se répéter. Les agents détestent jongler avec les outils. Vocalcom CXA rassemble tous les canaux, vos agents humains et IA et vos outils métier comme Salesforce, sur un solution unique, pour un service client magique disponible 24h/7 et ultra personnalisé. Bienvenue à l'expérience client. Automatisée.",
     stats: {
       roi: { value: "301%", label: "ROI sur 3 ans" },
-      payback: { value: "6 mois", label: "Amortissement" },
+      payback: { value: "-50%", label: "sur vos coût de production" },
       interactions: { value: "280k€", label: "de réduction de coûts" },
     },
     formTitle: "Voir la Démo en Action",
