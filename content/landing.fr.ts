@@ -23,8 +23,8 @@ export const landingFR = {
   },
   aiHuman: {
     badge: "Humain + IA",
-    title: "Ensemble, Agents humains et IA façonnent la réussite client",
-    description: "Créez des expériences plus connectées et plus percutantes grâce à une plateforme basée sur l'IA, pour chaque client, chaque interaction, à chaque fois, quelque soit le canal.",
+    title: "Bienvenue à l'ère de la Customer Expérience Automatisée.",
+    description: "Avec plus de 50 intégrations pour créer votre solution de centre de contact personnalisée, Vocalcom CXA vous apporte une solution simple pour profiter de l'IA à grande échelle en toute sécurité, en orchestrant les agents IA et vos téléconseillers sur une plateforme unique.",
     roiStat: { value: "301%", label: "ROI sur 3 ans" },
     features: [
       {
@@ -44,7 +44,7 @@ export const landingFR = {
   benefits: {
     badge: "Une plateforme unifiée, des possibilités infinies",
     title: "Des fonctionnalités basiques à l'innovation IA de pointe",
-    subtitle: "Vocalcom réunit tout ce dont vous avez besoin dans une plateforme unique : agents IA, humains, et tous vos canaux pour une CX plus rapide et humaine.",
+    subtitle: "Prenez en charge les conversations naturelles dans plus de 60 langues, avec des agents IA capable de résoudre les demandes clients de bout en bout, avec précision et à grande échelle.",
     items: [
       {
         title: "Agents IA Autonomes",
@@ -92,7 +92,7 @@ export const landingFR = {
   socialProof: {
     title: "Résultats Prouvés",
     subtitle: "Transformés par l'IA. Mesurés par les Résultats.",
-    description: "Des entreprises leaders qui ont 10x leur CX avec Vocalcom",
+    description: "La Solution de centre d'appels en cloud choisie par les entreprises innovantes.",
     testimonials: [
       {
         company: "CNM Prévoyance",
@@ -167,9 +167,9 @@ export const landingFR = {
   },
   comparison: {
     badge: "Nouvelle ère, nouveaux agents, mêmes valeurs",
-    title: "Vocalcom vs Solutions Traditionnelles",
-    subtitle: "Découvrez pourquoi les entreprises migrent vers notre plateforme AI-native",
-    description: "Du suivi immédiat de chaque lead au service client qui fournit son expertise 24/7, ensemble, humains et agents IA sont les moteurs de votre réussite. À la clé, un réel retour sur investissement, les chiffres le prouvent.",
+    title: "Vocalcom Customer Expérience Automation",
+    subtitle: "Passez à l'IA gratuitement et ce, quelque soit votre solution de centre de contact.",
+    description: "Vocalcom IA-First a été conçu pour accompagner les clients du projet pilote à la production sur n'importe quel centre de contact, système tiers ou sur site. *À la clé, un réel retour sur investissement, les chiffres le prouvent.*",
     vocalcom: "⚡ Vocalcom",
     legacy: "Solutions Legacy",
     features: [
