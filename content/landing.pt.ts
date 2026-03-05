@@ -169,22 +169,12 @@ export const landingPT = {
   },
   comparison: {
     badge: "Nova era, novos agentes, os mesmos valores",
-    title: "Vocalcom vs Soluções tradicionais",
-    subtitle: "Descubra por que as empresas migram para nossa plataforma AI-native",
-    description: "Do acompanhamento imediato de cada lead ao atendimento ao cliente com expertise 24/7, juntos, humanos e agentes de IA são o motor do seu sucesso. O resultado: um ROI real — os números comprovam.",
-    vocalcom: "⚡ Vocalcom",
-    legacy: "Soluções legadas",
-    features: [
-      { feature: "Agentes de IA integrados", vocalcom: true, legacy: "Limitado" },
-      { feature: "Omnicanal nativo (15+ canais)", vocalcom: true, legacy: "Limitado" },
-      { feature: "Precificação transparente", vocalcom: true, legacy: false },
-      { feature: "Analytics em tempo real", vocalcom: true, legacy: "Básico" },
-      { feature: "Integrações de API abertas", vocalcom: "200+", legacy: "Limitadas" },
-      { feature: "Suporte 24/7", vocalcom: true, legacy: "Limitado" }
-    ],
+    title: "Sua jornada de experiência do cliente automatizada começa aqui",
+    subtitle: "Dê um descanso aos seus agentes com nossos Agentes IA Virtuais",
+    description: "Mude para IA gratuitamente, independentemente da sua solução de call center.",
     cta: {
-      title: "Pronto para subir de nível?",
-      button: "Veja a diferença"
+      button: "30 dias grátis",
+      url: "https://calendly.com/vocalcom-france/demo-vocalcom"
     }
   },
   stats: {

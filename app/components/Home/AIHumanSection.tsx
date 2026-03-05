@@ -12,12 +12,12 @@ export default function AIHumanSection({ content }: { content: typeof landingFR.
                     <div className="grid lg:grid-cols-2 gap-12 items-center">
                         {/* Image Side */}
                         <div className="relative animate-fade-up order-2 lg:order-1">
-                            <div className="relative rounded-2xl overflow-hidden shadow-2xl max-w-md mx-auto">
+                            <div className="relative rounded-2xl overflow-hidden shadow-2xl max-w-xl mx-auto">
                                 <Image 
-                                    src="/assets/AIHumanAgent.jpg" 
+                                    src="/ai-human-agent.jpeg" 
                                     alt="AI Agents collaborating with humans" 
-                                    width={500} 
-                                    height={350}
+                                    width={700} 
+                                    height={490}
                                     className="w-full h-auto object-contain bg-white"
                                     unoptimized
                                 />

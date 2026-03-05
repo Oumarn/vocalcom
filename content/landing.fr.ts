@@ -20,7 +20,7 @@ export const landingFR = {
   logoBillboard: {
     badge: "Trusted by Industry Leaders",
     title: "",
-    leftText: "Plus de 1000 entreprises nous",
+    leftText: "Plus de 1 000 entreprises nous",
     leftTextLine2: "font confiance",
   },
   aiHuman: {
@@ -169,23 +169,12 @@ export const landingFR = {
   },
   comparison: {
     badge: "Nouvelle ère, nouveaux agents, mêmes valeurs",
-    title: "Vocalcom Service Client Automatisé",
-    subtitle: "<strong>Passez à l'IA gratuitement et ce, quelque soit votre solution de centre de contact.</strong>",
-    description: "Vocalcom IA-First a été conçu pour accompagner les clients du projet pilote à la production sur n'importe quel centre de contact, système tiers ou sur site.<br><br><strong>À la clé, un réel retour sur investissement, les chiffres le prouvent.</strong>",
-    vocalcom: "⚡ Vocalcom",
-    legacy: "Solutions Legacy",
-    features: [
-      { feature: "Agents IA intégrés", vocalcom: true, legacy: false },
-      { feature: "Déploiement cloud natif", vocalcom: true, legacy: false },
-      { feature: "Mises à jour automatiques", vocalcom: true, legacy: false },
-      { feature: "Analyse en temps réel", vocalcom: true, legacy: false },
-      { feature: "Tarification transparente", vocalcom: true, legacy: false },
-      { feature: "Support 24/7", vocalcom: true, legacy: true },
-      { feature: "Intégrations CRM", vocalcom: true, legacy: true }
-    ],
+    title: "Votre parcours d'expérience client automatisé commence ici",
+    subtitle: "Donnez un peu de répit à vos télé-conseillers avec nos Agent IA Virtuels",
+    description: "Passez à l'IA gratuitement et ce, quelque soit votre solution de centre de contact.",
     cta: {
-      title: "Prêt à passer à la vitesse supérieure?",
-      button: "Réserver une démo"
+      button: "30 jours gratuit",
+      url: "https://calendly.com/vocalcom-france/demo-vocalcom"
     }
   },
   stats: {
