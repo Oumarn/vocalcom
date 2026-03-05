@@ -20,6 +20,8 @@ export const landingEN = {
   logoBillboard: {
     badge: "Trusted by Industry Leaders",
     title: "They trust us",
+    leftText: "More than 100,000 companies",
+    leftTextLine2: "trust us",
   },
   aiHuman: {
     badge: "Human + AI",

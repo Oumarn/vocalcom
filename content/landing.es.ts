@@ -20,6 +20,8 @@ export const landingES = {
   logoBillboard: {
     badge: "Con la confianza de líderes de la industria",
     title: "Ellos confían en nosotros",
+    leftText: "Más de 100 000 empresas",
+    leftTextLine2: "confían en nosotros",
   },
   aiHuman: {
     badge: "Humanos + IA",

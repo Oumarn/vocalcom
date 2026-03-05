@@ -20,11 +20,13 @@ export const landingFR = {
   logoBillboard: {
     badge: "Trusted by Industry Leaders",
     title: "",
+    leftText: "Plus de 100 000 entreprises nous",
+    leftTextLine2: "font confiance",
   },
   aiHuman: {
     badge: "Humain + IA",
-    title: "Bienvenue à l'ère de la Customer Expérience Automatisée.",
-    description: "Avec plus de 50 intégrations pour créer votre solution de centre de contact personnalisée, Vocalcom CXA vous apporte une solution simple pour profiter de l'IA à grande échelle en toute sécurité, en orchestrant les agents IA et vos téléconseillers sur une plateforme unique.",
+    title: "Bienvenue à l'ère de l'Expérience Client Automatisée.",
+    description: "Avec plus de 50 intégrations pour créer votre solution de centre de contact personnalisée, la solution Vocalcom vous apporte une approche simple pour profiter de l'IA à grande échelle en toute sécurité, en orchestrant les agents IA et vos téléconseillers sur une plateforme unique.",
     roiStat: { value: "301%", label: "ROI sur 3 ans" },
     features: [
       {
@@ -44,7 +46,7 @@ export const landingFR = {
   benefits: {
     badge: "Une plateforme unifiée, des possibilités infinies",
     title: "Des fonctionnalités basiques à l'innovation IA de pointe",
-    subtitle: "Prenez en charge les conversations naturelles dans plus de 60 langues, avec des agents IA capable de résoudre les demandes clients de bout en bout, avec précision et à grande échelle.",
+    subtitle: "<strong>Et voici la réelle avancée !</strong> Un Agent IA Vocal personnel pour chacun de vos client, qui répond dans plus de 60 langues, qui sait quand faire une blague, résoudre les demandes de bout en bout, ou calmer un client frustré, avec empathie et à grande échelle.",
     items: [
       {
         title: "Agents IA Autonomes",
@@ -167,7 +169,7 @@ export const landingFR = {
   },
   comparison: {
     badge: "Nouvelle ère, nouveaux agents, mêmes valeurs",
-    title: "Vocalcom Customer Expérience Automation",
+    title: "Vocalcom Service Client Automatisé",
     subtitle: "Passez à l'IA gratuitement et ce, quelque soit votre solution de centre de contact.",
     description: "Vocalcom IA-First a été conçu pour accompagner les clients du projet pilote à la production sur n'importe quel centre de contact, système tiers ou sur site.<br><br><strong>À la clé, un réel retour sur investissement, les chiffres le prouvent.</strong>",
     vocalcom: "⚡ Vocalcom",

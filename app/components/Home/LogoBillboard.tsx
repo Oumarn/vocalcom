@@ -24,53 +24,65 @@ export default function LogoBillboard({ content }: { content: typeof landingFR.l
                             {content.badge}
                         </span>
                     </div>
-                    <h3 className="text-2xl font-bold text-gray-900">{content.title}</h3>
+                    {content.title && <h3 className="text-2xl font-bold text-gray-900">{content.title}</h3>}
                 </div>
-                <div className="relative bg-gradient-to-r from-slate-50 via-white to-slate-50 rounded-2xl py-8 shadow-xl shadow-slate-200/50 border border-slate-200/50 overflow-hidden">
-                    {/* Enhanced spotlight with brand colors */}
-                    <div className="absolute inset-0 pointer-events-none z-10">
-                        <div className="absolute top-0 bottom-0 w-1/3 bg-gradient-to-r from-transparent via-cyan-200/20 to-transparent blur-2xl" 
-                             style={{ animation: 'spotlight 10s linear infinite' }}>
+                <div className="flex flex-col lg:flex-row items-start lg:items-center gap-8 lg:gap-12">
+                    {content.leftText && (
+                        <div className="w-full lg:w-96 flex-shrink-0">
+                            <h3 className="text-xl lg:text-2xl font-bold text-gray-900 leading-tight">
+                                <div className="whitespace-nowrap">{content.leftText}</div>
+                                {content.leftTextLine2 && <div>{content.leftTextLine2}</div>}
+                            </h3>
                         </div>
-                    </div>
-                    {/* Decorative gradient borders */}
-                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent"></div>
-                    <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent"></div>
-                    
-                    <div className="flex scroll-container will-change-transform">
-                        {/* First set of logos */}
-                        <div className="flex items-center gap-16 px-8 shrink-0">
-                            <img src="/logos/Blancheporte.png" alt="Blancheporte" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/Konecta_logo.png" alt="Konecta" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/Logo_fcbarcelone.png" alt="FC Barcelona" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/Nexity_logo.png" alt="Nexity" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/SFR_Logo.png" alt="SFR" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/Stellantis_logo.png" alt="Stellantis" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/Vodafone_logo.png" alt="Vodafone" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/Volkswagen_logo.png" alt="Volkswagen" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/armatis.png" alt="Armatis" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/bnp paribas logo.png" alt="BNP Paribas" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/conentrix webhelp.png" alt="Concentrix Webhelp" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/engie_logo.png" alt="Engie" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/macdonald_logo.png" alt="McDonald's" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/renault.svg" alt="Renault" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                        </div>
-                        {/* Duplicate set for seamless loop */}
-                        <div className="flex items-center gap-16 px-8 shrink-0">
-                            <img src="/logos/Blancheporte.png" alt="Blancheporte" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/Konecta_logo.png" alt="Konecta" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/Logo_fcbarcelone.png" alt="FC Barcelona" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/Nexity_logo.png" alt="Nexity" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/SFR_Logo.png" alt="SFR" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/Stellantis_logo.png" alt="Stellantis" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/Vodafone_logo.png" alt="Vodafone" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/Volkswagen_logo.png" alt="Volkswagen" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/armatis.png" alt="Armatis" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/bnp paribas logo.png" alt="BNP Paribas" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/conentrix webhelp.png" alt="Concentrix Webhelp" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/engie_logo.png" alt="Engie" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/macdonald_logo.png" alt="McDonald's" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
-                            <img src="/logos/renault.svg" alt="Renault" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                    )}
+                    <div className="w-full flex-1 min-w-0">
+                        <div className="relative bg-gradient-to-r from-slate-50 via-white to-slate-50 rounded-2xl py-8 shadow-xl shadow-slate-200/50 border border-slate-200/50 overflow-hidden">
+                            {/* Enhanced spotlight with brand colors */}
+                            <div className="absolute inset-0 pointer-events-none z-10">
+                                <div className="absolute top-0 bottom-0 w-1/3 bg-gradient-to-r from-transparent via-cyan-200/20 to-transparent blur-2xl" 
+                                     style={{ animation: 'spotlight 10s linear infinite' }}>
+                                </div>
+                            </div>
+                            {/* Decorative gradient borders */}
+                            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent"></div>
+                            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent"></div>
+                            
+                            <div className="flex scroll-container will-change-transform">
+                                {/* First set of logos */}
+                                <div className="flex items-center gap-16 px-8 shrink-0">
+                                    <img src="/logos/Blancheporte.png" alt="Blancheporte" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/Konecta_logo.png" alt="Konecta" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/Logo_fcbarcelone.png" alt="FC Barcelona" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/Nexity_logo.png" alt="Nexity" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/SFR_Logo.png" alt="SFR" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/Stellantis_logo.png" alt="Stellantis" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/Vodafone_logo.png" alt="Vodafone" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/Volkswagen_logo.png" alt="Volkswagen" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/armatis.png" alt="Armatis" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/bnp paribas logo.png" alt="BNP Paribas" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/conentrix webhelp.png" alt="Concentrix Webhelp" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/engie_logo.png" alt="Engie" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/macdonald_logo.png" alt="McDonald's" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/renault.svg" alt="Renault" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                </div>
+                                {/* Duplicate set for seamless loop */}
+                                <div className="flex items-center gap-16 px-8 shrink-0">
+                                    <img src="/logos/Blancheporte.png" alt="Blancheporte" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/Konecta_logo.png" alt="Konecta" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/Logo_fcbarcelone.png" alt="FC Barcelona" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/Nexity_logo.png" alt="Nexity" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/SFR_Logo.png" alt="SFR" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/Stellantis_logo.png" alt="Stellantis" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/Vodafone_logo.png" alt="Vodafone" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/Volkswagen_logo.png" alt="Volkswagen" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/armatis.png" alt="Armatis" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/bnp paribas logo.png" alt="BNP Paribas" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/conentrix webhelp.png" alt="Concentrix Webhelp" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/engie_logo.png" alt="Engie" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/macdonald_logo.png" alt="McDonald's" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                    <img src="/logos/renault.svg" alt="Renault" className="h-12 w-32 object-contain opacity-80 hover:opacity-100 transition-all duration-500 hover:scale-110" />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

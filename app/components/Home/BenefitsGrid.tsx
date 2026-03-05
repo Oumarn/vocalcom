@@ -15,7 +15,7 @@ export default function BenefitsGrid({ content }: { content: typeof landingFR.be
                             {content.badge}
                         </div>
                         <h2 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 mb-4">{content.title}</h2>
-                        <p className="text-lg text-gray-600">{content.subtitle}</p>
+                        <p className="text-lg text-gray-600" dangerouslySetInnerHTML={{ __html: content.subtitle }}></p>
                     </div>
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-up">
