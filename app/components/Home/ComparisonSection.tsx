@@ -108,7 +108,7 @@ export default function ComparisonSection({ content }: { content: ComparisonCont
                             {/* CTA */}
                             <div className="p-8 text-center border-t-2 border-gray-200" style={{background: 'linear-gradient(90deg, rgba(139, 92, 246, 0.1), rgba(168, 85, 247, 0.1))'}}>
                                 <p className="text-gray-700 font-semibold mb-4">{content.cta.title}</p>
-                                <a href="#demo" className="inline-flex items-center gap-2 px-6 py-3 text-white font-bold rounded-full hover:shadow-xl transition-all transform hover:-translate-y-1" style={{background: 'linear-gradient(193deg, #7c3aed, #8b5cf6 25%, #a855f7 50%, #c084fc 75%, #d8b4fe)'}}>
+                                <a href="#demo" className="inline-flex items-center gap-2 px-6 py-3 text-sm text-white font-bold rounded-full hover:shadow-xl transition-all transform hover:-translate-y-1" style={{background: 'linear-gradient(193deg, #7c3aed, #8b5cf6 25%, #a855f7 50%, #c084fc 75%, #d8b4fe)'}}>
                                     {content.cta.button}
                                 </a>
                             </div>

@@ -4,7 +4,7 @@ export const landingFR = {
     description: "Plateforme AI-first de centre de contact. ROI de 301% sur 3 ans.",
   },
   header: {
-    cta: "Demander une démo",
+    cta: "RÉSERVER UNE DÉMO",
   },
   hero: {
     badge: "AI-first Contact Center Platform",
@@ -183,7 +183,7 @@ export const landingFR = {
     ],
     cta: {
       title: "Prêt à passer à la vitesse supérieure?",
-      button: "Voir la Différence"
+      button: "Réserver une démo"
     }
   },
   stats: {
@@ -198,14 +198,14 @@ export const landingFR = {
     emoji: "🚀",
     title: "Gardez une longueur d'avance sur la concurrence avec un centre de contact AI-First",
     subtitle: "Rejoignez 1200+ entreprises qui transforment leur expérience client avec le centre de contact AI-first de Vocalcom",
-    button: "Demander une démo",
+    button: "RÉSERVER UNE DÉMO",
     trust: [
       { label: "Support dédié" },
       { label: "ROI garanti" }
     ]
   },
   form: {
-    title: "Demander une démo",
+    title: "RÉSERVER UNE DÉMO",
     steps: {
       current: "Étape",
       of: "sur",

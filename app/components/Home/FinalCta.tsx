@@ -27,7 +27,7 @@ export default function FinalCta({ content }: { content: typeof landingFR.finalC
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-                        <a href="#demo" className="group inline-flex items-center gap-3 justify-center px-8 py-5 text-lg font-bold bg-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105" style={{color: '#8b5cf6'}} onMouseEnter={(e) => { e.currentTarget.style.background = 'linear-gradient(212deg, #7c3aed, #8b5cf6 50%, #a855f7)'; e.currentTarget.style.color = 'white'; }} onMouseLeave={(e) => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = '#8b5cf6'; }}>
+                        <a href="#demo" className="group inline-flex items-center gap-3 justify-center px-8 py-5 text-sm font-bold bg-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105" style={{color: '#8b5cf6'}} onMouseEnter={(e) => { e.currentTarget.style.background = 'linear-gradient(212deg, #7c3aed, #8b5cf6 50%, #a855f7)'; e.currentTarget.style.color = 'white'; }} onMouseLeave={(e) => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = '#8b5cf6'; }}>
                             {content.button}
                             <Icon path={mdiArrowRight} size={1} className="group-hover:translate-x-1 transition-transform" />
                         </a>
