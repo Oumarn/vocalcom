@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { landingFR } from '@/content/landing.fr';
-import HeroWithCalendly from "../../components/Home/HeroWithCalendly";
+import HeroHome from "../../components/Home/Hero";
 import AIHumanSection from "../../components/Home/AIHumanSection";
 import LogoBillboard from "../../components/Home/LogoBillboard";
 import StatsSection from "../../components/Home/StatsSection";
@@ -13,6 +13,7 @@ import SocialProof from "../../components/Home/SocialProof";
 import ComparisonSection from "../../components/Home/ComparisonSection";
 import Historic from "../../components/Home/Historic";
 import FinalCta from "../../components/Home/FinalCta";
+import MidPageCta from "../../components/Home/MidPageCta";
 
 const CALENDLY_URL = "https://calendly.com/vocalcom-france/demo-vocalcom-agent-ia-vocal";
 
@@ -38,13 +39,31 @@ export default function AgentVocalIAPage() {
   return (
     <div className="">
       <main className="">
-        <HeroWithCalendly content={landingFR.hero} calendlyUrl={CALENDLY_URL} />
+        <HeroHome content={landingFR.hero} showHelpField={true} />
         <LogoBillboard content={landingFR.logoBillboard} />
         <AIHumanSection content={landingFR.aiHuman} />
+        <MidPageCta 
+          url={CALENDLY_URL}
+          title="1000 Agent IA Vocaux Gratuitement !"
+          description="L'Agent IA Vocal qui répond au téléphone comme un humain."
+          buttonText="30 Jours Gratuits"
+        />
         <BenefitsGrid content={landingFR.benefits} />
         <Integrations content={landingFR.integrations} />
+        <MidPageCta 
+          url={CALENDLY_URL}
+          title="1000 Agent IA Vocaux Gratuitement !"
+          description="L'Agent IA Vocal qui répond au téléphone comme un humain."
+          buttonText="30 Jours Gratuits"
+        />
         <SocialProof content={landingFR.socialProof} />
         <SecurityCompliance content={landingFR.security} />
+        <MidPageCta 
+          url={CALENDLY_URL}
+          title="1000 Agent IA Vocaux Gratuitement !"
+          description="L'Agent IA Vocal qui répond au téléphone comme un humain."
+          buttonText="30 Jours Gratuits"
+        />
         <ComparisonSection content={landingFR.comparison} />
         <Historic content={landingFR.stats} />
         <FinalCta content={landingFR.finalCta} />

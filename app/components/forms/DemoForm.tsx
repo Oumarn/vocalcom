@@ -14,9 +14,10 @@ declare global {
 
 interface DemoFormProps {
   customButtonText?: string;
+  showHelpField?: boolean;
 }
 
-export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
+export default function DemoForm({ customButtonText, showHelpField = false }: DemoFormProps = {}) {
   const { locale } = useLanguage();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,6 +33,8 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
     phone: "",
     country: "",
     jobTitle: "",
+    helpMessage: "",
+    marketingConsent: false,
   });
 
   // Validation errors
@@ -154,6 +157,15 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
   // Listen for Calendly booking events and handle Pardot submission
   useEffect(() => {
     if (!showCalendly) return;
+
+    // Scroll to the form when Calendly appears
+    const demoElement = document.getElementById('demo');
+    if (demoElement) {
+      // Small delay to ensure the component has rendered
+      setTimeout(() => {
+        demoElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
 
     // Track if submission is in progress or completed to prevent duplicates
     let isSubmitting = false;
@@ -437,11 +449,16 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
     };
   }, [showCalendly, locale]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const target = e.target as HTMLInputElement;
+    const { name, value, type, checked } = target;
     
+    // Handle checkbox specially
+    if (type === 'checkbox') {
+      setFormData(prev => ({ ...prev, [name]: checked }));
+    }
     // Special handling for phone to maintain format
-    if (name === 'phone') {
+    else if (name === 'phone') {
       // Remove all non-digit and non-space characters except plus at start
       const cleaned = value.replace(/[^\d\s]/g, '');
       setFormData(prev => ({ ...prev, [name]: cleaned }));
@@ -629,11 +646,6 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
     if (currentStep === 2) {
       if (!formData.firstName) newErrors.firstName = 'First name is required';
       if (!formData.lastName) newErrors.lastName = 'Last name is required';
-    }
-
-    if (currentStep === 3) {
-      if (!formData.company) newErrors.company = 'Company is required';
-      if (!formData.country) newErrors.country = 'Country is required';
       if (!formData.phone) {
         newErrors.phone = 'Phone is required';
       } else {
@@ -643,6 +655,8 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
           newErrors.phone = 'Please enter a valid phone number';
         }
       }
+      if (!formData.company) newErrors.company = 'Company is required';
+      if (!formData.country) newErrors.country = 'Country is required';
       if (!formData.jobTitle) newErrors.jobTitle = 'Job title is required';
     }
 
@@ -716,6 +730,8 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
         phone: `${phonePrefix}${formData.phone.replace(/\s/g, '')}`,
         country: formData.country,
         jobTitle: formData.jobTitle,
+        helpMessage: formData.helpMessage,
+        marketingConsent: formData.marketingConsent,
         attribution,
         submittedAt: new Date().toISOString(),
       };
@@ -961,6 +977,8 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
     fr: {
       email: 'Email professionnel',
       emailPlaceholder: 'votre@email.com',
+      helpMessage: 'Comment pouvons-nous vous aider ?',
+      helpPlaceholder: 'Décrivez brièvement votre besoin...',
       firstName: 'Prénom',
       lastName: 'Nom',
       company: 'Entreprise',
@@ -968,6 +986,7 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
       country: 'Pays',
       countryPlaceholder: 'Rechercher un pays...',
       jobTitle: 'Poste',
+      marketingConsent: 'Oui, j\'accepte de recevoir des communications marketing sur les produits, services et évènements de Zendesk. Je comprends que je peux me désabonner à tout moment.',
       next: 'Suivant',
       back: 'Retour',
       submit: 'Réserver ma démo',
@@ -978,6 +997,8 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
     en: {
       email: 'Business Email',
       emailPlaceholder: 'your@email.com',
+      helpMessage: 'How can we help you?',
+      helpPlaceholder: 'Briefly describe your need...',
       firstName: 'First Name',
       lastName: 'Last Name',
       company: 'Company',
@@ -985,6 +1006,7 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
       country: 'Country',
       countryPlaceholder: 'Search for a country...',
       jobTitle: 'Job Title',
+      marketingConsent: 'Yes, I agree to receive marketing communications about Zendesk products, services and events. I understand that I can unsubscribe at any time.',
       next: 'Next',
       back: 'Back',
       submit: 'Book my demo',
@@ -995,6 +1017,8 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
     es: {
       email: 'Email profesional',
       emailPlaceholder: 'tu@email.com',
+      helpMessage: '¿Cómo podemos ayudarte?',
+      helpPlaceholder: 'Describe brevemente tu necesidad...',
       firstName: 'Nombre',
       lastName: 'Apellido',
       company: 'Empresa',
@@ -1002,6 +1026,7 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
       country: 'País',
       countryPlaceholder: 'Buscar un país...',
       jobTitle: 'Cargo',
+      marketingConsent: 'Sí, acepto recibir comunicaciones de marketing sobre productos, servicios y eventos de Zendesk. Entiendo que puedo darme de baja en cualquier momento.',
       next: 'Siguiente',
       back: 'Volver',
       submit: 'Reservar mi demo',
@@ -1012,6 +1037,8 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
     pt: {
       email: 'Email profissional',
       emailPlaceholder: 'seu@email.com',
+      helpMessage: 'Como podemos ajudá-lo?',
+      helpPlaceholder: 'Descreva brevemente sua necessidade...',
       firstName: 'Nome',
       lastName: 'Sobrenome',
       company: 'Empresa',
@@ -1019,6 +1046,7 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
       country: 'País',
       countryPlaceholder: 'Pesquisar um país...',
       jobTitle: 'Cargo',
+      marketingConsent: 'Sim, concordo em receber comunicações de marketing sobre produtos, serviços e eventos da Zendesk. Compreendo que posso cancelar a inscrição a qualquer momento.',
       next: 'Próximo',
       back: 'Voltar',
       submit: 'Reservar minha demo',
@@ -1050,10 +1078,13 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
     if (attribution.utm_medium) url.searchParams.set('utm_medium', attribution.utm_medium);
     if (attribution.utm_campaign) url.searchParams.set('utm_campaign', attribution.utm_campaign);
     
-    // Hide Calendly's GDPR banner since we're using GTM for cookie consent
+    // Hide Calendly's GDPR banner and optimize display
     url.searchParams.set('hide_gdpr_banner', '1');
+    url.searchParams.set('hide_event_type_details', '1');
+    url.searchParams.set('hide_landing_page_details', '1');
     url.searchParams.set('embed_domain', window.location.hostname);
     url.searchParams.set('embed_type', 'Inline');
+    url.searchParams.set('primary_color', '8b5cf6');
     
     // Don't set redirect URL - we'll handle it via message event
     // This prevents Calendly's security warning page
@@ -1083,7 +1114,7 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
             {formData.firstName}, {t.selectTimeDesc.toLowerCase()}
           </p>
         </div>
-        <div className="relative w-full" style={{ height: '800px', minHeight: '800px' }}>
+        <div className="relative w-full" style={{ height: '650px', minHeight: '600px' }}>
           <iframe
             src={iframeUrl}
             width="100%"
@@ -1121,10 +1152,28 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
               <p className="mt-1 text-sm text-red-600">{errors.email}</p>
             )}
           </div>
+          
+          {showHelpField && (
+            <div>
+              <label htmlFor="helpMessage" className="block text-sm font-medium text-gray-700 mb-2">
+                {t.helpMessage}
+              </label>
+              <textarea
+                id="helpMessage"
+                name="helpMessage"
+                value={formData.helpMessage}
+                onChange={handleInputChange}
+                placeholder={t.helpPlaceholder}
+                rows={3}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              />
+            </div>
+          )}
+          
           <button
             type="button"
             onClick={handleNext}
-            className="group w-full inline-flex items-center justify-center px-7 py-3.5 text-sm font-bold text-white rounded-full hover:shadow-xl hover:shadow-violet-500/30 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105"
+            className="group w-full inline-flex items-center justify-center px-8 py-4 text-sm font-bold text-white rounded-full hover:shadow-xl hover:shadow-violet-500/30 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105"
             style={{background: 'linear-gradient(90deg, #8b5cf6, #a855f7)'}}
           >
             <span className="relative">
@@ -1135,7 +1184,7 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
         </div>
       )}
 
-      {/* Step 2: Name */}
+      {/* Step 2: Name and Contact */}
       {step === 2 && (
         <div className="space-y-4">
           <div>
@@ -1174,32 +1223,30 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
               <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
             )}
           </div>
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={handleBack}
-              className="flex-1 bg-white border-2 border-gray-300 text-gray-700 py-3 px-6 rounded-full hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 font-medium"
-            >
-              {t.back}
-            </button>
-            <button
-              type="button"
-              onClick={handleNext}
-              className="group flex-1 inline-flex items-center justify-center px-7 py-3.5 text-sm font-bold text-white rounded-full hover:shadow-xl hover:shadow-violet-500/30 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105"
-              style={{background: 'linear-gradient(90deg, #8b5cf6, #a855f7)'}}
-            >
-              <span className="relative">
-                {t.next}
-                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
-              </span>
-            </button>
+          <div>
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+              {t.phone} *
+            </label>
+            <div className="flex gap-2">
+              <div className="flex items-center justify-center bg-gray-100 border border-gray-300 rounded-lg px-3 text-gray-700 font-medium min-w-[70px]">
+                {phonePrefix}
+              </div>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                placeholder="6 12 34 56 78"
+                className={`flex-1 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                  errors.phone ? 'border-red-500' : 'border-gray-300'
+                }`}
+              />
+            </div>
+            {errors.phone && (
+              <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
+            )}
           </div>
-        </div>
-      )}
-
-      {/* Step 3: Company Details */}
-      {step === 3 && (
-        <div className="space-y-4">
           <div>
             <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">
               {t.company} *
@@ -1257,30 +1304,6 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
             </div>
           </div>
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-              {t.phone} *
-            </label>
-            <div className="flex gap-2">
-              <div className="flex items-center justify-center bg-gray-100 border border-gray-300 rounded-lg px-3 text-gray-700 font-medium min-w-[70px]">
-                {phonePrefix}
-              </div>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                placeholder="6 12 34 56 78"
-                className={`flex-1 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                  errors.phone ? 'border-red-500' : 'border-gray-300'
-                }`}
-              />
-            </div>
-            {errors.phone && (
-              <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
-            )}
-          </div>
-          <div>
             <label htmlFor="jobTitle" className="block text-sm font-medium text-gray-700 mb-2">
               {t.jobTitle} *
             </label>
@@ -1298,6 +1321,19 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
               <p className="mt-1 text-sm text-red-600">{errors.jobTitle}</p>
             )}
           </div>
+          <div className="flex items-start gap-3">
+            <input
+              type="checkbox"
+              id="marketingConsent"
+              name="marketingConsent"
+              checked={formData.marketingConsent}
+              onChange={handleInputChange}
+              className="mt-1 w-4 h-4 text-violet-600 border-gray-300 rounded focus:ring-violet-500"
+            />
+            <label htmlFor="marketingConsent" className="text-sm text-gray-600 leading-relaxed cursor-pointer">
+              {t.marketingConsent}
+            </label>
+          </div>
           <div className="flex gap-3">
             <button
               type="button"
@@ -1309,7 +1345,7 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="group flex-1 inline-flex items-center justify-center px-7 py-3.5 text-sm font-bold text-white rounded-full hover:shadow-xl hover:shadow-violet-500/30 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:scale-100 disabled:hover:shadow-none"
+              className="group flex-1 inline-flex items-center justify-center px-8 py-4 text-sm font-bold text-white rounded-full hover:shadow-xl hover:shadow-violet-500/30 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:scale-100 disabled:hover:shadow-none"
               style={{background: 'linear-gradient(90deg, #8b5cf6, #a855f7)'}}
             >
               <span className="relative">
@@ -1321,9 +1357,11 @@ export default function DemoForm({ customButtonText }: DemoFormProps = {}) {
         </div>
       )}
 
+
+
       {/* Progress indicator */}
       <div className="flex justify-center gap-2 mt-6">
-        {[1, 2, 3].map((s) => (
+        {[1, 2].map((s) => (
           <div
             key={s}
             className={`w-2 h-2 rounded-full transition-all duration-300 ${

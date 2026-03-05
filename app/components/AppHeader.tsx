@@ -10,7 +10,7 @@ export default function AppHeader({ content }: { content: typeof landingFR.heade
                     </div>
 
                     <div className="hidden md:flex items-center gap-6">
-                        <a href="#demo" className="group inline-flex items-center justify-center px-7 py-3.5 text-sm font-bold text-white rounded-full hover:shadow-xl hover:shadow-violet-500/30 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105" style={{background: 'linear-gradient(90deg, #8b5cf6, #a855f7)'}}>
+                        <a href="#demo" className="group inline-flex items-center justify-center px-8 py-4 text-sm font-bold text-white rounded-full hover:shadow-xl hover:shadow-violet-500/30 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105" style={{background: 'linear-gradient(90deg, #8b5cf6, #a855f7)'}}>
                             <span className="relative">
                                 {content.cta}
                                 <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
@@ -19,7 +19,7 @@ export default function AppHeader({ content }: { content: typeof landingFR.heade
                     </div>
 
                     <div className="md:hidden flex items-center">
-                        <a href="#demo" className="inline-flex items-center justify-center p-2.5 text-sm text-white font-bold rounded-full px-6 py-3 hover:shadow-lg transition-all transform hover:-translate-y-0.5" style={{background: 'linear-gradient(90deg, #8b5cf6, #a855f7)'}}>
+                        <a href="#demo" className="inline-flex items-center justify-center px-8 py-4 text-sm text-white font-bold rounded-full hover:shadow-lg transition-all transform hover:-translate-y-0.5" style={{background: 'linear-gradient(90deg, #8b5cf6, #a855f7)'}}>
                             {content.cta}
                         </a>
                     </div>

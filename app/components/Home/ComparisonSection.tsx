@@ -42,9 +42,7 @@ export default function ComparisonSection({ content }: { content: ComparisonCont
                         <p className="text-lg text-gray-600 mb-3">
                             {content.subtitle}
                         </p>
-                        <p className="text-base text-gray-600 leading-relaxed">
-                            {content.description}
-                        </p>
+                        <p className="text-base text-gray-600 leading-relaxed" dangerouslySetInnerHTML={{ __html: content.description }} />
                     </div>
 
                     <div className="max-w-5xl mx-auto overflow-x-auto">

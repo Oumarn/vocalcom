@@ -3,7 +3,12 @@
 import DemoForm from '../forms/DemoForm';
 import type { landingFR } from '@/content/landing.fr';
 
-export default function HeroHome({ content }: { content: typeof landingFR.hero }) {
+interface HeroHomeProps {
+  content: typeof landingFR.hero;
+  showHelpField?: boolean;
+}
+
+export default function HeroHome({ content, showHelpField = false }: HeroHomeProps) {
 
     return (
         <>
@@ -60,7 +65,7 @@ export default function HeroHome({ content }: { content: typeof landingFR.hero }
                     </div>
 
                     <div className="bg-white rounded-3xl p-8 shadow-2xl animate-slide-in w-full max-w-lg mx-auto lg:mr-0 border border-gray-100" id="demo">
-                        <DemoForm />
+                        <DemoForm showHelpField={showHelpField} />
                     </div>
                 </div>
             </section>

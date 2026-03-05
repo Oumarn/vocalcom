@@ -9,17 +9,17 @@ export const landingFR = {
   hero: {
     badge: "AI-first Contact Center Platform",
     title: "Solution cloud de centre d'appels IA-First",
-    subtitle: "Les clients détestent se répéter. Les agents détestent jongler avec les outils. Vocalcom CXA rassemble tous les canaux, vos agents humains et IA et vos outils métier comme Salesforce, sur un solution unique, pour un service client magique disponible 24h/7 et ultra personnalisé. Bienvenue à l'expérience client. Automatisée.",
+    subtitle: "Les clients détestent se répéter. Les agents détestent jongler avec les outils. Vocalcom réunit tous les canaux, vos agents humains et IA sur une plateforme d'automatisation unique, pour un service client magique disponible 24h/7 et ultra personnalisé.",
     stats: {
-      roi: { value: "301%", label: "ROI sur 3 ans" },
-      payback: { value: "-50%", label: "sur vos coût de production" },
-      interactions: { value: "280k€", label: "de réduction de coûts" },
+      roi: { value: "281%", label: "de ROI en moins de 3 mois" },
+      payback: { value: "34%", label: "d'appels abandonnés en moins" },
+      interactions: { value: "-50%", label: "sur vos coût de production" },
     },
     formTitle: "Voir la Démo en Action",
   },
   logoBillboard: {
     badge: "Trusted by Industry Leaders",
-    title: "Nos clients parlent pour nous",
+    title: "",
   },
   aiHuman: {
     badge: "Humain + IA",
@@ -169,7 +169,7 @@ export const landingFR = {
     badge: "Nouvelle ère, nouveaux agents, mêmes valeurs",
     title: "Vocalcom Customer Expérience Automation",
     subtitle: "Passez à l'IA gratuitement et ce, quelque soit votre solution de centre de contact.",
-    description: "Vocalcom IA-First a été conçu pour accompagner les clients du projet pilote à la production sur n'importe quel centre de contact, système tiers ou sur site. *À la clé, un réel retour sur investissement, les chiffres le prouvent.*",
+    description: "Vocalcom IA-First a été conçu pour accompagner les clients du projet pilote à la production sur n'importe quel centre de contact, système tiers ou sur site.<br><br><strong>À la clé, un réel retour sur investissement, les chiffres le prouvent.</strong>",
     vocalcom: "⚡ Vocalcom",
     legacy: "Solutions Legacy",
     features: [
