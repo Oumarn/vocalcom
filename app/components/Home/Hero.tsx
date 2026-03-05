@@ -32,7 +32,7 @@ export default function HeroHome({ content }: { content: typeof landingFR.hero }
                         </div>
 
                         <div className="flex flex-col gap-4">
-                            <h1 className="text-3xl lg:text-5xl xl:text-6xl font-bold tracking-tight leading-[1.1] text-gray-900">
+                            <h1 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 mb-4">
                                 {content.title}
                             </h1>
                             <p className="text-lg lg:text-xl text-gray-600 font-light leading-relaxed">{content.subtitle}</p>

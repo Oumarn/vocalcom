@@ -19,7 +19,7 @@ export default function Integrations({ content }: { content: typeof landingFR.in
                         <div className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse"></div>
                         <p className="text-xs text-violet-700 font-medium uppercase tracking-wider">{content.badge}</p>
                     </div>
-                    <h2 className="text-3xl lg:text-4xl font-semibold text-gray-900 mb-6 tracking-tight">
+                    <h2 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 mb-4">
                         {content.title}
                     </h2>
                     <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">

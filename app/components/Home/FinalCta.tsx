@@ -19,7 +19,7 @@ export default function FinalCta({ content }: { content: typeof landingFR.finalC
                     <div className="inline-flex items-center gap-2 text-2xl mb-4">
                         <span>{content.emoji}</span>
                     </div>
-                    <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 mb-6 leading-tight">
+                    <h2 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 mb-4">
                         {content.title}
                     </h2>
                     <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">

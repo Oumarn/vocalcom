@@ -31,7 +31,7 @@ export default function SecurityCompliance({ content }: { content: typeof landin
         <section className="py-12 lg:py-16 bg-gradient-to-br from-slate-50 to-white">
             <div className="max-w-6xl mx-auto px-6">
                 <div className="text-center mb-16">
-                    <h2 className="text-3xl lg:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
+                    <h2 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 mb-4">
                         {content.title}
                     </h2>
                     <p className="text-lg text-gray-600 max-w-2xl mx-auto">

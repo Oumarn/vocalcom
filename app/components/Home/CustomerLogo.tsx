@@ -29,7 +29,7 @@ export default function CustomerLogo({ content }: { content: typeof landingFR.lo
               {content.badge}
             </span>
           </div>
-          <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 mb-4">
             {content.title}
           </h2>
         </div>

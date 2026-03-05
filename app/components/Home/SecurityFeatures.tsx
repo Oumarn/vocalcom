@@ -8,7 +8,7 @@ export default function SecurityFeatures() {
         <section className="py-20 lg:py-28 bg-gradient-to-br from-slate-50 to-white">
             <div className="max-w-6xl mx-auto px-6">
                 <div className="text-center mb-16">
-                    <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
+                    <h2 className="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 mb-4">
                         Secure by design.<br />Trusted by enterprise.
                     </h2>
                 </div>
