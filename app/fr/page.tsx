@@ -15,6 +15,17 @@ import FinalCta from "../components/Home/FinalCta";
 export const metadata: Metadata = {
   title: landingFR.meta.title,
   description: landingFR.meta.description,
+  openGraph: {
+    title: landingFR.meta.title,
+    description: landingFR.meta.description,
+    images: ['/hero.webp'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: landingFR.meta.title,
+    description: landingFR.meta.description,
+    images: ['/hero.webp'],
+  },
 };
 
 export default function FrenchLandingPage() {

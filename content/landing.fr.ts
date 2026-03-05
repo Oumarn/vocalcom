@@ -1,14 +1,14 @@
 export const landingFR = {
   meta: {
-    title: "Vocalcom - Solution cloud de centre d'appels IA-First",
-    description: "Plateforme AI-first de centre de contact. ROI de 301% sur 3 ans.",
+    title: "Solution IA-First de centre d'appels pour les entreprises innovantes",
+    description: "Solution cloud IA-First de centre de contact qui offre la flexibilité, l'évolutivité et la personnalisation dont vous avez besoin pour obtenir de vrais résultats métiers et un ROI rapide.",
   },
   header: {
     cta: "RÉSERVER UNE DÉMO",
   },
   hero: {
     badge: "AI-first Contact Center Platform",
-    title: "Solution cloud de centre d'appels IA-First",
+    title: "Solution IA-First de centre d'appels pour les entreprises innovantes",
     subtitle: "Les clients détestent se répéter. Les agents détestent jongler avec les outils. Vocalcom réunit tous les canaux, vos agents humains et IA sur une plateforme d'automatisation unique, pour un service client magique disponible 24h/7 et ultra personnalisé.",
     stats: {
       roi: { value: "281%", label: "de ROI en moins de 3 mois" },
@@ -20,14 +20,14 @@ export const landingFR = {
   logoBillboard: {
     badge: "Trusted by Industry Leaders",
     title: "",
-    leftText: "Plus de 100 000 entreprises nous",
+    leftText: "Plus de 1000 entreprises nous",
     leftTextLine2: "font confiance",
   },
   aiHuman: {
     badge: "Humain + IA",
     title: "Bienvenue à l'ère de l'Expérience Client Automatisée.",
     description: "Avec plus de 50 intégrations pour créer votre solution de centre de contact personnalisée, la solution Vocalcom vous apporte une approche simple pour profiter de l'IA à grande échelle en toute sécurité, en orchestrant les agents IA et vos téléconseillers sur une plateforme unique.",
-    roiStat: { value: "301%", label: "ROI sur 3 ans" },
+    roiStat: { value: "281%", label: "ROI en 3 mois" },
     features: [
       {
         title: "Agents IA Autonomes",
@@ -170,7 +170,7 @@ export const landingFR = {
   comparison: {
     badge: "Nouvelle ère, nouveaux agents, mêmes valeurs",
     title: "Vocalcom Service Client Automatisé",
-    subtitle: "Passez à l'IA gratuitement et ce, quelque soit votre solution de centre de contact.",
+    subtitle: "<strong>Passez à l'IA gratuitement et ce, quelque soit votre solution de centre de contact.</strong>",
     description: "Vocalcom IA-First a été conçu pour accompagner les clients du projet pilote à la production sur n'importe quel centre de contact, système tiers ou sur site.<br><br><strong>À la clé, un réel retour sur investissement, les chiffres le prouvent.</strong>",
     vocalcom: "⚡ Vocalcom",
     legacy: "Solutions Legacy",
@@ -191,7 +191,7 @@ export const landingFR = {
   stats: {
     items: [
       { value: "25+", label: "années d'expertise dans l'engagement client" },
-      { value: "550 000+", label: "utilisateurs dans plus de 47 pays sur les cinq continents" },
+      { value: "300 000+", label: "utilisateurs dans plus de 47 pays sur les cinq continents" },
       { value: "1200+", label: "clients dans le monde entier" },
       { value: "1 Milliard", label: "interactions traitées chaque année" }
     ]
