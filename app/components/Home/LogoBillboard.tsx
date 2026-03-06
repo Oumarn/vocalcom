@@ -14,7 +14,7 @@ export default function LogoBillboard({ content }: { content: typeof landingFR.l
                     }
                 }
                 .scroll-container {
-                    animation: infiniteScroll 25s linear infinite;
+                    animation: infiniteScroll 5s linear infinite;
                 }
             `}</style>
             <div className="max-w-7xl mx-auto px-6">

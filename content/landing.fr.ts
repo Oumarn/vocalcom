@@ -20,13 +20,13 @@ export const landingFR = {
   logoBillboard: {
     badge: "Trusted by Industry Leaders",
     title: "",
-    leftText: "Plus de 1 000 entreprises nous",
+    leftText: "Plus de 1 200 entreprises nous",
     leftTextLine2: "font confiance",
   },
   aiHuman: {
     badge: "Humain + IA",
     title: "Bienvenue à l'ère de l'Expérience Client Automatisée.",
-    description: "Avec plus de 50 intégrations pour créer votre solution de centre de contact personnalisée, la solution Vocalcom vous apporte une approche simple pour profiter de l'IA à grande échelle en toute sécurité, en orchestrant les agents IA et vos téléconseillers sur une plateforme unique.",
+    description: "Vous en avez assez de l'IA qui ressemble à un robot confus piégé dans une boucle ? Et voici la réelle avancée : un agent IA qui ne se contente pas de suivre des règles. Il reconnait, comprend et répond naturellement, capable de traiter des conversations et d'agir, pas seulement des flux scénarisés.",
     roiStat: { value: "281%", label: "ROI en 3 mois" },
     features: [
       {
@@ -45,8 +45,8 @@ export const landingFR = {
   },
   benefits: {
     badge: "Une plateforme unifiée, des possibilités infinies",
-    title: "Des fonctionnalités basiques à l'innovation IA de pointe",
-    subtitle: "<strong>Et voici la réelle avancée !</strong> Un Agent IA Vocal personnel pour chacun de vos client, qui répond dans plus de 60 langues, qui sait quand faire une blague, résoudre les demandes de bout en bout, ou calmer un client frustré, avec empathie et à grande échelle.",
+    title: "Et voici la réelle avancée !",
+    subtitle: "Un Agent IA Vocal pour chacun de vos client, qui répond avec la même voix à chacun de ses appels, qui sait quand faire une blague, résoudre les demandes de bout en bout, ou calmer un client frustré, avec empathie et à grande échelle.",
     items: [
       {
         title: "Agents IA Autonomes",
@@ -87,7 +87,7 @@ export const landingFR = {
   integrations: {
     badge: "Intégrations",
     title: "Connectez Vocalcom\nà tous vos outils",
-    subtitle: "CRM, CMS, e-commerce et bien plus : connectez Vocalcom à plus de 200 outils.",
+    subtitle: "Avec plus de 50 intégrations, créer votre solution de centre de contact personnalisée.",
     count: "+200",
     countLabel: "intégrations disponibles"
   },
@@ -170,8 +170,7 @@ export const landingFR = {
   comparison: {
     badge: "Nouvelle ère, nouveaux agents, mêmes valeurs",
     title: "Votre parcours d'expérience client automatisé commence ici",
-    subtitle: "Donnez un peu de répit à vos télé-conseillers avec nos Agent IA Virtuels",
-    description: "Passez à l'IA gratuitement et ce, quelque soit votre solution de centre de contact.",
+    description: "Donnez un peu de répit à vos téléconseillers. Offrez à chacun de vos clients son propre Agent Virtuel, il le reconnait, lui répond toujours avec la même voix, capable d'agir en toute autonomie. Pas de script rigide, il travail dans 60 langues 24h/24 et 7j/7 pour des clients plus heureux instantanément.",
     cta: {
       button: "30 jours gratuit",
       url: "https://calendly.com/vocalcom-france/demo-vocalcom"
@@ -188,7 +187,7 @@ export const landingFR = {
   finalCta: {
     emoji: "🚀",
     title: "Gardez une longueur d'avance sur la concurrence avec un centre de contact AI-First",
-    subtitle: "Rejoignez 1200+ entreprises qui transforment leur expérience client avec le centre de contact AI-first de Vocalcom",
+    subtitle: "Automatisez chaque jour davantage en connectant nos Agent IA et vos agents humains sur notre plateforme Vocalcom CXA. En unifiant les données d'interaction, l'Agent IA Loop de Vocalcom améliore continuellement le service pour des résolutions plus rapide et de qualité.",
     button: "RÉSERVER UNE DÉMO",
     trust: [
       { label: "Support dédié" },
@@ -292,6 +291,11 @@ export const landingFR = {
       privacy: "Politique de Confidentialité",
       cookies: "Cookies"
     }
+  },
+  ctaBanner: {
+    text: "Comment pouvons-nous vous aider?",
+    ctaText: "Contactez nous",
+    ctaUrl: "#demo"
   },
   thankYou: {
     title: "Merci pour votre demande !",

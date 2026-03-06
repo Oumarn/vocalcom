@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Icon from '@mdi/react';
+import { mdiArrowRight } from '@mdi/js';
 import { useLanguage } from "../../hooks/useLanguage";
 import { getCalendlyConfig, getCalendlyConfigByCountry, mapRegionKeyToCalendly, type CalendlyRegion } from "@/config/calendly-config";
 import { resolveRegionFromUTM } from "@/lib/region-resolver";
@@ -1173,13 +1175,11 @@ export default function DemoForm({ customButtonText, showHelpField = false }: De
           <button
             type="button"
             onClick={handleNext}
-            className="group w-full inline-flex items-center justify-center px-8 py-4 text-sm font-bold text-white rounded-full hover:shadow-xl hover:shadow-violet-500/30 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105"
-            style={{background: 'linear-gradient(90deg, #8b5cf6, #a855f7)'}}
+            className="w-full inline-flex items-center justify-center gap-2 px-4 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-bold text-white rounded-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+            style={{background: 'linear-gradient(90deg, #F6A02E, #f97316)'}}
           >
-            <span className="relative">
-              {t.next}
-              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
-            </span>
+            {t.next}
+            <Icon path={mdiArrowRight} size={0.8} className="transition-transform" />
           </button>
         </div>
       )}
@@ -1345,13 +1345,11 @@ export default function DemoForm({ customButtonText, showHelpField = false }: De
             <button
               type="submit"
               disabled={isSubmitting}
-              className="group flex-1 inline-flex items-center justify-center px-8 py-4 text-sm font-bold text-white rounded-full hover:shadow-xl hover:shadow-violet-500/30 transition-all duration-300 transform hover:-translate-y-0.5 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:scale-100 disabled:hover:shadow-none"
-              style={{background: 'linear-gradient(90deg, #8b5cf6, #a855f7)'}}
+              className="flex-1 inline-flex items-center justify-center gap-2 px-4 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-bold text-white rounded-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none"
+              style={{background: 'linear-gradient(90deg, #F6A02E, #f97316)'}}
             >
-              <span className="relative">
-                {isSubmitting ? t.submitting : (customButtonText || t.submit)}
-                {!isSubmitting && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>}
-              </span>
+              {isSubmitting ? t.submitting : (customButtonText || t.submit)}
+              <Icon path={mdiArrowRight} size={0.8} className="transition-transform" />
             </button>
           </div>
         </div>

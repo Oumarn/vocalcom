@@ -1,5 +1,7 @@
 "use client";
 import Image from 'next/image';
+import Icon from '@mdi/react';
+import { mdiArrowRight } from '@mdi/js';
 import type { landingFR } from '@/content/landing.fr';
 
 type ComparisonContent = {
@@ -34,10 +36,11 @@ export default function ComparisonSection({ content }: { content: ComparisonCont
                             <div className="pt-4">
                                 <a 
                                     href={content.cta.url} 
-                                    className="inline-flex items-center gap-2 px-8 py-4 text-sm text-white font-bold rounded-full hover:shadow-xl transition-all transform hover:-translate-y-1" 
-                                    style={{background: 'linear-gradient(193deg, #7c3aed, #8b5cf6 25%, #a855f7 50%, #c084fc 75%, #d8b4fe)'}}
+                                    className="inline-flex items-center justify-center gap-2 px-4 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm text-white font-bold rounded-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1" 
+                                    style={{background: 'linear-gradient(90deg, #F6A02E, #f97316)'}}
                                 >
                                     {content.cta.button}
+                                    <Icon path={mdiArrowRight} size={0.8} className="transition-transform group-hover:translate-x-1" />
                                 </a>
                             </div>
                         </div>

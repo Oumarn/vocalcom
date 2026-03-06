@@ -34,11 +34,11 @@ export default function MidPageCta({
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="group inline-flex items-center gap-3 justify-center px-8 py-4 text-sm font-bold text-white rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
-          style={{background: 'linear-gradient(90deg, #8b5cf6, #a855f7)'}}
+          className="inline-flex items-center justify-center gap-2 px-4 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-bold text-white rounded-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+          style={{background: 'linear-gradient(90deg, #F6A02E, #f97316)'}}
         >
           {buttonText}
-          <Icon path={mdiArrowRight} size={0.8} className="group-hover:translate-x-1 transition-transform" />
+          <Icon path={mdiArrowRight} size={0.8} className="transition-transform" />
         </a>
       </div>
     </section>

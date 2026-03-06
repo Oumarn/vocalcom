@@ -65,6 +65,11 @@ export default function HeroHome({ content, showHelpField = false }: HeroHomePro
                     </div>
 
                     <div className="bg-white rounded-3xl p-8 shadow-2xl animate-slide-in w-full max-w-lg mx-auto lg:mr-0 border border-gray-100" id="demo">
+                        <div className="mb-6 text-center">
+                            <p className="text-gray-600 text-sm leading-relaxed">
+                                Notre équipe est là pour vous guider vers la meilleure solution pour votre entreprise.
+                            </p>
+                        </div>
                         <DemoForm showHelpField={showHelpField} />
                     </div>
                 </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useCountUp } from "../../hooks/useCountUp";
 import { Stat } from "./Stat";
 import type { landingFR } from '@/content/landing.fr';
 
@@ -36,7 +35,7 @@ export default function Historic({ content }: { content: typeof landingFR.stats 
             <div className="shape-layer"></div>
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 md:gap-16 gap-12 text-white text-xl md:text-lg">
                 {content.items.map((stat, index) => (
-                    <Stat key={index} value={stat.value} label={stat.label} />
+                    <Stat key={index} value={stat.value} label={stat.label} isVisible={visible} />
                 ))}
             </div>
         </section>
