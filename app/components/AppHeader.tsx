@@ -12,14 +12,14 @@ export default function AppHeader({ content }: { content: typeof landingFR.heade
                     </div>
 
                     <div className="hidden md:flex items-center gap-6">
-                        <a href="#demo" className="inline-flex items-center justify-center gap-2 px-8 py-4 text-sm font-bold text-white rounded-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1" style={{background: 'linear-gradient(90deg, #F6A02E, #f97316)'}}>
+                        <a href="#demo" className="inline-flex items-center justify-center gap-2 px-6 py-2 text-sm font-bold text-white rounded-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1" style={{background: 'linear-gradient(90deg, #F6A02E, #f97316)'}}>
                             {content.cta}
                             <Icon path={mdiArrowRight} size={0.8} className="transition-transform" />
                         </a>
                     </div>
 
                     <div className="md:hidden flex items-center">
-                        <a href="#demo" className="inline-flex items-center justify-center gap-1 px-2 py-1 text-[10px] text-white font-semibold rounded-full hover:shadow-lg transition-all duration-300 whitespace-nowrap" style={{background: 'linear-gradient(90deg, #F6A02E, #f97316)'}}>
+                        <a href="#demo" className="inline-flex items-center justify-center gap-1 px-2.5 py-2 text-xs text-white font-semibold rounded-full hover:shadow-lg transition-all duration-300 whitespace-nowrap" style={{background: 'linear-gradient(90deg, #F6A02E, #f97316)'}}>
                             {content.cta}
                             <Icon path={mdiArrowRight} size={0.5} className="transition-transform" />
                         </a>
