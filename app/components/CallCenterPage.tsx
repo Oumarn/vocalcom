@@ -188,7 +188,7 @@ export default function CallCenterPage({ content }: { content: CallCenterContent
             </div>
             
             {/* Demo Form Card */}
-            <div id="demo" className="bg-white rounded-2xl shadow-2xl p-8">
+            <div id="demo" className="bg-white rounded-2xl shadow-2xl p-8 scroll-mt-24">
               <DemoForm customButtonText={content.hero.formButtonText} />
             </div>
           </div>

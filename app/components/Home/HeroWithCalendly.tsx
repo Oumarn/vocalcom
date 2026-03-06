@@ -59,7 +59,7 @@ export default function HeroWithCalendly({ content, calendlyUrl }: { content: ty
                         
                     </div>
 
-                    <div className="bg-white rounded-3xl p-6 shadow-2xl animate-slide-in w-full max-w-lg mx-auto lg:mr-0 border border-gray-100" id="demo">
+                    <div className="bg-white rounded-3xl p-6 shadow-2xl animate-slide-in w-full max-w-lg mx-auto lg:mr-0 border border-gray-100 scroll-mt-24" id="demo">
                         <div className="mb-4 text-center">
                             <p className="text-gray-600 text-sm leading-relaxed">
                                 Notre équipe est là pour vous guider vers la meilleure solution pour votre entreprise.
