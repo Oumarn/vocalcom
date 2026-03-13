@@ -43,7 +43,7 @@ export default function AgentVocalIAPage() {
         <LogoBillboard content={landingFR.logoBillboard} />
         <AIHumanSection content={landingFR.aiHuman} />
         <MidPageCta 
-          url={CALENDLY_URL}
+          url="#demo"
           title="1000 Agent IA Vocaux Gratuitement !"
           description="L'Agent IA Vocal qui répond au téléphone comme un humain."
           buttonText="30 Jours Gratuits"
@@ -51,7 +51,7 @@ export default function AgentVocalIAPage() {
         <BenefitsGrid content={landingFR.benefits} />
         <Integrations content={landingFR.integrations} />
         <MidPageCta 
-          url={CALENDLY_URL}
+          url="#demo"
           title="1000 Agent IA Vocaux Gratuitement !"
           description="L'Agent IA Vocal qui répond au téléphone comme un humain."
           buttonText="30 Jours Gratuits"
@@ -59,7 +59,7 @@ export default function AgentVocalIAPage() {
         <SocialProof content={landingFR.socialProof} />
         <SecurityCompliance content={landingFR.security} />
         <MidPageCta 
-          url={CALENDLY_URL}
+          url="#demo"
           title="1000 Agent IA Vocaux Gratuitement !"
           description="L'Agent IA Vocal qui répond au téléphone comme un humain."
           buttonText="30 Jours Gratuits"

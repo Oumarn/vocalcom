@@ -9,13 +9,14 @@ interface SimpleCtaProps {
 }
 
 export default function SimpleCta({ text, url }: SimpleCtaProps) {
+  const isExternal = url.startsWith('http');
+  
   return (
     <section className="py-12 bg-gradient-to-b from-gray-50 to-white">
       <div className="max-w-4xl mx-auto px-6 text-center">
         <a 
           href={url}
-          target="_blank"
-          rel="noopener noreferrer"
+          {...(isExternal && { target: "_blank", rel: "noopener noreferrer" })}
           className="inline-flex items-center justify-center gap-2 px-4 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm text-white font-bold rounded-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
           style={{background: 'linear-gradient(90deg, #F6A02E, #f97316)'}}
         >

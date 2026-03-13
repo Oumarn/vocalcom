@@ -16,6 +16,8 @@ export default function MidPageCta({
   description = "Réservez une démo personnalisée et voyez comment l'IA peut transformer votre centre de contact",
   buttonText = "RÉSERVER UNE DÉMO"
 }: MidPageCtaProps) {
+  const isExternal = url.startsWith('http');
+  
   return (
     <section className="py-16 lg:py-20 bg-white relative overflow-hidden">
       {/* Decorative gradient background */}
@@ -32,8 +34,7 @@ export default function MidPageCta({
         </p>
         <a 
           href={url}
-          target="_blank"
-          rel="noopener noreferrer"
+          {...(isExternal && { target: "_blank", rel: "noopener noreferrer" })}
           className="inline-flex items-center justify-center gap-2 px-4 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm font-bold text-white rounded-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
           style={{background: 'linear-gradient(90deg, #F6A02E, #f97316)'}}
         >

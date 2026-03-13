@@ -173,7 +173,7 @@ export const landingFR = {
     description: "Donnez un peu de répit à vos téléconseillers. Offrez à chacun de vos clients son propre Agent Virtuel, il le reconnait, lui répond toujours avec la même voix, capable d'agir en toute autonomie. Pas de script rigide, il travail dans 60 langues 24h/24 et 7j/7 pour des clients plus heureux instantanément.",
     cta: {
       button: "30 jours gratuit",
-      url: "https://calendly.com/vocalcom-france/demo-vocalcom"
+      url: "#demo"
     }
   },
   stats: {

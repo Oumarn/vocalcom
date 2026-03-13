@@ -16,6 +16,8 @@ type ComparisonContent = {
 };
 
 export default function ComparisonSection({ content }: { content: ComparisonContent }) {
+    const isExternal = content.cta.url.startsWith('http');
+    
     return (
         <>
             <section className="py-12 lg:py-16 bg-white">
@@ -35,7 +37,8 @@ export default function ComparisonSection({ content }: { content: ComparisonCont
                             <p className="text-lg text-gray-600 leading-relaxed" dangerouslySetInnerHTML={{ __html: content.description }} />
                             <div className="pt-4">
                                 <a 
-                                    href={content.cta.url} 
+                                    href={content.cta.url}
+                                    {...(isExternal && { target: "_blank", rel: "noopener noreferrer" })}
                                     className="inline-flex items-center justify-center gap-2 px-4 sm:px-8 py-2 sm:py-4 text-xs sm:text-sm text-white font-bold rounded-full hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1" 
                                     style={{background: 'linear-gradient(90deg, #F6A02E, #f97316)'}}
                                 >
