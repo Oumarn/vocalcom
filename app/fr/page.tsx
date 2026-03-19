@@ -37,7 +37,7 @@ export default function FrenchLandingPage() {
         <LogoBillboard content={landingFR.logoBillboard} />
         <AIHumanSection content={landingFR.aiHuman} />
         <BenefitsGrid content={landingFR.benefits} />
-        <SimpleCta text="30 jours gratuit" url="#demo" />
+        <SimpleCta text="30 jours gratuits" url="#demo" />
         <Integrations content={landingFR.integrations} />
         <SocialProof content={landingFR.socialProof} />
         <SecurityCompliance content={landingFR.security} />

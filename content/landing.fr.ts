@@ -13,7 +13,7 @@ export const landingFR = {
     stats: {
       roi: { value: "281%", label: "de ROI en moins de 3 mois" },
       payback: { value: "34%", label: "d'appels abandonnés en moins" },
-      interactions: { value: "-50%", label: "sur vos coût de production" },
+      interactions: { value: "-50%", label: "sur vos coûts de production" },
     },
     formTitle: "Voir la Démo en Action",
   },
@@ -87,7 +87,7 @@ export const landingFR = {
   integrations: {
     badge: "Intégrations",
     title: "Connectez Vocalcom\nà tous vos outils",
-    subtitle: "Avec plus de 50 intégrations, créer votre solution de centre de contact personnalisée.",
+    subtitle: "Avec plus de 50 intégrations, créez votre solution de centre de contact personnalisée.",
     count: "+200",
     countLabel: "intégrations disponibles"
   },
@@ -110,7 +110,7 @@ export const landingFR = {
       {
         company: "ENGIE Solutions",
         industry: "Énergie",
-        quote: "Je n'ai pas trouvé d'outil aussi complet et simple à utiliser que la solution Hermes de Vocalcom. Elle permet de gérer tout l'opérationnel, sans recourir à prestataire informatique et sans connaissances en scripting.",
+        quote: "Je n'ai pas trouvé d'outil aussi complet et simple à utiliser que la solution Hermes de Vocalcom. Elle permet de gérer tout l'opérationnel, sans recourir à un prestataire informatique et sans connaissances en scripting.",
         author: "Cyril Roustan",
         role: "Responsable CRC, ENGIE Solutions",
         stats: [
@@ -172,7 +172,7 @@ export const landingFR = {
     title: "Votre parcours d'expérience client automatisé commence ici",
     description: "Donnez un peu de répit à vos téléconseillers. Offrez à chacun de vos clients son propre Agent Virtuel, il le reconnait, lui répond toujours avec la même voix, capable d'agir en toute autonomie. Pas de script rigide, il travail dans 60 langues 24h/24 et 7j/7 pour des clients plus heureux instantanément.",
     cta: {
-      button: "30 jours gratuit",
+      button: "30 jours gratuits",
       url: "#demo"
     }
   },
@@ -187,7 +187,7 @@ export const landingFR = {
   finalCta: {
     emoji: "🚀",
     title: "Gardez une longueur d'avance sur la concurrence avec un centre de contact AI-First",
-    subtitle: "Automatisez chaque jour davantage en connectant nos Agent IA et vos agents humains sur notre plateforme Vocalcom CXA. En unifiant les données d'interaction, l'Agent IA Loop de Vocalcom améliore continuellement le service pour des résolutions plus rapide et de qualité.",
+    subtitle: "Automatisez chaque jour davantage en connectant nos Agents IA et vos agents humains sur notre plateforme Vocalcom CXA. En unifiant les données d'interaction, l'Agent IA Loop de Vocalcom améliore continuellement le service pour des résolutions plus rapides et de qualité.",
     button: "RÉSERVER UNE DÉMO",
     trust: [
       { label: "Support dédié" },
@@ -294,7 +294,7 @@ export const landingFR = {
   },
   ctaBanner: {
     text: "Comment pouvons-nous vous aider?",
-    ctaText: "Contactez nous",
+    ctaText: "Contactez-nous",
     ctaUrl: "#demo"
   },
   thankYou: {

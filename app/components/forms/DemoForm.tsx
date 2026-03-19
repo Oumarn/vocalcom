@@ -7,10 +7,11 @@ import { useLanguage } from "../../hooks/useLanguage";
 import { getCalendlyConfig, getCalendlyConfigByCountry, mapRegionKeyToCalendly, type CalendlyRegion } from "@/config/calendly-config";
 import { resolveRegionFromUTM } from "@/lib/region-resolver";
 
-// Declare dataLayer for GTM
+// Declare dataLayer for GTM and LinkedIn Insight Tag
 declare global {
   interface Window {
     dataLayer: any[];
+    lintrk: (action: string, options: { conversion_id: number }) => void;
   }
 }
 
@@ -66,6 +67,8 @@ export default function DemoForm({ customButtonText, showHelpField = false }: De
     adgroup_name?: string;
     gclid?: string;
     fbclid?: string;
+    li_fat_id?: string;
+    campaign_group?: string;
     calendly_event?: string;
     meeting_date?: string;
   }>({});
@@ -76,6 +79,14 @@ export default function DemoForm({ customButtonText, showHelpField = false }: De
     
     const params = new URLSearchParams(window.location.search);
     
+    // Helper: read cookie by name
+    function getCookie(name: string): string {
+      const match = document.cookie.match(
+        new RegExp('(^| )' + name + '=([^;]+)')
+      );
+      return match ? decodeURIComponent(match[2]) : '';
+    }
+
     // Helper to get value and persist to localStorage
     const getStored = (key: string): string | undefined => {
       const value = params.get(key);
@@ -86,6 +97,14 @@ export default function DemoForm({ customButtonText, showHelpField = false }: De
       return localStorage.getItem(`vocalcom_${key}`) || undefined;
     };
     
+    // LinkedIn-specific: first-party ad tracking ID
+    const li_fat_id = params.get('li_fat_id') || getCookie('li_fat_id') || '';
+    if (li_fat_id) localStorage.setItem('vocalcom_li_fat_id', li_fat_id);
+
+    // LinkedIn Campaign Group
+    const campaign_group = params.get('campaign_group') || '';
+    if (campaign_group) localStorage.setItem('vocalcom_campaign_group', campaign_group);
+
     const fullUtm = {
       utm_source: getStored('utm_source'),
       utm_medium: getStored('utm_medium'),
@@ -101,6 +120,8 @@ export default function DemoForm({ customButtonText, showHelpField = false }: De
       adgroup_name: getStored('adgroup_name'),
       gclid: getStored('gclid'),
       fbclid: getStored('fbclid'),
+      li_fat_id: li_fat_id || localStorage.getItem('vocalcom_li_fat_id') || undefined,
+      campaign_group: campaign_group || localStorage.getItem('vocalcom_campaign_group') || undefined,
     };
     
     setAttribution(fullUtm);
@@ -740,6 +761,13 @@ export default function DemoForm({ customButtonText, showHelpField = false }: De
       
       localStorage.setItem('vocalcom_form_submission', JSON.stringify(submissionData));
       console.log('[DemoForm] Form data saved to localStorage');
+
+      // Fire LinkedIn conversion tracking
+      if (typeof window.lintrk === 'function') {
+        window.lintrk('track', {
+          conversion_id: 18890849 // Replace with actual LinkedIn conversion ID
+        });
+      }
 
       // Show Calendly widget immediately
       setTimeout(() => {
