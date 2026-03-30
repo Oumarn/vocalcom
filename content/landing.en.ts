@@ -8,7 +8,7 @@ export const landingEN = {
   },
   hero: {
     badge: "AI-first Contact Center Platform",
-    title: "All-in-one AI-powered contact center",
+    title: "All-in-one AI-First contact center",
     subtitle: "Optimized to assist agents, anticipate churn, automate upsell and cross-sell, boost sales from leads, manage overflows, and open 24/7 services across all channels.",
     stats: {
       roi: { value: "301%", label: "3-Year ROI" },

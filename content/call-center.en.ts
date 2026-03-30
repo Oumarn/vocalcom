@@ -1,6 +1,6 @@
 export const callCenterEN = {
   meta: {
-    title: "AI-Powered Call Center Software for Modern Contact Centers | Vocalcom",
+    title: "AI-First Call Center Software for Modern Contact Centers | Vocalcom",
     description: "All-in-one call center solution to manage inbound & outbound calls, digital channels, from a single platform. Cloud-based, scalable, enterprise-ready.",
     keywords: "call center software, contact center solution, cloud call center, call center platform, omnichannel contact center, inbound call center software",
   },
@@ -8,7 +8,7 @@ export const callCenterEN = {
     cta: "Request a Demo",
   },
   hero: {
-    title: "AI-Powered Call Center Software for Modern Contact Centers",
+    title: "AI-First Call Center Software for Modern Contact Centers",
     subtitle: "All-in-one call center solution to manage inbound & outbound calls, digital channels, from a single platform.",
     benefits: [
       "Cloud-based call center solution",
@@ -76,8 +76,8 @@ export const callCenterEN = {
         }
       },
       {
-        badge: { emoji: "🤖", label: "AI-Powered" },
-        title: "AI-Powered Call Center Software",
+        badge: { emoji: "🤖", label: "AI-First" },
+        title: "AI-First Call Center Software",
         description: "AI is integrated to assist agents, not replace them.",
         items: [
           "Voicebots and chatbots for simple queries",
