@@ -356,6 +356,15 @@ export default function DemoForm({ customButtonText, showHelpField = false }: De
               calendly_event_uri: e.data.payload?.event?.uri || '',
               meeting_start_time: e.data.payload?.event?.start_time || '',
               
+              // Enhanced Conversions user data
+              user_data: {
+                email: localStorage.getItem('vocalcom_user_email') || '',
+                phone_number: localStorage.getItem('vocalcom_user_phone') || '',
+                first_name: localStorage.getItem('vocalcom_user_first_name') || '',
+                last_name: localStorage.getItem('vocalcom_user_last_name') || '',
+                country: localStorage.getItem('vocalcom_user_country') || '',
+              },
+              
               // Deduplication ID
               event_id: `demo_${Date.now()}`
             });
@@ -743,6 +752,13 @@ export default function DemoForm({ customButtonText, showHelpField = false }: De
       
       // Persist all attribution data with consistent vocalcom_ prefix
       persistAttribution();
+
+      // Persist user data for Enhanced Conversions (Google Ads)
+      localStorage.setItem('vocalcom_user_email', formData.email?.toLowerCase().trim() || '');
+      localStorage.setItem('vocalcom_user_phone', `${phonePrefix}${formData.phone.replace(/\s/g, '')}`);
+      localStorage.setItem('vocalcom_user_first_name', formData.firstName || '');
+      localStorage.setItem('vocalcom_user_last_name', formData.lastName || '');
+      localStorage.setItem('vocalcom_user_country', formData.country || '');
       
       // Store form data in localStorage for later Pardot submission
       const submissionData = {
@@ -1016,7 +1032,7 @@ export default function DemoForm({ customButtonText, showHelpField = false }: De
       country: 'Pays',
       countryPlaceholder: 'Rechercher un pays...',
       jobTitle: 'Poste',
-      marketingConsent: 'Oui, j\'accepte de recevoir des communications marketing sur les produits, services et évènements de Zendesk. Je comprends que je peux me désabonner à tout moment.',
+      marketingConsent: 'Oui, j\'accepte de recevoir des communications marketing sur les produits, services et évènements de Vocalcom. Je comprends que je peux me désabonner à tout moment.',
       next: 'Suivant',
       back: 'Retour',
       submit: 'Réserver ma démo',
@@ -1036,7 +1052,7 @@ export default function DemoForm({ customButtonText, showHelpField = false }: De
       country: 'Country',
       countryPlaceholder: 'Search for a country...',
       jobTitle: 'Job Title',
-      marketingConsent: 'Yes, I agree to receive marketing communications about Zendesk products, services and events. I understand that I can unsubscribe at any time.',
+      marketingConsent: 'Yes, I agree to receive marketing communications about Vocalcom products, services and events. I understand that I can unsubscribe at any time.',
       next: 'Next',
       back: 'Back',
       submit: 'Book my demo',
@@ -1056,7 +1072,7 @@ export default function DemoForm({ customButtonText, showHelpField = false }: De
       country: 'País',
       countryPlaceholder: 'Buscar un país...',
       jobTitle: 'Cargo',
-      marketingConsent: 'Sí, acepto recibir comunicaciones de marketing sobre productos, servicios y eventos de Zendesk. Entiendo que puedo darme de baja en cualquier momento.',
+      marketingConsent: 'Sí, acepto recibir comunicaciones de marketing sobre productos, servicios y eventos de Vocalcom. Entiendo que puedo darme de baja en cualquier momento.',
       next: 'Siguiente',
       back: 'Volver',
       submit: 'Reservar mi demo',
@@ -1076,7 +1092,7 @@ export default function DemoForm({ customButtonText, showHelpField = false }: De
       country: 'País',
       countryPlaceholder: 'Pesquisar um país...',
       jobTitle: 'Cargo',
-      marketingConsent: 'Sim, concordo em receber comunicações de marketing sobre produtos, serviços e eventos da Zendesk. Compreendo que posso cancelar a inscrição a qualquer momento.',
+      marketingConsent: 'Sim, concordo em receber comunicações de marketing sobre produtos, serviços e eventos da Vocalcom. Compreendo que posso cancelar a inscrição a qualquer momento.',
       next: 'Próximo',
       back: 'Voltar',
       submit: 'Reservar minha demo',
@@ -1096,11 +1112,10 @@ export default function DemoForm({ customButtonText, showHelpField = false }: De
     url.searchParams.set('name', fullName);
     url.searchParams.set('email', formData.email);
     
-    // Add phone for SMS notifications - Calendly expects it in a1 field
+    // Add phone for SMS notifications - Calendly a2 = "Numéro de téléphone" (2nd custom question)
     if (formData.phone) {
       const completePhone = `${phonePrefix}${formData.phone}`.trim();
-      url.searchParams.set('a1', completePhone); // Primary phone field
-      url.searchParams.set('phone_number', completePhone); // Alternative parameter for SMS
+      url.searchParams.set('a2', completePhone); // Phone number field (2nd custom question)
     }
     
     // Add UTM parameters for tracking
