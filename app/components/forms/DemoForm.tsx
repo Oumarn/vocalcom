@@ -778,6 +778,20 @@ export default function DemoForm({ customButtonText, showHelpField = false }: De
       localStorage.setItem('vocalcom_form_submission', JSON.stringify(submissionData));
       console.log('[DemoForm] Form data saved to localStorage');
 
+      // Fire GTM form_submitted event with user data for Enhanced Conversions
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'form_submitted',
+        user_data: {
+          email: formData.email?.toLowerCase().trim() || '',
+          phone_number: `${phonePrefix}${formData.phone.replace(/\s/g, '')}`,
+          first_name: formData.firstName || '',
+          last_name: formData.lastName || '',
+          country: formData.country || '',
+        },
+      });
+      console.log('[DemoForm] GTM form_submitted event fired with user_data');
+
       // Fire LinkedIn conversion tracking
       if (typeof window.lintrk === 'function') {
         window.lintrk('track', {
