@@ -47,7 +47,7 @@ export default function CalendlyWidget({
     };
   }, []);
 
-  // Build URL with customization parameters
+  // Build URL with customization parameters + UTM passthrough
   const buildCalendlyUrl = () => {
     const params = new URLSearchParams();
     if (hideEventTypeDetails) params.append('hide_event_type_details', '1');
@@ -56,7 +56,15 @@ export default function CalendlyWidget({
     params.append('background_color', backgroundColor);
     params.append('text_color', textColor);
     params.append('primary_color', primaryColor);
-    
+
+    // Forward UTM parameters from the current page URL to Calendly
+    const pageParams = new URLSearchParams(window.location.search);
+    const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+    utmKeys.forEach((key) => {
+      const value = pageParams.get(key);
+      if (value) params.append(key, value);
+    });
+
     return `${url}?${params.toString()}`;
   };
 
