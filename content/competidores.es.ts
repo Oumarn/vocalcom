@@ -8,15 +8,12 @@ export const competidoresES = {
     cta: "Ver la Diferencia — Demo en Vivo",
   },
   hero: {
-    title: "La Alternativa CCaaS que tus Agentes Amarán",
-    subtitle: "Genesys es complejo. NICE es caro. Five9 carece de CRM nativo. Vocalcom ofrece potencia enterprise con simplicidad: IA incluida, Salesforce nativo y soporte humano.",
+    title: "La Plataforma omnicanal que impulsa tu Contact Center",
+    subtitle: "Menos costes, fácil, rápido y sin complicaciones",
     benefits: [
-      "IA incluida — sin add-ons costosos",
-      "+200 herramientas conectadas — integración CRM nativa",
-      "Despliegue en 4 semanas, no en 6+ meses",
-      "40% menor coste total de propiedad",
-      "Customer Success Manager dedicado",
-      "Migración guiada desde cualquier plataforma"
+      "Superagente IA, habla, responde y vende",
+      "Automatización real del CX",
+      "+ 15 canales integrados",
     ],
     formTitle: "Ver Vocalcom vs Competidores",
     formSubtitle: "Demo personalizada de 30 minutos — te mostramos las diferencias reales",

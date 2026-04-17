@@ -8,8 +8,13 @@ export const landingES = {
   },
   hero: {
     badge: "Plataforma de Contact Center AI-first",
-    title: "La IA de los Centros de Contacto",
-    subtitle: "Optimizada para asistir a los agentes, anticipar el churn, automatizar el upsell y el cross-sell, impulsar la venta sobre leads, gestionar los desbordes y habilitar servicios 24/7 en todos los canales.",
+    title: "La Plataforma omnicanal que impulsa tu Contact Center",
+    bullets: [
+      "Superagente IA, habla, responde y vende",
+      "Automatización real del CX",
+      "+ 15 canales integrados",
+    ],
+    subtitle: "Menos costes, fácil, rápido y sin complicaciones",
     stats: {
       roi: { value: "301 %", label: "ROI a 3 años" },
       payback: { value: "6 meses", label: "Amortización" },

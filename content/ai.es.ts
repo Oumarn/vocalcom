@@ -8,15 +8,12 @@ export const aiES = {
     cta: "Ver el Agente IA en Acción",
   },
   hero: {
-    title: "IA en el Corazón de tu Contact Center",
-    subtitle: "El Agente IA Vocal gestiona llamadas autónomamente: cualificación, citas, FAQ. Analítica conversacional en tiempo real. Coaching IA. Resumen post-llamada automático.",
+    title: "La Plataforma omnicanal que impulsa tu Contact Center",
+    subtitle: "Menos costes, fácil, rápido y sin complicaciones",
     benefits: [
-      "Agente IA Vocal autónomo 24/7",
-      "Analítica conversacional en tiempo real",
-      "Coaching IA para agentes en directo",
-      "Resumen post-llamada automático",
-      "Enrutamiento predictivo inteligente",
-      "Chatbot & Voicebot multilingüe"
+      "Superagente IA, habla, responde y vende",
+      "Automatización real del CX",
+      "+ 15 canales integrados",
     ],
     formTitle: "Ver el Agente IA en Acción",
     formSubtitle: "Programa una demo personalizada de 30 minutos — te mostramos la IA en tus casos de uso",

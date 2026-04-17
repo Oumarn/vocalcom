@@ -8,13 +8,12 @@ export const outboundES = {
     cta: "Solicitar Demo"
   },
   hero: {
-    title: "Software de telemarketing con IA para maximizar ventas",
-    subtitle: "Automatice llamadas salientes, aumente la tasa de contacto y mejore la productividad con marcación predictiva IA y gestión omnicanal.",
+    title: "La Plataforma omnicanal que impulsa tu Contact Center",
+    subtitle: "Menos costes, fácil, rápido y sin complicaciones",
     benefits: [
-      "Televentas",
-      "Telemarketing",
-      "Agendamiento",
-      "Callbacks"
+      "Superagente IA, habla, responde y vende",
+      "Automatización real del CX",
+      "+ 15 canales integrados",
     ],
     formTitle: "Solicitar una demo personalizada",
     formSubtitle: "Descubra cómo transformar sus campañas salientes en motor de crecimiento.",

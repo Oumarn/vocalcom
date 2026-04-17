@@ -8,15 +8,12 @@ export const callCenterES = {
     cta: "Solicitar Demo",
   },
   hero: {
-    title: "Software de Call Center con IA para Centros de Contacto Modernos",
-    subtitle: "Unifique sus llamadas entrantes, salientes y canales digitales en una plataforma única. Una solución todo-en-uno, diseñada para maximizar la productividad de sus agentes mientras reduce los costos operativos.",
+    title: "La Plataforma omnicanal que impulsa tu Contact Center",
+    subtitle: "Menos costes, fácil, rápido y sin complicaciones",
     benefits: [
-      "Solución de call center en la nube",
-      "Escalable para entornos empresariales",
-      "Diseñada para equipos de atención al cliente y ventas",
-      "Omnicanal unificado (voz y digital)",
-      "Asistencia con IA integrada",
-      "Monitoreo de rendimiento en tiempo real"
+      "Superagente IA, habla, responde y vende",
+      "Automatización real del CX",
+      "+ 15 canales integrados",
     ],
     formTitle: "Solicitar una Demo Personalizada",
     formSubtitle: "Descubra cómo Vocalcom puede transformar su centro de contacto",

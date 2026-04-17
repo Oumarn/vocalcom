@@ -8,14 +8,12 @@ export const customerServiceES = {
         cta: "Solicitar una Demo"
     },
     hero: {
-        title: "Software de Atención al Cliente Omnicanal para Equipos Modernos",
-        subtitle: "Una solución integral de atención al cliente para gestionar interacciones en todos los canales y mejorar la experiencia del cliente.",
+        title: "La Plataforma omnicanal que impulsa tu Contact Center",
+        subtitle: "Menos costes, fácil, rápido y sin complicaciones",
         benefits: [
-            "Software cloud de atención al cliente",
-            "Omnicanal unificado",
-            "Asistencia con inteligencia artificial",
-            "Analítica y supervisión en tiempo real",
-            "Escalable para empresas"
+            "Superagente IA, habla, responde y vende",
+            "Automatización real del CX",
+            "+ 15 canales integrados",
         ],
         formTitle: "Solicitar una demo personalizada",
         formSubtitle: "Descubra cómo transformar su atención al cliente",
