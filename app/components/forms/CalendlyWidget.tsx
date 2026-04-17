@@ -58,12 +58,14 @@ export default function CalendlyWidget({
     params.append('primary_color', primaryColor);
 
     // Forward UTM parameters from the current page URL to Calendly
-    const pageParams = new URLSearchParams(window.location.search);
-    const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
-    utmKeys.forEach((key) => {
-      const value = pageParams.get(key);
-      if (value) params.append(key, value);
-    });
+    if (typeof window !== 'undefined') {
+      const pageParams = new URLSearchParams(window.location.search);
+      const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+      utmKeys.forEach((key) => {
+        const value = pageParams.get(key);
+        if (value) params.append(key, value);
+      });
+    }
 
     return `${url}?${params.toString()}`;
   };

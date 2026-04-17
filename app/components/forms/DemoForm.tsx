@@ -738,7 +738,13 @@ export default function DemoForm({ customButtonText, showHelpField = false }: De
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
+    // If still on step 1 (e.g. user pressed Enter), advance to step 2 instead of submitting
+    if (step === 1) {
+      handleNext();
+      return;
+    }
+
     if (!validateStep(step)) {
       return;
     }
@@ -1125,17 +1131,33 @@ export default function DemoForm({ customButtonText, showHelpField = false }: De
     const url = new URL(calendlyUrl);
     url.searchParams.set('name', fullName);
     url.searchParams.set('email', formData.email);
-    
-    // Add phone for SMS notifications - Calendly a2 = "Numéro de téléphone" (2nd custom question)
+
+    // Prefill custom questions — adjust aN numbers to match your Calendly event form order:
+    //   a1 = Company / Entreprise        (1st custom question)
+    //   a2 = Phone / Téléphone           (2nd custom question)
+    //   a3 = Job Title / Poste           (3rd custom question)
+    //   a4 = Country / Pays              (4th custom question)
+    if (formData.company) url.searchParams.set('a1', formData.company);
     if (formData.phone) {
       const completePhone = `${phonePrefix}${formData.phone}`.trim();
-      url.searchParams.set('a2', completePhone); // Phone number field (2nd custom question)
+      url.searchParams.set('a2', completePhone);
     }
+    if (formData.jobTitle) url.searchParams.set('a3', formData.jobTitle);
+    if (formData.country) url.searchParams.set('a4', formData.country);
     
-    // Add UTM parameters for tracking
+    // Add all UTM parameters for tracking
     if (attribution.utm_source) url.searchParams.set('utm_source', attribution.utm_source);
     if (attribution.utm_medium) url.searchParams.set('utm_medium', attribution.utm_medium);
     if (attribution.utm_campaign) url.searchParams.set('utm_campaign', attribution.utm_campaign);
+    if (attribution.utm_term) url.searchParams.set('utm_term', attribution.utm_term);
+    if (attribution.utm_content) url.searchParams.set('utm_content', attribution.utm_content);
+    if (attribution.utm_creative) url.searchParams.set('utm_creative', attribution.utm_creative);
+    if (attribution.utm_matchtype) url.searchParams.set('utm_matchtype', attribution.utm_matchtype);
+    if (attribution.utm_network) url.searchParams.set('utm_network', attribution.utm_network);
+    if (attribution.utm_device) url.searchParams.set('utm_device', attribution.utm_device);
+    if (attribution.gclid) url.searchParams.set('gclid', attribution.gclid);
+    if (attribution.campaign_name) url.searchParams.set('campaign_name', attribution.campaign_name);
+    if (attribution.adgroup_name) url.searchParams.set('adgroup_name', attribution.adgroup_name);
     
     // Hide Calendly's GDPR banner and optimize display
     url.searchParams.set('hide_gdpr_banner', '1');
