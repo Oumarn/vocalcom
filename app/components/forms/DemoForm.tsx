@@ -249,19 +249,40 @@ export default function DemoForm({ customButtonText, showHelpField = false }: De
         
         // Add landing language
         const landingLanguage = localStorage.getItem('vocalcom_landing_language');
-        if (landingLanguage) pardotFields.landing_language = landingLanguage;
+        if (landingLanguage) {
+          pardotFields.landing_language = landingLanguage;
+          pardotFields.Landing_Language = landingLanguage;
+        }
         
         // Add all UTM and attribution parameters
-        if (formSubmission.attribution?.utm_source) pardotFields.utm_source = formSubmission.attribution.utm_source;
-        if (formSubmission.attribution?.utm_medium) pardotFields.utm_medium = formSubmission.attribution.utm_medium;
-        if (formSubmission.attribution?.utm_campaign) pardotFields.utm_campaign = formSubmission.attribution.utm_campaign;
-        if (formSubmission.attribution?.utm_term) pardotFields.utm_term = formSubmission.attribution.utm_term;
-        if (formSubmission.attribution?.utm_content) pardotFields.utm_content = formSubmission.attribution.utm_content;
+        if (formSubmission.attribution?.utm_source) {
+          pardotFields.utm_source = formSubmission.attribution.utm_source;
+          pardotFields.UTM_Source = formSubmission.attribution.utm_source;
+        }
+        if (formSubmission.attribution?.utm_medium) {
+          pardotFields.utm_medium = formSubmission.attribution.utm_medium;
+          pardotFields.UTM_Medium = formSubmission.attribution.utm_medium;
+        }
+        if (formSubmission.attribution?.utm_campaign) {
+          pardotFields.utm_campaign = formSubmission.attribution.utm_campaign;
+          pardotFields.UTM_Campaign = formSubmission.attribution.utm_campaign;
+        }
+        if (formSubmission.attribution?.utm_term) {
+          pardotFields.utm_term = formSubmission.attribution.utm_term;
+          pardotFields.UTM_Term = formSubmission.attribution.utm_term;
+        }
+        if (formSubmission.attribution?.utm_content) {
+          pardotFields.utm_content = formSubmission.attribution.utm_content;
+          pardotFields.UTM_Content = formSubmission.attribution.utm_content;
+        }
         if (formSubmission.attribution?.utm_creative) pardotFields.utm_creative = formSubmission.attribution.utm_creative;
         if (formSubmission.attribution?.utm_matchtype) pardotFields.utm_matchtype = formSubmission.attribution.utm_matchtype;
         if (formSubmission.attribution?.utm_network) pardotFields.utm_network = formSubmission.attribution.utm_network;
         if (formSubmission.attribution?.utm_device) pardotFields.utm_device = formSubmission.attribution.utm_device;
-        if (formSubmission.attribution?.gclid) pardotFields.gclid = formSubmission.attribution.gclid;
+        if (formSubmission.attribution?.gclid) {
+          pardotFields.gclid = formSubmission.attribution.gclid;
+          pardotFields.GCLID = formSubmission.attribution.gclid;
+        }
         
         // Add Google Ads campaign and adgroup names
         if (formSubmission.attribution?.campaign_name) pardotFields.campaign_name = formSubmission.attribution.campaign_name;
@@ -450,19 +471,37 @@ export default function DemoForm({ customButtonText, showHelpField = false }: De
         if (formSubmission.jobTitle) pardotFields.job_title = formSubmission.jobTitle;
         
         // Add all UTM and attribution parameters
-        if (formSubmission.attribution?.utm_source) pardotFields.utm_source = formSubmission.attribution.utm_source;
-        if (formSubmission.attribution?.utm_medium) pardotFields.utm_medium = formSubmission.attribution.utm_medium;
-        if (formSubmission.attribution?.utm_campaign) pardotFields.utm_campaign = formSubmission.attribution.utm_campaign;
+        if (formSubmission.attribution?.utm_source) {
+          pardotFields.utm_source = formSubmission.attribution.utm_source;
+          pardotFields.UTM_Source = formSubmission.attribution.utm_source;
+        }
+        if (formSubmission.attribution?.utm_medium) {
+          pardotFields.utm_medium = formSubmission.attribution.utm_medium;
+          pardotFields.UTM_Medium = formSubmission.attribution.utm_medium;
+        }
+        if (formSubmission.attribution?.utm_campaign) {
+          pardotFields.utm_campaign = formSubmission.attribution.utm_campaign;
+          pardotFields.UTM_Campaign = formSubmission.attribution.utm_campaign;
+        }
         if (formSubmission.attribution?.utm_source_platform) pardotFields.utm_source_platform = formSubmission.attribution.utm_source_platform;
-        if (formSubmission.attribution?.utm_term) pardotFields.utm_term = formSubmission.attribution.utm_term;
-        if (formSubmission.attribution?.utm_content) pardotFields.utm_content = formSubmission.attribution.utm_content;
+        if (formSubmission.attribution?.utm_term) {
+          pardotFields.utm_term = formSubmission.attribution.utm_term;
+          pardotFields.UTM_Term = formSubmission.attribution.utm_term;
+        }
+        if (formSubmission.attribution?.utm_content) {
+          pardotFields.utm_content = formSubmission.attribution.utm_content;
+          pardotFields.UTM_Content = formSubmission.attribution.utm_content;
+        }
         if (formSubmission.attribution?.utm_creative) pardotFields.utm_creative = formSubmission.attribution.utm_creative;
         if (formSubmission.attribution?.utm_matchtype) pardotFields.utm_matchtype = formSubmission.attribution.utm_matchtype;
         if (formSubmission.attribution?.utm_network) pardotFields.utm_network = formSubmission.attribution.utm_network;
         if (formSubmission.attribution?.utm_device) pardotFields.utm_device = formSubmission.attribution.utm_device;
         if (formSubmission.attribution?.campaign_name) pardotFields.campaign_name = formSubmission.attribution.campaign_name;
         if (formSubmission.attribution?.adgroup_name) pardotFields.adgroup_name = formSubmission.attribution.adgroup_name;
-        if (formSubmission.attribution?.gclid) pardotFields.gclid = formSubmission.attribution.gclid;
+        if (formSubmission.attribution?.gclid) {
+          pardotFields.gclid = formSubmission.attribution.gclid;
+          pardotFields.GCLID = formSubmission.attribution.gclid;
+        }
 
         const pardotData = new URLSearchParams(pardotFields);
 
