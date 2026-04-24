@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { landingES } from '@/content/landing.es';
 import HeroHome from "../components/Home/Hero";
 import AIHumanSection from "../components/Home/AIHumanSection";
-import LogoBillboard from "../components/Home/LogoBillboard";
+import LogoBillboardES from "../components/Home/LogoBillboardES";
 import StatsSection from "../components/Home/StatsSection";
 import BenefitsGrid from "../components/Home/BenefitsGrid";
 import Integrations from "../components/Home/Integrations";
@@ -22,7 +22,7 @@ export default function SpanishLandingPage() {
     <div className="">
       <main className="">
         <HeroHome content={landingES.hero} />
-        <LogoBillboard content={landingES.logoBillboard} />
+        <LogoBillboardES content={landingES.logoBillboard} />
         <AIHumanSection content={landingES.aiHuman} />
         <BenefitsGrid content={landingES.benefits} />
         <Integrations content={landingES.integrations} />
