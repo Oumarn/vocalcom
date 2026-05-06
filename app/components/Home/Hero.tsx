@@ -73,13 +73,26 @@ export default function HeroHome({ content, showHelpField = false }: HeroHomePro
                             </div>
                         </div>
 
-                        
+                        {/* Award badges */}
+                        <div className="flex items-center gap-6 pt-2">
+                            <img
+                                src="/assets/Logo_lp_es/2026-IT-POTY.png"
+                                alt="TMC Internet Telephony Product of the Year 2026"
+                                className="h-20 w-auto object-contain drop-shadow-sm"
+                            />
+                            <img
+                                src="/assets/Logo_lp_es/Global%20100%20-%202026%20-%20VOCALCOM.png"
+                                alt="Global 100 Winner 2026 – Vocalcom Best CCaaS Software"
+                                className="h-20 w-auto object-contain drop-shadow-sm"
+                            />
+                        </div>
+
                     </div>
 
                     <div className="bg-white rounded-3xl p-8 shadow-2xl animate-slide-in w-full max-w-lg mx-auto lg:mr-0 border border-gray-100 scroll-mt-24" id="demo">
                         <div className="mb-6 text-center">
                             <p className="text-gray-600 text-sm leading-relaxed">
-                                Notre équipe est là pour vous guider vers la meilleure solution pour votre entreprise.
+                                {content.formSubtitle}
                             </p>
                         </div>
                         <DemoForm showHelpField={showHelpField} />

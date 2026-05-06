@@ -16,6 +16,7 @@ export const landingEN = {
       interactions: { value: "€280k", label: "in cost reduction" },
     },
     formTitle: "See the Demo in Action",
+    formSubtitle: "Our team is here to guide you towards the best solution for your business.",
   },
   logoBillboard: {
     badge: "Trusted by Industry Leaders",

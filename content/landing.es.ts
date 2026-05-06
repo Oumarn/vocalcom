@@ -21,6 +21,7 @@ export const landingES = {
       interactions: { value: "280 mil €", label: "de reducción de costes" },
     },
     formTitle: "Ver la demo en acción",
+    formSubtitle: "Nuestro equipo está aquí para guiarle hacia la mejor solución para su empresa.",
   },
   logoBillboard: {
     badge: "Con la confianza de líderes de la industria",

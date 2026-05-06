@@ -16,6 +16,7 @@ export const landingFR = {
       interactions: { value: "-50%", label: "sur vos coûts de production" },
     },
     formTitle: "Voir la Démo en Action",
+    formSubtitle: "Notre équipe est là pour vous guider vers la meilleure solution pour votre entreprise.",
   },
   logoBillboard: {
     badge: "Trusted by Industry Leaders",
