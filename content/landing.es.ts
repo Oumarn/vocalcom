@@ -4,30 +4,61 @@ export const landingES = {
     description: "La IA de los Centros de Contacto. Optimizada para asistir a los agentes, anticipar el churn, automatizar el upsell y el cross-sell, impulsar la venta sobre leads, gestionar los desbordes y habilitar servicios 24/7 en todos los canales.",
   },
   header: {
-    cta: "Solicitar una demo",
+    cta: "Solicita una demo gratis",
   },
   hero: {
     badge: "Plataforma de Contact Center AI-first",
-    title: "La Plataforma omnicanal que impulsa tu Contact Center",
+    title: "Mejore la productividad con la plataforma CX de Vocalcom",
     bullets: [
-      "Superagente IA, habla, responde y vende",
-      "Automatización real del CX",
-      "+ 15 canales integrados",
+      "Reemplace sistemas locales tradicioneles con una solución moderna en la nube.",
+      "Potencie a su equipo con inteligencia artificial práctica y automatización en la nube.",
+      "Ofrezca experiencias sin esfuerzo que fortalezcan a sus agentes y deleiten a sus clientes.",
     ],
-    subtitle: "Menos costes, fácil, rápido y sin complicaciones",
+    subtitle: "Satisfaga las necesidades de Centro de Contacto de todos los tamaños, hoy y en el futuro.",
     stats: {
       roi: { value: "301 %", label: "ROI a 3 años" },
       payback: { value: "6 meses", label: "Amortización" },
       interactions: { value: "280 mil €", label: "de reducción de costes" },
     },
-    formTitle: "Ver la demo en acción",
-    formSubtitle: "Nuestro equipo está aquí para guiarle hacia la mejor solución para su empresa.",
+    formTitle: "Obtenga un presupuesto rápido",
+    formSubtitle: "",
+    formCgu1: "* Sí, me gustaría recibir comunicaciones de marketing sobre productos, servicios y eventos de Vocalcom. Entiendo que puedo darme de baja más adelante.",
+    formCgu2: "Al enviar este formulario acepto que Vocalcom procese mis datos personales en la forma indicada anteriormente y como se describe en la (Declaración de privacidad) de Vocalcom.",
+    formEmail: "* Email",
+    formPlaceholderEmail: "juan@empresa.com",
+    formCountry: "* País",
+    formPlaceholderCountry: "Seleccione un país",
+    formAgent: "* N.º de agentes",
+    formPlaceholderAgent: "Seleccione una opción",
+    formFooter1: "Todos los campos son obligatorios.",
+    formFooter2: "Al enviar este formulario, acepta nuestra política de privacidad y términos y condiciones.",
+    formFooter3: "Su información está segura y no será compartida.",
   },
   logoBillboard: {
-    badge: "Con la confianza de líderes de la industria",
+    badge: "Marcas líderes ya transforman su CX con Vocalcom",
     title: "Ellos confían en nosotros",
-    leftText: "Más de 100 000 empresas",
+    leftText: "Más de 1 250 empresas",
     leftTextLine2: "confían en nosotros",
+  },
+  soluciones: {
+    badge: "Humanos + IA",
+    title: "Agentes de IA al servicio de las personas",
+    description: "La plataforma de contact center AI-first de Vocalcom permite a los equipos centrarse en casos complejos y conversaciones de alto valor.",
+    roiStat: { value: "301%", label: "de ROI en 3 años" },
+    features: [
+      {
+        title: "IA al servicio de las personas",
+        description: "Desde el seguimiento instantáneo de leads hasta un servicio de atención al cliente disponible 24/7, la colaboración entre agentes humanos y agentes de IA maximiza la eficiencia operativa y genera un retorno de inversión tangible."
+      },
+      {
+        title: "Equipos potenciados",
+        description: "Tus agentes humanos mejoran su desempeño gracias a la asistencia de IA en tiempo real y a insights predictivos."
+      },
+      {
+        title: "ROI medible",
+        description: "Reducción de los tiempos de atención, aumento de la satisfacción del cliente y mejor retención del talento."
+      }
+    ]
   },
   aiHuman: {
     badge: "Humanos + IA",
@@ -193,9 +224,9 @@ export const landingES = {
   },
   finalCta: {
     emoji: "🚀",
-    title: "Toma ventaja frente a la competencia",
-    subtitle: "Únete a más de 1200 empresas que transforman su experiencia de cliente con el contact center AI-first de Vocalcom.",
-    button: "Solicitar una demo",
+    title: "Haz más con la plataforma inteligente de experiencia del cliente de Vocalcom",
+    subtitle: "Ofrezca experiencias hiperpersonalizadas impulsadas por IA con la nueva experiencia del cliente.",
+    button: "Solicita una demo gratis",
     trust: [
       { label: "Soporte dedicado" },
       { label: "ROI garantizado" }
