@@ -26,7 +26,7 @@ export default function HeroEsHome({ content }: HeroHomeProps) {
                     <div className="absolute inset-0 bg-[#f0f3ff]"></div>
                 </div>
 
-                <div className="relative grid lg:grid-cols-2 gap-6 lg:gap-12 max-w-7xl mx-auto z-10 text-[#333] items-center">
+                <div className="relative gap-6 lg:gap-12 max-w-7xl mx-auto z-10 text-[#333]">
                     <div className="flex flex-col gap-6">
                         <h1
                             className={`${raleway.className} text-5xl lg:text-6xl font-extralight tracking-tight leading-[1.05]`}
@@ -46,9 +46,7 @@ export default function HeroEsHome({ content }: HeroHomeProps) {
                                 </ul>
                             )}
                         </article>
-                    </div>
-                    <div className="w-full">
-                        <NewDemoFormEs />
+                        {/* <img src="/ai-human-agent.jpeg" alt="ai-human-agent.jpeg" className="rounded-lg md:h-72" /> */}
                     </div>
                 </div>
             </section>
