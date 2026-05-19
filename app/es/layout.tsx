@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import AppHeader from "../components/AppHeader";
-import AppFooter from "../components/AppFooter";
 import { landingES } from "@/content/landing.es";
+import AppFooterEs from "../components/AppFooterES";
 
 export const metadata: Metadata = {
   title: landingES.meta.title,
@@ -17,7 +17,7 @@ export default function SpanishLayout({
     <>
       <AppHeader content={landingES.header} />
       {children}
-      <AppFooter content={landingES.footer} />
+      <AppFooterEs content={landingES.footer} />
     </>
   );
 }
