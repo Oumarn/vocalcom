@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import AppHeader from "../components/AppHeader";
+import AppHeaderES from "../components/AppHeaderES";
 import { landingES } from "@/content/landing.es";
 import AppFooterEs from "../components/AppFooterES";
 
@@ -15,7 +15,7 @@ export default function SpanishLayout({
 }>) {
   return (
     <>
-      <AppHeader content={landingES.header} />
+      <AppHeaderES content={landingES.header} />
       {children}
       <AppFooterEs content={landingES.footer} />
     </>
