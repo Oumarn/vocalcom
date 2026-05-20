@@ -11,7 +11,7 @@ export function useLanguage() {
   
   // Detect language from URL path
   const isEnglish = pathname?.startsWith('/en');
-  const isSpanish = pathname?.startsWith('/es');
+  const isSpanish = pathname?.startsWith('/es-es');
   const isPortuguese = pathname?.startsWith('/pt');
   const isFrench = pathname?.startsWith('/fr');
   

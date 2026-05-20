@@ -14,7 +14,7 @@ export default function AppHeaderES({ content }: { content: typeof landingES.hea
 
                     <div className="hidden md:flex items-center gap-6">
                         <Link
-                            href="/es/solicita-una-demo"
+                            href="/es-es/solicita-una-demo"
                             className="
     inline-flex items-center justify-center gap-2
     px-6 py-2 text-sm
@@ -38,7 +38,7 @@ export default function AppHeaderES({ content }: { content: typeof landingES.hea
 
                     <div className="md:hidden flex items-center">
                         <Link
-                            href="/es/solicita-una-demo"
+                            href="/es-es/solicita-una-demo"
                             className="
     inline-flex items-center justify-center gap-1
     px-2.5 py-2 text-xs

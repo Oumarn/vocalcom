@@ -17,7 +17,7 @@ export default async function RootPage() {
   
   // Check for Spanish (es or es-*)
   if (lowerLang.includes('es')) {
-    redirect('/es');
+    redirect('/es-es');
   }
   
   // Check for English

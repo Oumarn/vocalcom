@@ -178,7 +178,7 @@ export default function NewDemoFormEs({ showHelpField = false }: DemoFormProps =
 
       // Show Calendly widget immediately
       setTimeout(() => {
-        window.location.href = "/es/solicita-una-demo"
+        window.location.href = "/es-es/solicita-una-demo"
       }, 300);
 
     } catch (error) {

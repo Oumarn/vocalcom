@@ -32,7 +32,7 @@ export default function Cta({ content }: { content: typeof landingES.finalCta })
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                         <Link
-                            href="/es/solicita-una-demo"
+                            href="/es-es/solicita-una-demo"
                             className="
     inline-flex items-center justify-center gap-2
     px-4 sm:px-8 py-2 sm:py-4

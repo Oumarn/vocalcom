@@ -319,9 +319,9 @@ export const landingES = {
     navigation: {
       title: "Soluciones",
       links: [
-        { text: "Software Call Center", href: "/es/software-call-center" },
-        { text: "Software Atención Cliente", href: "/es/software-atencion-cliente" },
-        { text: "Software Telemarketing", href: "/es/software-telemarketing" }
+        { text: "Software Call Center", href: "/es-es/software-call-center" },
+        { text: "Software Atención Cliente", href: "/es-es/software-atencion-cliente" },
+        { text: "Software Telemarketing", href: "/es-es/software-telemarketing" }
       ]
     },
     links: {
