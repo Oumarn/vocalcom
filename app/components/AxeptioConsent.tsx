@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
-// Extend Window interface to include Axeptio settings
 declare global {
   interface Window {
     axeptioSettings?: {
@@ -12,15 +12,23 @@ declare global {
   }
 }
 
+function resolveCookiesVersion(pathname: string | null): string {
+  if (!pathname) return 'vocalcom-fr';
+  if (pathname.startsWith('/es-es')) return 'vocalcom-es';
+  if (pathname.startsWith('/en')) return 'vocalcom-en';
+  if (pathname.startsWith('/pt')) return 'vocalcom-pt';
+  return 'vocalcom-fr';
+}
+
 export default function AxeptioConsent() {
+  const pathname = usePathname();
+
   useEffect(() => {
-    // Only load Axeptio after React hydration is complete
     if (typeof window === 'undefined') return;
 
-    // Set Axeptio configuration
     window.axeptioSettings = {
       clientId: "6916f5a3619a0d16460c7d6b",
-      cookiesVersion: "vocalcom-fr"
+      cookiesVersion: resolveCookiesVersion(pathname),
     };
 
     // Load Axeptio script
