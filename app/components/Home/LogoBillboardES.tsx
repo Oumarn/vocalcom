@@ -1,5 +1,11 @@
 "use client";
 import type { landingFR } from '@/content/landing.fr';
+import { Raleway } from 'next/font/google';
+
+const raleway = Raleway({
+    variable: "--font-raleway",
+    subsets: ["latin"],
+});
 
 const logos = [
     { src: '/assets/Logo_lp_es/Allianz.svg.png', alt: 'Allianz' },
@@ -45,18 +51,17 @@ export default function LogoBillboardES({ content }: { content: typeof landingFR
                 }
             `}</style>
             <div className="max-w-7xl mx-auto px-6">
-                <div className="text-center mb-12">
+                <div className="text-center mb-9 text-[#333]">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-violet-50 to-purple-50 border border-violet-200 shadow-lg shadow-violet-500/10 mb-4">
-                        <span className="text-xs font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent uppercase tracking-wider">
+                        <span className={`${raleway.className} text-xs font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent uppercase tracking-wider`}>
                             {content.badge}
                         </span>
                     </div>
-                    {content.title && <h3 className="text-2xl font-bold text-gray-900">{content.title}</h3>}
                 </div>
                 <div className="flex flex-col lg:flex-row items-start lg:items-center gap-8 lg:gap-12">
                     {content.leftText && (
-                        <div className="w-full lg:w-96 flex-shrink-0">
-                            <h3 className="text-xl lg:text-2xl font-bold text-gray-900 leading-tight">
+                        <div className="hidden lg:block w-full lg:w-96 flex-shrink-0">
+                            <h3 className={`${raleway.className} text-xl lg:text-2xl font-normal text-gray-900 leading-tight`}>
                                 <div className="whitespace-nowrap">{content.leftText}</div>
                                 {content.leftTextLine2 && <div>{content.leftTextLine2}</div>}
                             </h3>
@@ -64,18 +69,15 @@ export default function LogoBillboardES({ content }: { content: typeof landingFR
                     )}
                     <div className="w-full flex-1 min-w-0">
                         <div className="relative bg-gradient-to-r from-slate-50 via-white to-slate-50 rounded-2xl py-8 shadow-xl shadow-slate-200/50 border border-slate-200/50 overflow-hidden">
-                            {/* Enhanced spotlight with brand colors */}
                             <div className="absolute inset-0 pointer-events-none z-10">
-                                <div className="absolute top-0 bottom-0 w-1/3 bg-gradient-to-r from-transparent via-cyan-200/20 to-transparent blur-2xl" 
+                                <div className="absolute top-0 bottom-0 w-1/3 bg-gradient-to-r from-transparent via-cyan-200/20 to-transparent blur-2xl"
                                      style={{ animation: 'spotlight 10s linear infinite' }}>
                                 </div>
                             </div>
-                            {/* Decorative gradient borders */}
                             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent"></div>
                             <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent"></div>
-                            
+
                             <div className="flex scroll-container will-change-transform">
-                                {/* First set of logos */}
                                 <div className="flex items-center gap-6 px-4 shrink-0">
                                     {logos.map((logo) => (
                                         <div key={`first-${logo.src}`} className={logoSlotClass}>
@@ -87,7 +89,6 @@ export default function LogoBillboardES({ content }: { content: typeof landingFR
                                         </div>
                                     ))}
                                 </div>
-                                {/* Duplicate set for seamless loop */}
                                 <div className="flex items-center gap-6 px-4 shrink-0">
                                     {logos.map((logo) => (
                                         <div key={`second-${logo.src}`} className={logoSlotClass}>
