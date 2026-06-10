@@ -1,11 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Icon from '@mdi/react';
 import { mdiArrowRight } from '@mdi/js';
 import { useLanguage } from "../../hooks/useLanguage";
-import { getCalendlyConfig, getCalendlyConfigByCountry, mapRegionKeyToCalendly, type CalendlyRegion } from "@/config/calendly-config";
-import { resolveRegionFromUTM } from "@/lib/region-resolver";
 
 // Declare dataLayer for GTM and LinkedIn Insight Tag
 declare global {
@@ -22,10 +20,7 @@ interface DemoFormProps {
 
 export default function NewDemoFormEs({ showHelpField = false }: DemoFormProps = {}) {
   const { locale } = useLanguage();
-  const [step, setStep] = useState(1);
   const [___, setIsSubmitting] = useState(false);
-  const [showCalendly, setShowCalendly] = useState(false);
-  const [calendlyUrl, setCalendlyUrl] = useState("");
 
   // Form data state
   const [formData, setFormData] = useState({
@@ -182,8 +177,7 @@ export default function NewDemoFormEs({ showHelpField = false }: DemoFormProps =
       }, 300);
 
     } catch (error) {
-      console.error('[DemoForm] Error processing form:', error);
-      setShowCalendly(true);
+      console.error('[NewDemoFormEs] Error processing form:', error);
       setIsSubmitting(false);
     }
   };

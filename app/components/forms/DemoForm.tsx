@@ -844,15 +844,55 @@ export default function DemoForm({ customButtonText, showHelpField = false }: De
         });
       }
 
-      // Show Calendly widget immediately
-      setTimeout(() => {
-        setShowCalendly(true);
-        setIsSubmitting(false);
-      }, 300);
+      // Submit directly to Pardot — Calendly booking step disabled.
+      // The Calendly listener/UI below is dead code kept for easy re-enable.
+      const pardotUrl = 'https://go.vocalcom.com/l/1029911/2026-01-04/363cd';
+      const pardotFields: { [key: string]: string } = {
+        email: submissionData.email,
+        first_name: submissionData.firstName,
+        last_name: submissionData.lastName,
+        company: submissionData.company,
+        phone: submissionData.phone,
+        calendly_booking_status: 'form_only',
+      };
+      if (submissionData.country) pardotFields.country = submissionData.country;
+      if (submissionData.jobTitle) pardotFields.job_title = submissionData.jobTitle;
+
+      localStorage.setItem('vocalcom_landing_language', locale || 'fr');
+      pardotFields.landing_language = locale || 'fr';
+      pardotFields.Landing_Language = locale || 'fr';
+
+      const attr = submissionData.attribution;
+      if (attr?.utm_source) { pardotFields.utm_source = attr.utm_source; pardotFields.UTM_Source = attr.utm_source; }
+      if (attr?.utm_medium) { pardotFields.utm_medium = attr.utm_medium; pardotFields.UTM_Medium = attr.utm_medium; }
+      if (attr?.utm_campaign) { pardotFields.utm_campaign = attr.utm_campaign; pardotFields.UTM_Campaign = attr.utm_campaign; }
+      if (attr?.utm_term) { pardotFields.utm_term = attr.utm_term; pardotFields.UTM_Term = attr.utm_term; }
+      if (attr?.utm_content) { pardotFields.utm_content = attr.utm_content; pardotFields.UTM_Content = attr.utm_content; }
+      if (attr?.utm_creative) pardotFields.utm_creative = attr.utm_creative;
+      if (attr?.utm_matchtype) pardotFields.utm_matchtype = attr.utm_matchtype;
+      if (attr?.utm_network) pardotFields.utm_network = attr.utm_network;
+      if (attr?.utm_device) pardotFields.utm_device = attr.utm_device;
+      if (attr?.gclid) { pardotFields.gclid = attr.gclid; pardotFields.GCLID = attr.gclid; }
+      if (attr?.campaign_name) pardotFields.campaign_name = attr.campaign_name;
+      if (attr?.adgroup_name) pardotFields.adgroup_name = attr.adgroup_name;
+
+      try {
+        await fetch(pardotUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(pardotFields).toString(),
+          mode: 'no-cors',
+        });
+        console.log('[DemoForm] Pardot submission completed');
+      } catch (pardotErr) {
+        console.error('[DemoForm] Pardot submit failed:', pardotErr);
+      }
+
+      localStorage.removeItem('vocalcom_form_submission');
+      window.location.href = '/thank-you';
 
     } catch (error) {
       console.error('[DemoForm] Error processing form:', error);
-      setShowCalendly(true);
       setIsSubmitting(false);
     }
   };
